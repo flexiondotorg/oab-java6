@@ -203,8 +203,8 @@ cecho success
 apt_update
 
 # Install the build requirements.
-ncecho " [x] Installing Debian package tools  "
-apt-get install -y --no-install-recommends debhelper devscripts dpkg-dev git-core >> "$log" 2>&1 &
+ncecho " [x] Installing development tools  "
+apt-get install -y --no-install-recommends build-essential debhelper devscripts dpkg-dev git-core >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Make sure the required dirs exist.
