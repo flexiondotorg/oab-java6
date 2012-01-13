@@ -111,8 +111,9 @@ function usage() {
     echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-2~${LSB_CODE}1_${LSB_ARCH}.deb"
     echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-2~${LSB_CODE}1_all.deb"
     echo
-    echo "On 64-bit systems the Java Runtime Environment for 32-bit systems, 'ia32-sun-java6-bin',"
-    echo "is not installed by default. If you require that package execute the following:"
+    echo "On 64-bit systems the Java Runtime Environment for 32-bit systems,"
+    echo "'ia32-sun-java6-bin', is not installed by default. If you require"
+    echo "that package, then execute the following:"
     echo
     echo "  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-2~${LSB_CODE}1_amd64.deb"
     echo

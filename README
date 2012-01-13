@@ -66,8 +66,9 @@ require those packages, execute the following:
   sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-2~oneiric1_amd64.deb
   sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-2~oneiric1_all.deb
 
-On 64-bit systems the Java Runtime Environment for 32-bit systems, 'ia32-sun-java6-bin',
-is not installed by default. If you require that package execute the following:
+On 64-bit systems the Java Runtime Environment for 32-bit systems,
+'ia32-sun-java6-bin', is not installed by default. If you require
+that package, then execute the following:
 
   sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-2~oneiric1_amd64.deb
 
