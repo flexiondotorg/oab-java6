@@ -12,13 +12,30 @@ following from another shell:
   tail -f ./oab-java6.sh.log
 
 Usage
-  ./oab-java6.sh -k[jre|jdk]
+
+  sudo ./oab-java6.sh -k [jre|jdk]
 
 Required parameters
   -k : Specify the Java kit you want to install [jre|jdk]
 
 Optional parameters
   -h : This help
+
+How it works
+============
+This scripts is merely a wrapper for most excllent Debian packaging 
+scripts prepared by Janusz Dziemidowicz for Sun Java 6.
+
+  - https://github.com/rraptorr/sun-java6
+
+The basic execution steps are:
+  - Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'.
+  - Install the tools required to build the packages.
+  - Create download and build caches under '/var/local/oab'.
+  - Download the i586 and x64 Java 6 install binaries. Yes, both are required.
+  - Clone the build scripts from https://github.com/rraptorr/sun-java6
+  - Build all the Sun Java 6 packages applicable to your system.
+  - Install the packages that were just built.
 
 What gets installed?
 ====================

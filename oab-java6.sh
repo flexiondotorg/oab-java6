@@ -50,12 +50,12 @@ function copyright_msg() {
 	echo "following from another shell:"
 	echo
 	echo "  tail -f ${0}.log"
+    echo
 }
 
 # Usage instructions.
 function usage() {
     local MODE=${1}
-    echo
     echo "Usage"
     echo
     echo "  sudo ${0} -k [jre|jdk]"
@@ -193,7 +193,6 @@ if [ "${INST_KIT}" != "jre" ] && [ "${INST_KIT}" != "jdk" ]; then
 fi
 
 # Let's start doing something...
-echo
 echo "Here we go..."
 
 # Remove my, now disabled, PPA.
