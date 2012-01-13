@@ -25,6 +25,15 @@ Required parameters
 Optional parameters
   -h : This help
 
+How do I download an run this thing?
+====================================
+The quick and simple solution is to do the following at the shell:
+
+  cd ~/
+  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O oab-java6.sh
+  chmod +x oab-java6.sh
+  sudo ./oab-java6.sh -k [jre|jdk]
+
 How it works
 ============
 This scripts is merely a wrapper for most excllent Debian packaging 

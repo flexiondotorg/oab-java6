@@ -70,6 +70,15 @@ function usage() {
     echo "Optional parameters"
     echo "  -h : This help"
     echo
+    echo "How do I download an run this thing?"
+    echo "===================================="
+    echo "The quick and simple solution is to do the following at the shell:"
+    echo
+    echo "  cd ~/"
+    echo "  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O `basename ${0}`"
+    echo "  chmod +x `basename ${0}`"
+    echo "  sudo ./`basename ${0}` -k [jre|jdk]"
+    echo
     echo "How it works"
     echo "============"
     echo "This scripts is merely a wrapper for most excllent Debian packaging "
