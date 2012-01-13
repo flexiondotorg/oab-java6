@@ -60,6 +60,10 @@ function usage() {
     echo
     echo "  sudo ${0} -k [jre|jdk]"
     echo
+    echo "So to install the JRE execute the following:"
+    echo
+    echo "  sudo ${0} -k jre"
+    echo
     echo "Required parameters"
     echo "  -k : Specify the Java kit you want to install [jre|jdk]"
     echo
@@ -107,13 +111,15 @@ function usage() {
     echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-2~${LSB_CODE}1_${LSB_ARCH}.deb"
     echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-2~${LSB_CODE}1_all.deb"
     echo
-    if [ "${LSB_ARCH}" == "amd64" ] || [ "${MODE}" == "build_docs" ]; then
-        echo "On 64-bit systems the Java Runtime Environment for 32-bit systems, 'ia32-sun-java6-bin',"
-        echo "is not installed by default. If you require that package execute the following:"
-        echo
-        echo "  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-2~${LSB_CODE}1_amd64.deb"
-        echo
-    fi
+    echo "On 64-bit systems the Java Runtime Environment for 32-bit systems, 'ia32-sun-java6-bin',"
+    echo "is not installed by default. If you require that package execute the following:"
+    echo
+    echo "  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-2~${LSB_CODE}1_amd64.deb"
+    echo
+    echo "What is 'oab'?"
+    echo "=============="
+    echo "Because, O.A.B! ;-)"
+    echo
 
     # Only exit if we are not build docs.
     if [ "${MODE}" != "build_docs" ]; then

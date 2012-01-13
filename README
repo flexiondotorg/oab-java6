@@ -15,6 +15,10 @@ Usage
 
   sudo ./oab-java6.sh -k [jre|jdk]
 
+So to install the JRE execute the following:
+
+  sudo ./oab-java6.sh -k jre
+
 Required parameters
   -k : Specify the Java kit you want to install [jre|jdk]
 
@@ -66,6 +70,10 @@ On 64-bit systems the Java Runtime Environment for 32-bit systems, 'ia32-sun-jav
 is not installed by default. If you require that package execute the following:
 
   sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-2~oneiric1_amd64.deb
+
+What is 'oab'?
+==============
+Because, O.A.B! ;-)
 
 
 History
