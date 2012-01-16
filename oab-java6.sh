@@ -76,8 +76,8 @@ function usage() {
     echo "Optional parameters"
     echo "  -h : This help"
     echo
-    echo "How do I download an run this thing?"
-    echo "===================================="
+    echo "How do I download and run this thing?"
+    echo "====================================="
     echo "The quick and simple solution is to do the following at the shell:"
     echo
     echo "  cd ~/"
