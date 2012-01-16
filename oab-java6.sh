@@ -35,25 +35,31 @@ JAVA_KIT="jdk"
 JAVA_VER="6"
 JAVA_UPD="30"
 JAVA_REL="b12"
-VER="0.1.0"
+VER="0.1.1"
 
 function copyright_msg() {
-    echo `basename ${0}`" v${VER} - Install Java 1.${JAVA_VER}.0.${JAVA_UPD} from locally built packages."
+    local MODE=${1}
+    echo `basename ${0}`" v${VER} - Install Java ${JAVA_VER}u${JAVA_UPD} from locally built packages."
     echo "Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"
 	echo
-	echo "By running this script to download and install Java you acknowledge that "
-	echo "you have read and accepted the terms of the end user license agreement."
+	echo "By running this script to download and/or install Java you acknowledge that "
+	echo "you have read and accepted the terms of the Oracle end user license agreement."
 	echo
 	echo "  - http://www.oracle.com/technetwork/java/javase/terms/license/"
 	echo
-	echo "If you want to see what this script while it is running then execute the"
-	echo "following from another shell:"
+	echo "If you want to see what this is script is doing while it is running then execute"
+	echo "the following from another shell:"
 	echo
-	echo "  tail -f ${0}.log"
+
+    # Adjust the output if we are building the docs.
+    if [ "${MODE}" != "build_docs" ]; then
+        echo "  tail -f `pwd``basename ${0}`.log"
+    else
+	    echo "  tail -f ./`basename ${0}`.log"
+    fi
     echo
 }
 
-# Usage instructions.
 function usage() {
     local MODE=${1}
     echo "Usage"
@@ -82,7 +88,7 @@ function usage() {
     echo "How it works"
     echo "============"
     echo "This scripts is merely a wrapper for most excllent Debian packaging "
-    echo "scripts prepared by Janusz Dziemidowicz for Sun Java 6."
+    echo "scripts prepared by Janusz Dziemidowicz for Java."
     echo
     echo "  - https://github.com/rraptorr/sun-java6"
     echo
@@ -92,7 +98,7 @@ function usage() {
     echo "  - Create download and build caches under '/var/local/oab'."
     echo "  - Download the i586 and x64 Java 6 install binaries. Yes, both are required."
     echo "  - Clone the build scripts from https://github.com/rraptorr/sun-java6"
-    echo "  - Build all the Sun Java 6 packages applicable to your system."
+    echo "  - Build all the Java ${JAVA_VER}u${JAVA_UPD} packages applicable to your system."
     echo "  - Install the packages that were just built."
     echo
     echo "What gets installed?"
@@ -117,14 +123,14 @@ function usage() {
     echo "Derby 'sun-java6-javadb' are not installed by default. Should you"
     echo "require those packages, execute the following:"
     echo
-    echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-2~${LSB_CODE}1_${LSB_ARCH}.deb"
-    echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-2~${LSB_CODE}1_all.deb"
+    echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-3~${LSB_CODE}1_${LSB_ARCH}.deb"
+    echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-3~${LSB_CODE}1_all.deb"
     echo
     echo "On 64-bit systems the Java Runtime Environment for 32-bit systems,"
     echo "'ia32-sun-java6-bin', is not installed by default. If you require"
     echo "that package, then execute the following:"
     echo
-    echo "  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-2~${LSB_CODE}1_amd64.deb"
+    echo "  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-3~${LSB_CODE}1_amd64.deb"
     echo
     echo "What is 'oab'?"
     echo "=============="
@@ -138,7 +144,7 @@ function usage() {
 }
 
 function build_docs() {
-    copyright_msg > README
+    copyright_msg build_docs > README
 
     # Add the usage instructions
     usage build_docs >> README
@@ -157,14 +163,7 @@ function build_docs() {
     exit 1
 }
 
-function dpkg_install() {
-    local DEB="${1}"
-    ncecho " [x] Installing ${DEB} "
-    dpkg -i "${DEB}" >> "$log" 2>&1 &
-    pid=$!;progress $pid
-}
-
-copyright_msg ${1}
+copyright_msg
 
 # 'source' my common functions
 if [ -f /tmp/common.sh ]; then
@@ -211,15 +210,16 @@ fi
 # Let's start doing something...
 echo "Here we go..."
 
-# Remove my, now disabled, PPA.
-ncecho " [x] Removing ppa:flexiondotorg/java "
-rm -v /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* >> "$log" 2>&1
-cecho success
-
-apt_update
+# Remove my, now disabled, Java PPA.
+if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* ]; then
+    ncecho " [x] Removing ppa:flexiondotorg/java "
+    rm -v /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* >> "$log" 2>&1
+    cecho success
+    apt_update
+fi
 
 # Install the build requirements.
-ncecho " [x] Installing development tools  "
+ncecho " [x] Installing development tools "
 apt-get install -y --no-install-recommends build-essential debhelper devscripts dpkg-dev git-core >> "$log" 2>&1 &
 pid=$!;progress $pid
 
@@ -230,13 +230,13 @@ pid=$!;progress $pid
 
 # Remove the 'src' directory everytime.
 ncecho " [x] Removing clones of https://github.com/rraptorr/sun-java6 "
-rm -rfv /var/local/oab/sun-java6-6.30 2>/dev/null >> "$log" 2>&1 &
+rm -rfv /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD} 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Checkout the code
 ncecho " [x] Cloning https://github.com/rraptorr/sun-java6 "
 cd /var/local/oab/ >> "$log" 2>&1
-git clone git://github.com/rraptorr/sun-java6.git sun-java6-6.30 >> "$log" 2>&1 &
+git clone git://github.com/rraptorr/sun-java6.git sun-java6-${JAVA_VER}.${JAVA_UPD} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Download the Oracle install packages.
@@ -248,23 +248,23 @@ do
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
-    ln -s /var/local/oab/pkg/${JAVA_BIN} /var/local/oab/sun-java6-6.30/${JAVA_BIN} >> "$log" 2>&1 &
+    ln -s /var/local/oab/pkg/${JAVA_BIN} /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD}/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 done
 
 # Change directory to the build directory
-cd /var/local/oab/sun-java6-6.30/
+cd /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD}/
 
 # Get the version
 VERSION=`head -n1 debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
-PPA_VERSION="${VERSION}~${LSB_CODE}1"
+NEW_VERSION="${VERSION}~${LSB_CODE}1"
 
 # Genereate a build message
 BUILD_MESSAGE="Automated build for Ubuntu ${LSB_REL} using https://github.com/rraptorr/sun-java6"
 
 # Update the changelog
 ncecho " [x] Updating the changelog "
-dch --distribution ${LSB_CODE} --force-distribution --newversion ${PPA_VERSION} --force-bad-version "${BUILD_MESSAGE}" >> "$log" 2>&1 &
+dch --distribution ${LSB_CODE} --force-distribution --newversion ${NEW_VERSION} --force-bad-version "${BUILD_MESSAGE}" >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Build the binary packages
@@ -274,20 +274,22 @@ pid=$!;progress_can_fail $pid
 
 # Move the .deb files into the 'deb' directory
 ncecho " [x] Moving the packages "
-mv -v /var/local/oab/sun-java6-*_6.30-2~${LSB_CODE}1_*.deb /var/local/oab/deb/ >> "$log" 2>&1
-mv -v /var/local/oab/sun-java6_6.30-2~${LSB_CODE}1_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1 &
+mv -v /var/local/oab/sun-java6-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1
+mv -v /var/local/oab/sun-java6_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1 &
 pid=$!;progress $pid
 
-# Install the JRE.
-dpkg_install "/var/local/oab/deb/sun-java6-bin_${PPA_VERSION}_${LSB_ARCH}.deb"
-dpkg_install "/var/local/oab/deb/sun-java6-plugin_${PPA_VERSION}_${LSB_ARCH}.deb"
-dpkg_install "/var/local/oab/deb/sun-java6-jre_${PPA_VERSION}_all.deb"
-dpkg_install "/var/local/oab/deb/sun-java6-fonts_${PPA_VERSION}_all.deb"
+# Build the list of .debs to be installed
+INST_DEB="./sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-jre_${NEW_VERSION}_all.deb ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-fonts_${NEW_VERSION}_all.deb"
 
-# If the JDK was requested, then install the extra packages.
+# If the JDK was requested, then add the extra packages.
 if [ "${INST_KIT}" == "jdk" ]; then
-    dpkg_install "/var/local/oab/deb/sun-java6-jdk_${PPA_VERSION}_${LSB_ARCH}.deb"
-    dpkg_install "/var/local/oab/deb/sun-java6-source_${PPA_VERSION}_all.deb"
+    INST_DEB="${INST_DEB} ./sun-java6-jdk_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-source_${NEW_VERSION}_all.deb"
 fi
+
+# Install the required .debs
+ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [${INST_KIT}] "
+cd /var/local/oab/deb >> "$log" 2>&1
+dpkg -i ${INST_DEB} >> "$log" 2>&1 &
+pid=$!;progress $pid
 
 echo "All done!"

@@ -2,6 +2,13 @@
 History
 =======
 
+0.1.1
+-----
+
+* Updated to use dynamic version detection throughout
+* Fixed package installation when upgrading
+* Minor documentation updates
+
 0.1.0
 -----
 

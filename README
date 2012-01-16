@@ -1,13 +1,13 @@
-oab-java6.sh v0.1.0 - Install Java 1.6.0.30 from locally built packages.
+oab-java6.sh v0.1.1 - Install Java 6u30 from locally built packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
 
-By running this script to download and install Java you acknowledge that 
-you have read and accepted the terms of the end user license agreement.
+By running this script to download and/or install Java you acknowledge that 
+you have read and accepted the terms of the Oracle end user license agreement.
 
   - http://www.oracle.com/technetwork/java/javase/terms/license/
 
-If you want to see what this script while it is running then execute the
-following from another shell:
+If you want to see what this is script is doing while it is running then execute
+the following from another shell:
 
   tail -f ./oab-java6.sh.log
 
@@ -37,7 +37,7 @@ The quick and simple solution is to do the following at the shell:
 How it works
 ============
 This scripts is merely a wrapper for most excllent Debian packaging 
-scripts prepared by Janusz Dziemidowicz for Sun Java 6.
+scripts prepared by Janusz Dziemidowicz for Java.
 
   - https://github.com/rraptorr/sun-java6
 
@@ -47,7 +47,7 @@ The basic execution steps are:
   - Create download and build caches under '/var/local/oab'.
   - Download the i586 and x64 Java 6 install binaries. Yes, both are required.
   - Clone the build scripts from https://github.com/rraptorr/sun-java6
-  - Build all the Sun Java 6 packages applicable to your system.
+  - Build all the Java 6u30 packages applicable to your system.
   - Install the packages that were just built.
 
 What gets installed?
@@ -72,14 +72,14 @@ examples, 'sun-java6-demo' and the Java DB distribution of Apache
 Derby 'sun-java6-javadb' are not installed by default. Should you
 require those packages, execute the following:
 
-  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-2~oneiric1_amd64.deb
-  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-2~oneiric1_all.deb
+  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-3~oneiric1_amd64.deb
+  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-3~oneiric1_all.deb
 
 On 64-bit systems the Java Runtime Environment for 32-bit systems,
 'ia32-sun-java6-bin', is not installed by default. If you require
 that package, then execute the following:
 
-  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-2~oneiric1_amd64.deb
+  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-3~oneiric1_amd64.deb
 
 What is 'oab'?
 ==============
@@ -88,6 +88,13 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+0.1.1
+-----
+
+* Updated to use dynamic version detection throughout
+* Fixed package installation when upgrading
+* Minor documentation updates
 
 0.1.0
 -----
