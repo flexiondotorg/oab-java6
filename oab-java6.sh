@@ -87,8 +87,8 @@ function usage() {
     echo
     echo "How it works"
     echo "============"
-    echo "This scripts is merely a wrapper for most excllent Debian packaging "
-    echo "scripts prepared by Janusz Dziemidowicz for Java."
+    echo "This script is merely a wrapper for most excllent Debian packaging "
+    echo "scripts prepared by Janusz Dziemidowicz."
     echo
     echo "  - https://github.com/rraptorr/sun-java6"
     echo

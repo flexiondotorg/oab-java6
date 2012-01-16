@@ -36,8 +36,8 @@ The quick and simple solution is to do the following at the shell:
 
 How it works
 ============
-This scripts is merely a wrapper for most excllent Debian packaging 
-scripts prepared by Janusz Dziemidowicz for Java.
+This script is merely a wrapper for most excllent Debian packaging 
+scripts prepared by Janusz Dziemidowicz.
 
   - https://github.com/rraptorr/sun-java6
 
