@@ -86,8 +86,10 @@ History
 0.1.2
 -----
 
+* Fixed build requirements
 * Fixed install of 'ia32-sun-java6-bin' on 64-bit systems
-* Added install the required Java dependencies
+* Fixed install of Java browser plugin on systems without a supported browser
+* Added runtime requirements
 * Added TODO
 
 0.1.1
@@ -105,6 +107,8 @@ History
 Todo
 ====
 
+* Only attempt to install the Java browser plugin if a supported browser is
+  already installed.
 * Package descriptions and versions should be dynamically determined in the
   documentation.
 * Built .deb dependencies should be dynamically determined.

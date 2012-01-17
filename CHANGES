@@ -5,8 +5,10 @@ History
 0.1.2
 -----
 
+* Fixed build requirements
 * Fixed install of 'ia32-sun-java6-bin' on 64-bit systems
-* Added install the required Java dependencies
+* Fixed install of Java browser plugin on systems without a supported browser
+* Added runtime requirements
 * Added TODO
 
 0.1.1

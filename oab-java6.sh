@@ -291,7 +291,7 @@ mv -v /var/local/oab/sun-java6_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab
 pid=$!;progress $pid
 
 # Build the list of .debs to be installed
-INST_DEB="./sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-jre_${NEW_VERSION}_all.deb ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-fonts_${NEW_VERSION}_all.deb"
+INST_DEB="./sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-jre_${NEW_VERSION}_all.deb ./sun-java6-fonts_${NEW_VERSION}_all.deb"
 if [ "${LSB_ARCH}" == "amd64" ]; then
     INST_DEB="${INST_DEB} ./ia32-sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb"
 fi
@@ -301,10 +301,17 @@ if [ "${INST_KIT}" == "jdk" ]; then
     INST_DEB="${INST_DEB} ./sun-java6-jdk_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-source_${NEW_VERSION}_all.deb"
 fi
 
-# Install the required .debs
+# Install the required JRE or JDK .debs
 ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [${INST_KIT}] "
 cd /var/local/oab/deb >> "$log" 2>&1
 dpkg -i ${INST_DEB} >> "$log" 2>&1 &
 pid=$!;progress $pid
+
+# Install the Java plugin .deb
+#  - Permitted to fail if a supported browser is not installed.
+ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [plugin] "
+cd /var/local/oab/deb >> "$log" 2>&1
+dpkg -i ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb >> "$log" 2>&1 &
+pid=$!;progress_can_fail $pid
 
 echo "All done!"
