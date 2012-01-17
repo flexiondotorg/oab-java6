@@ -2,7 +2,7 @@
 
 # License
 #
-# A wrapper for Janusz Dziemidowicz Debian packaging scripts for Java.
+# Create a local 'apt' repository for Ubuntu Java packages.
 # Copyright (c) 2012 Flexion.Org, http://flexion.org/
 #
 # Permission is hereby granted, free of charge, to any person
@@ -34,15 +34,15 @@ JAVA_KIT="jdk"
 JAVA_VER="6"
 JAVA_UPD="30"
 JAVA_REL="b12"
-VER="0.1.2"
+VER="0.1.3"
 
 function copyright_msg() {
     local MODE=${1}
-    echo `basename ${0}`" v${VER} - Install Java ${JAVA_VER}u${JAVA_UPD} from locally built packages."
+    echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
     echo "Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"
 	echo
-	echo "By running this script to download and/or install Java you acknowledge that "
-	echo "you have read and accepted the terms of the Oracle end user license agreement."
+	echo "By running this script to download Java you acknowledge that you have"
+	echo "read and accepted the terms of the Oracle end user license agreement."
 	echo
 	echo "  - http://www.oracle.com/technetwork/java/javase/terms/license/"
 	echo
@@ -63,72 +63,58 @@ function usage() {
     local MODE=${1}
     echo "Usage"
     echo
-    echo "  sudo ${0} -k [jre|jdk]"
-    echo
-    echo "So to install the JRE execute the following:"
-    echo
-    echo "  sudo ${0} -k jre"
-    echo
-    echo "Required parameters"
-    echo "  -k : Specify the Java kit you want to install [jre|jdk]"
+    echo "  sudo ${0}"
     echo
     echo "Optional parameters"
     echo "  -h : This help"
     echo
     echo "How do I download and run this thing?"
     echo "====================================="
-    echo "The quick and simple solution is to do the following at the shell:"
+    echo "Like this."
     echo
     echo "  cd ~/"
     echo "  wget https://raw.github.com/flexiondotorg/oab-java6/master/`basename ${0}` -O `basename ${0}`"
     echo "  chmod +x `basename ${0}`"
-    echo "  sudo ./`basename ${0}` -k [jre|jdk]"
+    echo "  sudo ./`basename ${0}`"
     echo
     echo "How it works"
     echo "============"
-    echo "This script is merely a wrapper for most excllent Debian packaging "
+    echo "This script is merely a wrapper for the most excllent Debian packaging"
     echo "scripts prepared by Janusz Dziemidowicz."
     echo
     echo "  - https://github.com/rraptorr/sun-java6"
     echo
     echo "The basic execution steps are:"
+    echo
     echo "  - Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
-    echo "  - Install the tools required to build the packages."
-    echo "  - Create download and build caches under '/var/local/oab'."
-    echo "  - Download the i586 and x64 Java ${JAVA_VER} install binaries. Yes, both are required."
+    echo "  - Install the tools required to build the Java packages."
+    echo "  - Create download cache in '/var/local/oab/pkg'."
+    echo "  - Download the i586 and x64 Java ${JAVA_VER} install binaries from Oracle. Yes, both are required."
     echo "  - Clone the build scripts from https://github.com/rraptorr/sun-java6"
-    echo "  - Build all the Java ${JAVA_VER}u${JAVA_UPD} packages applicable to your system."
-    echo "  - Install the packages that were just built."
+    echo "  - Build the Java ${JAVA_VER}u${JAVA_UPD} packages applicable to your system."
+    echo "  - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages"
     echo
     echo "What gets installed?"
     echo "===================="
-    echo "If you elect to install the JRE the following packages are installed:"
+    echo "Nothing!"
     echo
-    echo "  * sun-java${JAVA_VER}-bin"
-    echo "  * sun-java${JAVA_VER}-jre"
-    echo "  * sun-java${JAVA_VER}-fonts"
+    echo "This script will no longer try and directly install or upgrade any Java"
+    echo "packages, instead a local 'apt' repository is created that hosts locally"
+    echo "built Java packages applicable to your system. It is up to you to install"
+    echo "or upgrade the Java packages you require using 'apt-get', 'aptitude' or"
+    echo "'synaptic', etc. For example, once this script has been run you can simply"
+    echo "install the JRE by executing the following from a shell."
     echo
-    echo "If you elect to install the JDK this following packages are installed,"
-    echo "in addition to those from the JRE above."
+    echo "  sudo apt-get install sun-java6-jre"
     echo
-    echo "  * sun-java${JAVA_VER}-jdk"
-    echo "  * sun-java${JAVA_VER}-source"
+    echo "Or if you already have the \"official\" Ubuntu packages installed then you"
+    echo "can upgrade by executing the folowing from a shell."
     echo
-    echo "The Java browser plugin is installed, **but only if a supported web browser"
-    echo "is already installed**. This is a safe guard to prevent servers from "
-    echo "installing a web browser and all its dependencies."
+    echo "  sudo apt-get upgrade"
     echo
-    echo "  * sun-java${JAVA_VER}-plugin"
-    echo
-    echo "What is not installed?"
-    echo "======================"
-    echo "When electing to install the JDK the Java Development Kit demos and"
-    echo "examples, 'sun-java${JAVA_VER}-demo' and the Java DB distribution of Apache"
-    echo "Derby 'sun-java${JAVA_VER}-javadb' are not installed by default. Should you"
-    echo "require those packages, execute the following:"
-    echo
-    echo "  sudo dpkg -i /var/local/oab/deb/sun-java${JAVA_VER}-demo_${JAVA_VER}.${JAVA_UPD}-3~${LSB_CODE}1_${LSB_ARCH}.deb"
-    echo "  sudo dpkg -i /var/local/oab/deb/sun-java${JAVA_VER}-javadb_${JAVA_VER}.${JAVA_UPD}-3~${LSB_CODE}1_all.deb"
+    echo "The local 'apt' repository is just that, **local**. It is not accessible"
+    echo "remotely and `basename ${0}` will never enable that capability to ensure"
+    echo "compliance with Oracle's asinine license requirements."
     echo
     echo "What is 'oab'?"
     echo "=============="
@@ -192,23 +178,16 @@ check_ubuntu "lucid maverick natty oneiric precise"
 lsb
 
 # Parse the options
-OPTSTRING=bhk:
+OPTSTRING=bh
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
         b) build_docs;;
         h) usage;;
-        k) INST_KIT=`echo ${OPTARG} | tr '[A-Z]' '[a-z]'`;;
         *) usage;;
     esac
 done
 shift "$(( $OPTIND - 1 ))"
-
-# Check the the select kit is valid.
-if [ "${INST_KIT}" != "jre" ] && [ "${INST_KIT}" != "jdk" ]; then
-    echo "ERROR! You must specify which Java kit you want to install, either 'jre' or 'jdk'."
-    usage
-fi
 
 # Let's start doing something...
 echo "Here we go..."
@@ -218,27 +197,18 @@ if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* ]; then
     ncecho " [x] Removing ppa:flexiondotorg/java "
     rm -v /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* >> "$log" 2>&1
     cecho success
-    apt_update
 fi
 
 # Determine the build and runtime requirements.
 BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core libasound2 libxi6 libxt6 libxtst6 unixodbc unzip"
-RUNTIME_DEPS="defoma java-common libasound2 libx11-6 libxext6 libxi6 libxt6 libxtst6 locales unixodbc"
 if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
-    RUNTIME_DEPS="${RUNTIME_DEPS} ia32-libs"
 fi
 
 # Install the Java build requirements
 ncecho " [x] Installing Java ${JAVA_VER} build requirements "
 apt-get install -y --no-install-recommends ${BUILD_DEPS} >> "$log" 2>&1 &
 pid=$!;progress $pid
-
-# Install the Java runtime requirements
-ncecho " [x] Installing Java ${JAVA_VER} runtime requirements "
-apt-get install -y --no-install-recommends ${RUNTIME_DEPS} >> "$log" 2>&1 &
-pid=$!;progress $pid
-
 
 # Make sure the required dirs exist.
 ncecho " [x] Making build directories "
@@ -295,33 +265,25 @@ mv -v /var/local/oab/*sun-java6-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$
 mv -v /var/local/oab/sun-java6_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1 &
 pid=$!;progress $pid
 
-# Build the list of .debs to be installed
-INST_DEB="./sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-jre_${NEW_VERSION}_all.deb ./sun-java6-fonts_${NEW_VERSION}_all.deb"
-if [ "${LSB_ARCH}" == "amd64" ]; then
-    INST_DEB="${INST_DEB} ./ia32-sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb"
-fi
+# Create the local 'override' file
+echo "#Override" > /var/local/oab/deb/override
+echo "#Package priority section" >> /var/local/oab/deb/override
+for FILE in /var/local/oab/deb/*.deb
+do
+    DEB_PACKAGE=`dpkg --info ${FILE} | grep Package | cut -d':' -f2`
+    DEB_SECTION=`dpkg --info ${FILE} | grep Section | cut -d'/' -f2`
+    echo "${DEB_PACKAGE} high ${DEB_SECTION}" >> /var/local/oab/deb/override
+done
 
-# If the JDK was requested, then add the extra packages.
-if [ "${INST_KIT}" == "jdk" ]; then
-    INST_DEB="${INST_DEB} ./sun-java6-jdk_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-source_${NEW_VERSION}_all.deb"
-fi
+# Create the local apt repository
+ncecho " [x] Creating local 'apt' repository "
+cd /var/local/oab/deb
+dpkg-scanpackages . override 2>/dev/null > Packages
+cat Packages | gzip -c9 > Packages.gz
+cecho success
 
-# Install the required JRE or JDK .debs
-ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [${INST_KIT}] "
-cd /var/local/oab/deb >> "$log" 2>&1
-dpkg -i ${INST_DEB} >> "$log" 2>&1 &
-pid=$!;progress $pid
-
-# Install the Java plugin .deb, if a supported browser is already installed.
-# Prevents installing a browser and all its dependencies on a server.
-BROWSER_INSTALLED=`update-alternatives --list x-www-browser 2>/dev/null`
-if [ $? -eq 0 ]; then
-    ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [plugin] "
-    cd /var/local/oab/deb >> "$log" 2>&1
-    dpkg -i ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb >> "$log" 2>&1 &
-    pid=$!;progress $pid
-else
-    cecho " [!] Install of Java ${JAVA_VER}u${JAVA_UPD} : [plugin] skipped"
-fi
+# Update apt cache
+echo "deb file:///var/local/oab/deb /" > /etc/apt/sources.list.d/oab.list
+apt_update
 
 echo "All done!"

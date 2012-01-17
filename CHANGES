@@ -2,6 +2,13 @@
 History
 =======
 
+0.1.3
+-----
+
+* Added the creation of a local 'apt' repository
+* Removed installation of Java packages, you can now use 'apt-get' yourself
+* Updated documentation
+
 0.1.2
 -----
 
