@@ -309,9 +309,9 @@ pid=$!;progress $pid
 
 # Install the Java plugin .deb
 #  - Permitted to fail if a supported browser is not installed.
-ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [plugin] "
-cd /var/local/oab/deb >> "$log" 2>&1
-dpkg -i ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb >> "$log" 2>&1 &
-pid=$!;progress_can_fail $pid
+#ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [plugin] "
+#cd /var/local/oab/deb >> "$log" 2>&1
+#dpkg -i ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb >> "$log" 2>&1 &
+#pid=$!;progress_can_fail $pid
 
 echo "All done!"
