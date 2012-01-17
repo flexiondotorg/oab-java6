@@ -314,7 +314,7 @@ pid=$!;progress $pid
 
 # Install the Java plugin .deb, if a supported browser is already installed.
 # Prevents installing a browser and all its dependencies on a server.
-BROWSER_INSTALLED=`update-alternatives --list x-www-browser`
+BROWSER_INSTALLED=`update-alternatives --list x-www-browser 2>/dev/null`
 if [ $? -eq 0 ]; then
     ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [plugin] "
     cd /var/local/oab/deb >> "$log" 2>&1
