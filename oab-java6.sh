@@ -80,7 +80,7 @@ function usage() {
     echo "The quick and simple solution is to do the following at the shell:"
     echo
     echo "  cd ~/"
-    echo "  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O `basename ${0}`"
+    echo "  wget https://raw.github.com/flexiondotorg/oab-java6/master/`basename ${0}` -O `basename ${0}`"
     echo "  chmod +x `basename ${0}`"
     echo "  sudo ./`basename ${0}` -k [jre|jdk]"
     echo
@@ -95,7 +95,7 @@ function usage() {
     echo "  - Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
     echo "  - Install the tools required to build the packages."
     echo "  - Create download and build caches under '/var/local/oab'."
-    echo "  - Download the i586 and x64 Java 6 install binaries. Yes, both are required."
+    echo "  - Download the i586 and x64 Java ${JAVA_VER} install binaries. Yes, both are required."
     echo "  - Clone the build scripts from https://github.com/rraptorr/sun-java6"
     echo "  - Build all the Java ${JAVA_VER}u${JAVA_UPD} packages applicable to your system."
     echo "  - Install the packages that were just built."
@@ -104,29 +104,31 @@ function usage() {
     echo "===================="
     echo "If you elect to install the JRE the following packages are installed:"
     echo
-    echo "  * sun-java6-bin"
-    echo "  * sun-java6-jre"
-    echo "  * sun-java6-fonts"
+    echo "  * sun-java${JAVA_VER}-bin"
+    echo "  * sun-java${JAVA_VER}-jre"
+    echo "  * sun-java${JAVA_VER}-fonts"
     echo
     echo "If you elect to install the JDK this following packages are installed,"
     echo "in addition to those from the JRE above."
     echo
-    echo "  * sun-java6-jdk    - Sun Java(TM) Development Kit (JDK) 6"
-    echo "  * sun-java6-source - Sun Java(TM) Development Kit (JDK) 6 source files"
+    echo "  * sun-java${JAVA_VER}-jdk"
+    echo "  * sun-java${JAVA_VER}-source"
     echo
     echo "The Java browser plugin is installed, **but only if a supported web browser"
     echo "is already installed**. This is a safe guard to prevent servers from "
     echo "installing a web browser and all its dependencies."
     echo
+    echo "  * sun-java${JAVA_VER}-plugin"
+    echo
     echo "What is not installed?"
     echo "======================"
     echo "When electing to install the JDK the Java Development Kit demos and"
-    echo "examples, 'sun-java6-demo' and the Java DB distribution of Apache"
-    echo "Derby 'sun-java6-javadb' are not installed by default. Should you"
+    echo "examples, 'sun-java${JAVA_VER}-demo' and the Java DB distribution of Apache"
+    echo "Derby 'sun-java${JAVA_VER}-javadb' are not installed by default. Should you"
     echo "require those packages, execute the following:"
     echo
-    echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-3~${LSB_CODE}1_${LSB_ARCH}.deb"
-    echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-3~${LSB_CODE}1_all.deb"
+    echo "  sudo dpkg -i /var/local/oab/deb/sun-java${JAVA_VER}-demo_${JAVA_VER}.${JAVA_UPD}-3~${LSB_CODE}1_${LSB_ARCH}.deb"
+    echo "  sudo dpkg -i /var/local/oab/deb/sun-java${JAVA_VER}-javadb_${JAVA_VER}.${JAVA_UPD}-3~${LSB_CODE}1_all.deb"
     echo
     echo "What is 'oab'?"
     echo "=============="
@@ -204,7 +206,7 @@ shift "$(( $OPTIND - 1 ))"
 
 # Check the the select kit is valid.
 if [ "${INST_KIT}" != "jre" ] && [ "${INST_KIT}" != "jdk" ]; then
-    echo "ERROR! You must specify what Java kit you want to install, either 'jre' or 'jdk'."
+    echo "ERROR! You must specify which Java kit you want to install, either 'jre' or 'jdk'."
     usage
 fi
 
@@ -245,7 +247,7 @@ pid=$!;progress $pid
 
 # Remove the 'src' directory everytime.
 ncecho " [x] Removing clones of https://github.com/rraptorr/sun-java6 "
-rm -rfv /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD} 2>/dev/null >> "$log" 2>&1 &
+rm -rfv /var/local/oab/sun-java6*-${JAVA_VER}.${JAVA_UPD} 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Checkout the code

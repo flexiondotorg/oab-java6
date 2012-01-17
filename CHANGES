@@ -10,6 +10,7 @@ History
 * Fixed install of Java browser plugin on systems without a supported browser
 * Added runtime requirements
 * Added TODO
+* Updated documentation
 
 0.1.1
 -----

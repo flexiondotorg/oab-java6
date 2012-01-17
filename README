@@ -61,12 +61,14 @@ If you elect to install the JRE the following packages are installed:
 If you elect to install the JDK this following packages are installed,
 in addition to those from the JRE above.
 
-  * sun-java6-jdk    - Sun Java(TM) Development Kit (JDK) 6
-  * sun-java6-source - Sun Java(TM) Development Kit (JDK) 6 source files
+  * sun-java6-jdk
+  * sun-java6-source
 
 The Java browser plugin is installed, **but only if a supported web browser
 is already installed**. This is a safe guard to prevent servers from 
 installing a web browser and all its dependencies.
+
+  * sun-java6-plugin
 
 What is not installed?
 ======================
@@ -94,6 +96,7 @@ History
 * Fixed install of Java browser plugin on systems without a supported browser
 * Added runtime requirements
 * Added TODO
+* Updated documentation
 
 0.1.1
 -----
