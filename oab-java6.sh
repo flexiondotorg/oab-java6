@@ -2,8 +2,7 @@
 
 # License
 #
-# A wrapper for Janusz Dziemidowicz 'sun-java6' Debian packaging scripts that
-# installs Java 6 by building packages locally.
+# A wrapper for Janusz Dziemidowicz Java 6 Debian packaging scripts.
 # Copyright (c) 2012 Flexion.Org, http://flexion.org/
 #
 # Permission is hereby granted, free of charge, to any person
@@ -35,7 +34,7 @@ JAVA_KIT="jdk"
 JAVA_VER="6"
 JAVA_UPD="30"
 JAVA_REL="b12"
-VER="0.1.1"
+VER="0.1.2"
 
 function copyright_msg() {
     local MODE=${1}
@@ -125,12 +124,6 @@ function usage() {
     echo
     echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-3~${LSB_CODE}1_${LSB_ARCH}.deb"
     echo "  sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-3~${LSB_CODE}1_all.deb"
-    echo
-    echo "On 64-bit systems the Java Runtime Environment for 32-bit systems,"
-    echo "'ia32-sun-java6-bin', is not installed by default. If you require"
-    echo "that package, then execute the following:"
-    echo
-    echo "  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-3~${LSB_CODE}1_amd64.deb"
     echo
     echo "What is 'oab'?"
     echo "=============="
@@ -274,17 +267,27 @@ pid=$!;progress_can_fail $pid
 
 # Move the .deb files into the 'deb' directory
 ncecho " [x] Moving the packages "
-mv -v /var/local/oab/sun-java6-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1
+mv -v /var/local/oab/*sun-java6-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1
 mv -v /var/local/oab/sun-java6_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Build the list of .debs to be installed
+APT_DEB="defoma java-common libasound2 libx11-6 libxext6 libxi6 libxt6 libxtst6 locales unixodbc"
 INST_DEB="./sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-jre_${NEW_VERSION}_all.deb ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-fonts_${NEW_VERSION}_all.deb"
+if [ "${LSB_ARCH}" == "amd64" ]; then
+    APT_DEB="${APT_DEB} ia32-libs"
+    INST_DEB="${INST_DEB} ./ia32-sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb"
+fi
 
 # If the JDK was requested, then add the extra packages.
 if [ "${INST_KIT}" == "jdk" ]; then
     INST_DEB="${INST_DEB} ./sun-java6-jdk_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-source_${NEW_VERSION}_all.deb"
 fi
+
+# Install the Java requirements
+ncecho " [x] Installing Java requirements "
+apt-get install -y --no-install-recommends ${APT_DEB} >> "$log" 2>&1 &
+pid=$!;progress $pid
 
 # Install the required .debs
 ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [${INST_KIT}] "

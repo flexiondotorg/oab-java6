@@ -2,6 +2,12 @@
 History
 =======
 
+0.1.2
+-----
+
+* Added install the required Java dependencies
+* Fixed install of 'ia32-sun-java6-bin' on 64-bit systems
+
 0.1.1
 -----
 

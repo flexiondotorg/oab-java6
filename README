@@ -1,4 +1,4 @@
-oab-java6.sh v0.1.1 - Install Java 6u30 from locally built packages.
+oab-java6.sh v0.1.2 - Install Java 6u30 from locally built packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
 
 By running this script to download and/or install Java you acknowledge that 
@@ -75,12 +75,6 @@ require those packages, execute the following:
   sudo dpkg -i /var/local/oab/deb/sun-java6-demo_6.30-3~oneiric1_amd64.deb
   sudo dpkg -i /var/local/oab/deb/sun-java6-javadb_6.30-3~oneiric1_all.deb
 
-On 64-bit systems the Java Runtime Environment for 32-bit systems,
-'ia32-sun-java6-bin', is not installed by default. If you require
-that package, then execute the following:
-
-  sudo dpkg -i /var/local/oab/deb/ia32-sun-java6-bin_6.30-3~oneiric1_amd64.deb
-
 What is 'oab'?
 ==============
 Because, O.A.B! ;-)
@@ -88,6 +82,12 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+0.1.2
+-----
+
+* Added install the required Java dependencies
+* Fixed install of 'ia32-sun-java6-bin' on 64-bit systems
 
 0.1.1
 -----
@@ -104,7 +104,7 @@ History
 License
 =======
 
-A wrapper for Janusz Dziemidowicz Debian packaging scripts for Java 6.
+A wrapper for Janusz Dziemidowicz Java 6 Debian packaging scripts.
 Copyright (c) 2012 Martin Wimpress, http://flexion.org/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
