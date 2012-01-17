@@ -104,16 +104,19 @@ function usage() {
     echo "===================="
     echo "If you elect to install the JRE the following packages are installed:"
     echo
-    echo "  * sun-java6-bin    - Sun Java(TM) Runtime Environment (JRE) 6"
-    echo "  * sun-java6-jre    - Sun Java(TM) Runtime Environment (JRE) 6"
-    echo "  * sun-java6-plugin - Java(TM) Plug-in, Java SE 6"
-    echo "  * sun-java6-fonts  - Lucida TrueType fonts (from the Sun JRE)"
+    echo "  * sun-java6-bin"
+    echo "  * sun-java6-jre"
+    echo "  * sun-java6-fonts"
     echo
     echo "If you elect to install the JDK this following packages are installed,"
     echo "in addition to those from the JRE above."
     echo
     echo "  * sun-java6-jdk    - Sun Java(TM) Development Kit (JDK) 6"
     echo "  * sun-java6-source - Sun Java(TM) Development Kit (JDK) 6 source files"
+    echo
+    echo "The Java browser plugin is installed, **but only if a supported web browser"
+    echo "is already installed**. This is a safe guard to prevent servers from "
+    echo "installing a web browser and all its dependencies."
     echo
     echo "What is not installed?"
     echo "======================"
@@ -307,11 +310,16 @@ cd /var/local/oab/deb >> "$log" 2>&1
 dpkg -i ${INST_DEB} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
-# Install the Java plugin .deb
-#  - Permitted to fail if a supported browser is not installed.
-#ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [plugin] "
-#cd /var/local/oab/deb >> "$log" 2>&1
-#dpkg -i ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb >> "$log" 2>&1 &
-#pid=$!;progress_can_fail $pid
+# Install the Java plugin .deb, if a supported browser is already installed.
+# Prevents installing a browser and all its dependencies on a server.
+BROWSER_INSTALLED=`update-alternatives --list x-www-browser`
+if [ $? -eq 0 ]; then
+    ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [plugin] "
+    cd /var/local/oab/deb >> "$log" 2>&1
+    dpkg -i ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb >> "$log" 2>&1 &
+    pid=$!;progress $pid
+else
+    cecho " [!] Install of Java ${JAVA_VER}u${JAVA_UPD} : [plugin] skipped"
+fi
 
 echo "All done!"

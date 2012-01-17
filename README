@@ -54,16 +54,19 @@ What gets installed?
 ====================
 If you elect to install the JRE the following packages are installed:
 
-  * sun-java6-bin    - Sun Java(TM) Runtime Environment (JRE) 6
-  * sun-java6-jre    - Sun Java(TM) Runtime Environment (JRE) 6
-  * sun-java6-plugin - Java(TM) Plug-in, Java SE 6
-  * sun-java6-fonts  - Lucida TrueType fonts (from the Sun JRE)
+  * sun-java6-bin
+  * sun-java6-jre
+  * sun-java6-fonts
 
 If you elect to install the JDK this following packages are installed,
 in addition to those from the JRE above.
 
   * sun-java6-jdk    - Sun Java(TM) Development Kit (JDK) 6
   * sun-java6-source - Sun Java(TM) Development Kit (JDK) 6 source files
+
+The Java browser plugin is installed, **but only if a supported web browser
+is already installed**. This is a safe guard to prevent servers from 
+installing a web browser and all its dependencies.
 
 What is not installed?
 ======================
@@ -107,8 +110,6 @@ History
 Todo
 ====
 
-* Only attempt to install the Java browser plugin if a supported browser is
-  already installed.
 * Package descriptions and versions should be dynamically determined in the
   documentation.
 * Built .deb dependencies should be dynamically determined.

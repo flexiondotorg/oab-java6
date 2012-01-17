@@ -2,8 +2,6 @@
 Todo
 ====
 
-* Only attempt to install the Java browser plugin if a supported browser is
-  already installed.
 * Package descriptions and versions should be dynamically determined in the
   documentation.
 * Built .deb dependencies should be dynamically determined.
