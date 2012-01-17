@@ -52,7 +52,7 @@ function copyright_msg() {
 
     # Adjust the output if we are building the docs.
     if [ "${MODE}" != "build_docs" ]; then
-        echo "  tail -f `pwd``basename ${0}`.log"
+        echo "  tail -f `pwd`/`basename ${0}`.log"
     else
 	    echo "  tail -f ./`basename ${0}`.log"
     fi
@@ -147,13 +147,18 @@ function build_docs() {
         cat CHANGES >> README
     fi
 
+    # Add the TODO
+    if [ -e TODO ]; then
+        cat TODO >> README
+    fi
+
     # Add the LICENSE
     if [ -e LICENSE ]; then
         cat LICENSE >> README
     fi
 
     echo "Documentation built."
-    exit 1
+    exit 0
 }
 
 copyright_msg
@@ -211,10 +216,24 @@ if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* ]; then
     apt_update
 fi
 
-# Install the build requirements.
-ncecho " [x] Installing development tools "
-apt-get install -y --no-install-recommends build-essential debhelper devscripts dpkg-dev git-core >> "$log" 2>&1 &
+# Determine the build and runtime requirements.
+BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core libasound2 libxi6 libxt6 libxtst6 unixodbc unzip"
+RUNTIME_DEPS="defoma java-common libasound2 libx11-6 libxext6 libxi6 libxt6 libxtst6 locales unixodbc"
+if [ "${LSB_ARCH}" == "amd64" ]; then
+    BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
+    RUNTIME_DEPS="${RUNTIME_DEPS} ia32-libs"
+fi
+
+# Install the Java build requirements
+ncecho " [x] Installing Java ${JAVA_VER} build requirements "
+apt-get install -y --no-install-recommends ${BUILD_DEPS} >> "$log" 2>&1 &
 pid=$!;progress $pid
+
+# Install the Java runtime requirements
+ncecho " [x] Installing Java ${JAVA_VER} runtime requirements "
+apt-get install -y --no-install-recommends ${RUNTIME_DEPS} >> "$log" 2>&1 &
+pid=$!;progress $pid
+
 
 # Make sure the required dirs exist.
 ncecho " [x] Making build directories "
@@ -272,10 +291,8 @@ mv -v /var/local/oab/sun-java6_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab
 pid=$!;progress $pid
 
 # Build the list of .debs to be installed
-APT_DEB="defoma java-common libasound2 libx11-6 libxext6 libxi6 libxt6 libxtst6 locales unixodbc"
 INST_DEB="./sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-jre_${NEW_VERSION}_all.deb ./sun-java6-plugin_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-fonts_${NEW_VERSION}_all.deb"
 if [ "${LSB_ARCH}" == "amd64" ]; then
-    APT_DEB="${APT_DEB} ia32-libs"
     INST_DEB="${INST_DEB} ./ia32-sun-java6-bin_${NEW_VERSION}_${LSB_ARCH}.deb"
 fi
 
@@ -283,11 +300,6 @@ fi
 if [ "${INST_KIT}" == "jdk" ]; then
     INST_DEB="${INST_DEB} ./sun-java6-jdk_${NEW_VERSION}_${LSB_ARCH}.deb ./sun-java6-source_${NEW_VERSION}_all.deb"
 fi
-
-# Install the Java requirements
-ncecho " [x] Installing Java requirements "
-apt-get install -y --no-install-recommends ${APT_DEB} >> "$log" 2>&1 &
-pid=$!;progress $pid
 
 # Install the required .debs
 ncecho " [x] Installing Java ${JAVA_VER}u${JAVA_UPD} : [${INST_KIT}] "

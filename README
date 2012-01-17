@@ -86,8 +86,9 @@ History
 0.1.2
 -----
 
-* Added install the required Java dependencies
 * Fixed install of 'ia32-sun-java6-bin' on 64-bit systems
+* Added install the required Java dependencies
+* Added TODO
 
 0.1.1
 -----
@@ -101,6 +102,14 @@ History
 
 * Initial release
 
+Todo
+====
+
+* Package descriptions and versions should be dynamically determined in the
+  documentation.
+* Built .deb dependencies should be dynamically determined.
+* Add an option to build only, but not install.
+* Add support for Java 7.
 License
 =======
 

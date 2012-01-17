@@ -1,0 +1,9 @@
+
+Todo
+====
+
+* Package descriptions and versions should be dynamically determined in the
+  documentation.
+* Built .deb dependencies should be dynamically determined.
+* Add an option to build only, but not install.
+* Add support for Java 7.
