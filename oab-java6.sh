@@ -2,7 +2,7 @@
 
 # License
 #
-# A wrapper for Janusz Dziemidowicz Java 6 Debian packaging scripts.
+# A wrapper for Janusz Dziemidowicz Debian packaging scripts for Java.
 # Copyright (c) 2012 Flexion.Org, http://flexion.org/
 #
 # Permission is hereby granted, free of charge, to any person

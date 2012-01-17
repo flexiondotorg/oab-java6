@@ -118,10 +118,11 @@ Todo
 * Built .deb dependencies should be dynamically determined.
 * Add an option to build only, but not install.
 * Add support for Java 7.
+
 License
 =======
 
-A wrapper for Janusz Dziemidowicz Java 6 Debian packaging scripts.
+A wrapper for Janusz Dziemidowicz Debian packaging scripts for Java.
 Copyright (c) 2012 Martin Wimpress, http://flexion.org/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
