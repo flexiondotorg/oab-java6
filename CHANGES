@@ -5,6 +5,11 @@ History
 0.1.3
 -----
 
+* Added checking out of tagged releases of the upstream scripts.
+    - Closes : https://github.com/flexiondotorg/oab-java6/issues/1
+* Added loose distribution checking so it should now work with Linux Mint and
+  other Ubuntu derivatives.
+    - Closes : https://github.com/flexiondotorg/oab-java6/issues/2
 * Added the creation of a local 'apt' repository
 * Removed installation of Java packages, you can now use 'apt-get' yourself
 * Updated documentation

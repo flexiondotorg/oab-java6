@@ -174,8 +174,7 @@ fi
 # Check we are running on a supported system in the correct way.
 check_root
 check_sudo
-check_ubuntu "lucid maverick natty oneiric precise"
-lsb
+check_ubuntu "all"
 
 # Parse the options
 OPTSTRING=bh
@@ -220,10 +219,18 @@ ncecho " [x] Removing clones of https://github.com/rraptorr/sun-java6 "
 rm -rfv /var/local/oab/sun-java6*-${JAVA_VER}.${JAVA_UPD} 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
-# Checkout the code
+# Clone the code
 ncecho " [x] Cloning https://github.com/rraptorr/sun-java6 "
 cd /var/local/oab/ >> "$log" 2>&1
 git clone git://github.com/rraptorr/sun-java6.git sun-java6-${JAVA_VER}.${JAVA_UPD} >> "$log" 2>&1 &
+pid=$!;progress $pid
+
+# Checkout the latest tagged release
+cd /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD} >> "$log" 2>&1
+TAG=`git tag -l v${JAVA_VER}.${JAVA_UPD}-* | tail -n1`
+
+ncecho " [x] Checking out ${TAG} "
+git checkout ${TAG} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Download the Oracle install packages.
