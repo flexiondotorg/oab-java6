@@ -155,18 +155,23 @@ function build_docs() {
 copyright_msg
 
 # 'source' my common functions
-if [ -f /tmp/common.sh ]; then
+if [ -r /tmp/common.sh ]; then
     source /tmp/common.sh
     if [ $? -ne 0 ]; then
-        echo "ERROR! Couldn't import common functions from common.sh"
+        echo "ERROR! Couldn't import common functions from /tmp/common.sh"
+        rm /tmp/common.sh 2>/dev/null
         exit 1
-    fi
+    else
+        update_thyself        
+    fi    
 else
     echo "Downloading common.sh"
-    wget -q "http://bazaar.launchpad.net/~flexiondotorg/%2Bjunk/Common/download/head%3A/common.sh-20100825102958-j1cd344bsn112jxu-1/common.sh" -O /tmp/common.sh
+    wget -q "https://github.com/flexiondotorg/common/raw/master/common.sh" -O /tmp/common.sh
+    chmod 666 /tmp/common.sh
     source /tmp/common.sh
     if [ $? -ne 0 ]; then
-        echo "ERROR! Couldn't import common functions from common.sh"
+        echo "ERROR! Couldn't import common functions from /tmp/common.sh"
+        rm /tmp/common.sh 2>/dev/null
         exit 1
     fi
 fi
@@ -187,9 +192,6 @@ do
     esac
 done
 shift "$(( $OPTIND - 1 ))"
-
-# Let's start doing something...
-echo "Here we go..."
 
 # Remove my, now disabled, Java PPA.
 if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* ]; then
