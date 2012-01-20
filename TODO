@@ -2,4 +2,5 @@
 Todo
 ====
 
+* Dynamically determine the download URLs for the Java installers.
 * Add support for Java 7.

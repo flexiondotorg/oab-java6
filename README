@@ -1,4 +1,4 @@
-oab-java6.sh v0.1.3 - Create a local 'apt' repository for Ubuntu Java packages.
+oab-java6.sh v0.1.4 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -39,10 +39,12 @@ The basic execution steps are:
   - Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'.
   - Install the tools required to build the Java packages.
   - Create download cache in '/var/local/oab/pkg'.
-  - Download the i586 and x64 Java 6 install binaries from Oracle. Yes, both are required.
+  - Download the i586 and x64 Java install binaries from Oracle. Yes, both are required.
   - Clone the build scripts from https://github.com/rraptorr/sun-java6
-  - Build the Java 6u30 packages applicable to your system.
-  - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages
+  - Build the Java packages applicable to your system.
+  - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages.
+  - Create a GnuPG signing key in '/var/local/oab/gpg' if none exists.
+  - Sign the local 'apt' repository using the local GnuPG signing key.
 
 What gets installed?
 ====================
@@ -66,6 +68,16 @@ The local 'apt' repository is just that, **local**. It is not accessible
 remotely and oab-java6.sh will never enable that capability to ensure
 compliance with Oracle's asinine license requirements.
 
+Known Issues
+============
+
+  - The Oracle download servers can be horribly slow. My script caches the
+    downloads so you only need download each file once.
+  - This script doesn't dynamically determine the download URLs for the
+    Java installers released by Oracle. Currently, when a new Java version is
+    released by Oracle this script must be updated to support that new version.
+    I hope to address this limitation in the future.
+
 What is 'oab'?
 ==============
 Because, O.A.B! ;-)
@@ -74,13 +86,22 @@ Because, O.A.B! ;-)
 History
 =======
 
+0.1.4
+-----
+
+  * Added GnuPG signing of the local 'apt' repository
+  * Updated package building to preserve the upstream package urgency
+  * Refactored to remove hard coded versions, now uses 'debian/changelog'
+  * Fixed the 'override' file generation to ensure it doesn't contain duplicates
+  * Updated documentation
+
 0.1.3
 -----
 
-* Added checking out of tagged releases of the upstream scripts.
+* Added checking out of tagged releases of the upstream scripts
     - Closes : https://github.com/flexiondotorg/oab-java6/issues/1
 * Added loose distribution checking so it should now work with Linux Mint and
-  other Ubuntu derivatives.
+  other Ubuntu derivatives
     - Closes : https://github.com/flexiondotorg/oab-java6/issues/2
 * Added the creation of a local 'apt' repository
 * Removed installation of Java packages, you can now use 'apt-get' yourself
@@ -111,6 +132,7 @@ History
 Todo
 ====
 
+* Dynamically determine the download URLs for the Java installers.
 * Add support for Java 7.
 
 License

@@ -28,13 +28,11 @@
 #
 # References
 #  - https://github.com/rraptorr/sun-java6
+#  - http://ubuntuforums.org/showthread.php?t=1090731
+#  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-JAVA_KIT="jdk"
-JAVA_VER="6"
-JAVA_UPD="30"
-JAVA_REL="b12"
-VER="0.1.3"
+VER="0.1.4"
 
 function copyright_msg() {
     local MODE=${1}
@@ -89,10 +87,12 @@ function usage() {
     echo "  - Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
     echo "  - Install the tools required to build the Java packages."
     echo "  - Create download cache in '/var/local/oab/pkg'."
-    echo "  - Download the i586 and x64 Java ${JAVA_VER} install binaries from Oracle. Yes, both are required."
+    echo "  - Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
     echo "  - Clone the build scripts from https://github.com/rraptorr/sun-java6"
-    echo "  - Build the Java ${JAVA_VER}u${JAVA_UPD} packages applicable to your system."
-    echo "  - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages"
+    echo "  - Build the Java packages applicable to your system."    
+    echo "  - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages."
+    echo "  - Create a GnuPG signing key in '/var/local/oab/gpg' if none exists."
+    echo "  - Sign the local 'apt' repository using the local GnuPG signing key."
     echo
     echo "What gets installed?"
     echo "===================="
@@ -115,6 +115,16 @@ function usage() {
     echo "The local 'apt' repository is just that, **local**. It is not accessible"
     echo "remotely and `basename ${0}` will never enable that capability to ensure"
     echo "compliance with Oracle's asinine license requirements."
+    echo
+    echo "Known Issues"
+    echo "============"
+    echo
+    echo "  - The Oracle download servers can be horribly slow. My script caches the"    
+    echo "    downloads so you only need download each file once."
+    echo "  - This script doesn't dynamically determine the download URLs for the"
+    echo "    Java installers released by Oracle. Currently, when a new Java version is"
+    echo "    released by Oracle this script must be updated to support that new version."
+    echo "    I hope to address this limitation in the future."
     echo
     echo "What is 'oab'?"
     echo "=============="
@@ -194,41 +204,63 @@ done
 shift "$(( $OPTIND - 1 ))"
 
 # Remove my, now disabled, Java PPA.
-if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* ]; then
+if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list ]; then
     ncecho " [x] Removing ppa:flexiondotorg/java "
     rm -v /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list* >> "$log" 2>&1
     cecho success
 fi
 
 # Determine the build and runtime requirements.
-BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core libasound2 libxi6 libxt6 libxtst6 unixodbc unzip"
+BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core gnupg libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
 if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
 fi
 
 # Install the Java build requirements
-ncecho " [x] Installing Java ${JAVA_VER} build requirements "
+ncecho " [x] Installing Java build requirements "
 apt-get install -y --no-install-recommends ${BUILD_DEPS} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Make sure the required dirs exist.
 ncecho " [x] Making build directories "
-mkdir -p /var/local/oab/{deb,pkg} >> "$log" 2>&1 &
+mkdir -p /var/local/oab/{deb,gpg,pkg} >> "$log" 2>&1 &
 pid=$!;progress $pid
+
+# Set the permissions appropriately for 'gpg'
+chown root:root /var/local/oab/gpg 2>/dev/null
+chmod 0700 /var/local/oab/gpg 2>/dev/null
 
 # Remove the 'src' directory everytime.
 ncecho " [x] Removing clones of https://github.com/rraptorr/sun-java6 "
-rm -rfv /var/local/oab/sun-java6*-${JAVA_VER}.${JAVA_UPD} 2>/dev/null >> "$log" 2>&1 &
+rm -rfv /var/local/oab/sun-java6* 2>/dev/null >> "$log" 2>&1
+rm -rfv /var/local/oab/src 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Clone the code
 ncecho " [x] Cloning https://github.com/rraptorr/sun-java6 "
 cd /var/local/oab/ >> "$log" 2>&1
-git clone git://github.com/rraptorr/sun-java6.git sun-java6-${JAVA_VER}.${JAVA_UPD} >> "$log" 2>&1 &
+git clone git://github.com/rraptorr/sun-java6.git src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
+# Cet the current Debian package version and package urgency
+DEB_VERSION=`head -n1 /var/local/oab/src/debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
+DEB_URGENCY=`head -n1 /var/local/oab/src/debian/changelog | cut -d'=' -f2` 
+
+# Determine the currently supported Java version and update
+JAVA_VER=`echo ${DEB_VERSION} | cut -d'.' -f1`
+JAVA_UPD=`echo ${DEB_VERSION} | cut -d'.' -f2 | cut -d'-' -f1`
+
+# Determine the JAVA_REL based on known Java releases
+if [ "${JAVA_VER}" != "6" ] && [ "${JAVA_UPD}" != "30" ]; then
+    error_msg "ERROR! A new version of Java has been released. Update this script!"
+fi    
+
+# Damn it, if it weren't for having to know the release number this could be 
+# entirely dynamic!
+JAVA_REL="b12"
+
 # Checkout the latest tagged release
-cd /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD} >> "$log" 2>&1
+cd /var/local/oab/src >> "$log" 2>&1
 TAG=`git tag -l v${JAVA_VER}.${JAVA_UPD}-* | tail -n1`
 
 ncecho " [x] Checking out ${TAG} "
@@ -236,60 +268,135 @@ git checkout ${TAG} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Download the Oracle install packages.
-for JAVA_PLAT in i586 x64
+for JAVA_BIN in jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin
 do
-    JAVA_BIN="${JAVA_KIT}-${JAVA_VER}u${JAVA_UPD}-linux-${JAVA_PLAT}.bin"
     ncecho " [x] Downloading ${JAVA_BIN} : ~80MB "
     wget -c http://download.oracle.com/otn-pub/java/jdk/${JAVA_VER}u${JAVA_UPD}-${JAVA_REL}/${JAVA_BIN} -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
-    ln -s /var/local/oab/pkg/${JAVA_BIN} /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD}/${JAVA_BIN} >> "$log" 2>&1 &
+    ln -s /var/local/oab/pkg/${JAVA_BIN} /var/local/oab/src/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 done
 
-# Change directory to the build directory
-cd /var/local/oab/sun-java6-${JAVA_VER}.${JAVA_UPD}/
-
-# Get the version
-VERSION=`head -n1 debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
-NEW_VERSION="${VERSION}~${LSB_CODE}1"
+# Determine the new version
+NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
 # Genereate a build message
-BUILD_MESSAGE="Automated build for Ubuntu ${LSB_REL} using https://github.com/rraptorr/sun-java6"
+BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/sun-java6"
+
+# Change directory to the build directory
+cd /var/local/oab/src
 
 # Update the changelog
-ncecho " [x] Updating the changelog "
-dch --distribution ${LSB_CODE} --force-distribution --newversion ${NEW_VERSION} --force-bad-version "${BUILD_MESSAGE}" >> "$log" 2>&1 &
-pid=$!;progress $pid
+#ncecho " [x] Updating the changelog "
+#dch --distribution ${LSB_CODE} --force-distribution --newversion ${NEW_VERSION} --force-bad-version --urgency=${DEB_URGENCY} "${BUILD_MESSAGE}" >> "$log" 2>&1 &
+#pid=$!;progress $pid
 
 # Build the binary packages
-ncecho " [x] Building the packages "
-dpkg-buildpackage -b >> "$log" 2>&1 &
-pid=$!;progress_can_fail $pid
+#ncecho " [x] Building the packages "
+#dpkg-buildpackage -b >> "$log" 2>&1 &
+#pid=$!;progress_can_fail $pid
 
-# Move the .deb files into the 'deb' directory
-ncecho " [x] Moving the packages "
-mv -v /var/local/oab/*sun-java6-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1
-mv -v /var/local/oab/sun-java6_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1 &
-pid=$!;progress $pid
+# Populate the 'apt' repository with .debs
+#ncecho " [x] Moving the packages "
+#mv -v /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
+#mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
+#pid=$!;progress $pid
 
-# Create the local 'override' file
-echo "#Override" > /var/local/oab/deb/override
-echo "#Package priority section" >> /var/local/oab/deb/override
+# Create a temporary 'override' file, which may contain duplicates
+echo "#Override" > /tmp/override
+echo "#Package priority section" >> /tmp/override
 for FILE in /var/local/oab/deb/*.deb
 do
     DEB_PACKAGE=`dpkg --info ${FILE} | grep Package | cut -d':' -f2`
     DEB_SECTION=`dpkg --info ${FILE} | grep Section | cut -d'/' -f2`
-    echo "${DEB_PACKAGE} high ${DEB_SECTION}" >> /var/local/oab/deb/override
+    echo "${DEB_PACKAGE} high ${DEB_SECTION}" >> /tmp/override
 done
 
-# Create the local apt repository
-ncecho " [x] Creating local 'apt' repository "
+# Remove the duplicates from the overide file
+uniq /tmp/override > /var/local/oab/deb/override
+
+# Create the 'apt' Packages.gz
+ncecho " [x] Creating Packages.gz file "
 cd /var/local/oab/deb
 dpkg-scanpackages . override 2>/dev/null > Packages
 cat Packages | gzip -c9 > Packages.gz
+rm /var/local/oab/deb/override 2>/dev/null
 cecho success
+
+# Create a 'Release' file
+ncecho " [x] Creating Release file "
+cd /var/local/oab/deb
+echo "Origin: `hostname --fqdn`"                 >  Release
+echo "Label: Java"                                >> Release
+echo "Suite: ${LSB_CODE}"                       >> Release
+echo "Version: ${LSB_REL}"                      >> Release
+echo "Codename: ${LSB_CODE}"                    >> Release
+echo "Date: `date -R`"                           >> Release
+echo "Architectures: ${LSB_ARCH}"               >> Release
+echo "Components: restricted"                     >> Release
+echo "Description: Local Java Repository"         >> Release 
+echo "MD5Sum:"                                    >> Release
+for PACKAGE in Packages*
+do
+    printf ' '`md5sum ${PACKAGE} | cut -d' ' -f1`" %16d ${PACKAGE}\n" `wc --bytes ${PACKAGE} | cut -d' ' -f1` >> Release
+done
+cecho success
+
+# Do we need to create signing keys
+if [ ! -e /var/local/oab/gpg/pubring.gpg ] && [ ! -e /var/local/oab/gpg/secring.gpg ] && [ ! -e /var/local/oab/gpg/trustdb.gpg ]; then
+
+    ncecho " [x] Create GnuPG configuration "
+    echo "Key-Type: DSA" > /var/local/oab/gpg-key.conf
+    echo "Key-Length: 1024" >> /var/local/oab/gpg-key.conf
+    echo "Subkey-Type: ELG-E" >> /var/local/oab/gpg-key.conf
+    echo "Subkey-Length: 2048" >> /var/local/oab/gpg-key.conf
+    echo "Name-Real: `hostname --fqdn`" >> /var/local/oab/gpg-key.conf
+    echo "Name-Email: root@`hostname --fqdn`" >> /var/local/oab/gpg-key.conf
+    echo "Expire-Date: 0" >> /var/local/oab/gpg-key.conf
+    cecho success
+  
+    # Stop the system 'rngd'.
+    /etc/init.d/rng-tools stop >> "$log" 2>&1
+
+    ncecho " [x] Start generating entropy "  
+    rngd -r /dev/urandom -p /tmp/rngd.pid >> "$log" 2>&1 &
+    pid=$!;progress $pid
+
+    ncecho " [x] Creating signing key "
+    gpg --homedir /var/local/oab/gpg --batch --gen-key /var/local/oab/gpg-key.conf >> "$log" 2>&1 &
+    pid=$!;progress $pid
+
+    ncecho " [x] Stop generating entropy "
+    kill -9 `cat /tmp/rngd.pid` >> "$log" 2>&1 &
+    pid=$!;progress $pid  
+    rm /tmp/rngd.pid 2>/dev/null
+        
+    # Start the system 'rngd'.
+    /etc/init.d/rng-tools start >> "$log" 2>&1
+fi
+
+# Do we have signing keys, if so use them.
+if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg ] && [ -e /var/local/oab/gpg/trustdb.gpg ]; then
+
+    # Sign the Release
+    ncecho " [x] Signing the 'Release' file "
+    rm /var/local/oab/deb/Release.gpg 2>/dev/null
+    gpg --homedir /var/local/oab/gpg --armor --detach-sign --output /var/local/oab/deb/Release.gpg /var/local/oab/deb/Release >> "$log" 2>&1 &
+    pid=$!;progress $pid     
+    
+    # Export public signing key
+    ncecho " [x] Exporting public key "
+    gpg --homedir /var/local/oab/gpg --export -a "`hostname --fqdn`" > /var/local/oab/deb/pubkey.asc
+    cecho success
+        
+    # Add the public signing key
+    ncecho " [x] Adding public key "
+    apt-key add /var/local/oab/deb/pubkey.asc >> "$log" 2>&1 &
+    pid=$!;progress $pid             
+fi
+    
 
 # Update apt cache
 echo "deb file:///var/local/oab/deb /" > /etc/apt/sources.list.d/oab.list
