@@ -2,6 +2,11 @@
 History
 =======
 
+0.1.5
+-----
+
+  * Fixed missing code that actually does the build
+
 0.1.4
 -----
 

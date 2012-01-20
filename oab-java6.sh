@@ -32,7 +32,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-VER="0.1.4"
+VER="0.1.5"
 
 function copyright_msg() {
     local MODE=${1}

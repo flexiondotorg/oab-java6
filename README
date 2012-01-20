@@ -1,4 +1,4 @@
-oab-java6.sh v0.1.4 - Create a local 'apt' repository for Ubuntu Java packages.
+oab-java6.sh v0.1.5 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -85,6 +85,11 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+0.1.5
+-----
+
+  * Fixed missing code that actually does the build
 
 0.1.4
 -----
