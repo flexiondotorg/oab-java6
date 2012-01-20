@@ -289,20 +289,20 @@ BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/
 cd /var/local/oab/src
 
 # Update the changelog
-#ncecho " [x] Updating the changelog "
-#dch --distribution ${LSB_CODE} --force-distribution --newversion ${NEW_VERSION} --force-bad-version --urgency=${DEB_URGENCY} "${BUILD_MESSAGE}" >> "$log" 2>&1 &
-#pid=$!;progress $pid
+ncecho " [x] Updating the changelog "
+dch --distribution ${LSB_CODE} --force-distribution --newversion ${NEW_VERSION} --force-bad-version --urgency=${DEB_URGENCY} "${BUILD_MESSAGE}" >> "$log" 2>&1 &
+pid=$!;progress $pid
 
 # Build the binary packages
-#ncecho " [x] Building the packages "
-#dpkg-buildpackage -b >> "$log" 2>&1 &
-#pid=$!;progress_can_fail $pid
+ncecho " [x] Building the packages "
+dpkg-buildpackage -b >> "$log" 2>&1 &
+pid=$!;progress_can_fail $pid
 
 # Populate the 'apt' repository with .debs
-#ncecho " [x] Moving the packages "
-#mv -v /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
-#mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
-#pid=$!;progress $pid
+ncecho " [x] Moving the packages "
+mv -v /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
+mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
+pid=$!;progress $pid
 
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override
