@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+DISTRO=$1
+RELEASE=$2
+SIGN_KEY=$3
+
+TGZ="oab-${DISTRO}-${RELEASE}.tgz"
+
+if [ ! -e "/var/cache/pbuilder/${TGZ}" ]; then
+    pbuilder --create --components "main restricted universe multiverse" --distribution $RELEASE --basetgz /var/cache/pbuilder/${TGZ} --debootstrapopts --variant=buildd
+fi
+   pbuilder --execute --basetgz /var/cache/pbuilder/${TGZ} --distribution $RELEASE --save-after-exec -- ./jdk_installdeps
+
+mkdir -p tmp
+rm -rf tmp/*
+gpg --export-secret-key -a $SIGN_KEY > tmp/privkey.asc
+gpg --export -a $SIGN_KEY > tmp/pubkey.asc
+
+
+sudo pbuilder --execute --bindmounts $(pwd) --basetgz /var/cache/pbuilder/${TGZ} --distribution $RELEASE  -- ./jdk_buildpkg $(readlink -f $(pwd)) $SIGN_KEY
+rm -rf tmp/*
