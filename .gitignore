@@ -1,2 +1,3 @@
 *.log
 cache/
+output/*.deb
