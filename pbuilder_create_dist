@@ -1,8 +1,21 @@
 #!/bin/bash
 set -e
-DISTRO=$1
-RELEASE=$2
-SIGN_KEY=$3
+USAGE="USAGE:\n sudo $0 distribution release gpg_sign_key_id, e.g.\n\n
+sudo $0 ubuntu natty ABCD1234\n\n
+gpg private and public key must exist in your current keyring\n
+pbuilder must be installed on your system.\n
+currently works on Ubuntu, for Ubuntu only.\n
+Debian version on its way.\n
+"
+
+if [ -z "$*" ]; then
+    echo -e $USAGE
+    exit 1
+fi
+
+DISTRO=${1:?"Missing distribution param"}
+RELEASE=${2:?"Missing release param"}
+SIGN_KEY=${3:?"Missing gpg_sign_key_id param"}
 
 TGZ="oab-${DISTRO}-${RELEASE}.tgz"
 
