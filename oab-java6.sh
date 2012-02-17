@@ -32,7 +32,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-VER="0.1.5"
+VER="0.1.6"
 
 function copyright_msg() {
     local MODE=${1}
@@ -119,7 +119,7 @@ function usage() {
     echo "Known Issues"
     echo "============"
     echo
-    echo "  - The Oracle download servers can be horribly slow. My script caches the"    
+    echo "  - The Oracle download servers can be horribly slow. My script caches the"
     echo "    downloads so you only need download each file once."
     echo "  - This script doesn't dynamically determine the download URLs for the"
     echo "    Java installers released by Oracle. Currently, when a new Java version is"
@@ -173,10 +173,10 @@ if [ -r /tmp/common.sh ]; then
         exit 1
     else
         update_thyself        
-    fi    
+    fi
 else
     echo "Downloading common.sh"
-    wget -q "https://github.com/flexiondotorg/common/raw/master/common.sh" -O /tmp/common.sh
+    wget --no-check-certificate -q "https://github.com/flexiondotorg/common/raw/master/common.sh" -O /tmp/common.sh
     chmod 666 /tmp/common.sh
     source /tmp/common.sh
     if [ $? -ne 0 ]; then
@@ -191,13 +191,20 @@ check_root
 check_sudo
 check_ubuntu "all"
 
+if [ "${LSB_CODE}" == "precise" ]; then
+    error_msg
+fi
+
+BUILD_KEY=""
+
 # Parse the options
-OPTSTRING=bh
+OPTSTRING=bhk
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
         b) build_docs;;
         h) usage;;
+        k) BUILD_KEY=${OPTARG};;
         *) usage;;
     esac
 done
@@ -211,7 +218,8 @@ if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list ]; then
 fi
 
 # Determine the build and runtime requirements.
-BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core gnupg libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
+BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core \
+gnupg imvirt libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
 if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
 fi
@@ -242,30 +250,36 @@ cd /var/local/oab/ >> "$log" 2>&1
 git clone git://github.com/rraptorr/sun-java6.git src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
+# Get the last commit tag.
+cd /var/local/oab/src >> "$log" 2>&1
+TAG=`git tag -l | tail -n1`
+
+# Check the tagged, stable, version.
+ncecho " [x] Checking out ${TAG} "
+git checkout ${TAG} >> "$log" 2>&1 &
+pid=$!;progress $pid
+
 # Cet the current Debian package version and package urgency
 DEB_VERSION=`head -n1 /var/local/oab/src/debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
-DEB_URGENCY=`head -n1 /var/local/oab/src/debian/changelog | cut -d'=' -f2` 
+DEB_URGENCY=`head -n1 /var/local/oab/src/debian/changelog | cut -d'=' -f2`
 
 # Determine the currently supported Java version and update
 JAVA_VER=`echo ${DEB_VERSION} | cut -d'.' -f1`
 JAVA_UPD=`echo ${DEB_VERSION} | cut -d'.' -f2 | cut -d'-' -f1`
 
-# Determine the JAVA_REL based on known Java releases
-if [ "${JAVA_VER}" != "6" ] && [ "${JAVA_UPD}" != "30" ]; then
-    error_msg "ERROR! A new version of Java has been released. Update this script!"
-fi    
-
-# Damn it, if it weren't for having to know the release number this could be 
+# Determine the JAVA_REL for known Java releases
+# Damn it, if it weren't for having to know the release number this could be
 # entirely dynamic!
-JAVA_REL="b12"
-
-# Checkout the latest tagged release
-cd /var/local/oab/src >> "$log" 2>&1
-TAG=`git tag -l v${JAVA_VER}.${JAVA_UPD}-* | tail -n1`
-
-ncecho " [x] Checking out ${TAG} "
-git checkout ${TAG} >> "$log" 2>&1 &
-pid=$!;progress $pid
+#  - http://www.oracle.com/technetwork/java/javase/downloads/index.html
+if [ "${JAVA_VER}" == "6" ]; then
+    if [ "${JAVA_UPD}" == "30" ]; then
+        JAVA_REL="b12"
+    elif [ "${JAVA_UPD}" == "31" ]; then
+        JAVA_REL="b04"
+    else
+        error_msg "ERROR! A new version of Java has been released. Please raise a ticket - https://github.com/flexiondotorg/oab-java6/issues/new"
+    fi
+fi
 
 # Download the Oracle install packages.
 for JAVA_BIN in jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin
@@ -344,42 +358,45 @@ do
 done
 cecho success
 
-# Do we need to create signing keys
-if [ ! -e /var/local/oab/gpg/pubring.gpg ] && [ ! -e /var/local/oab/gpg/secring.gpg ] && [ ! -e /var/local/oab/gpg/trustdb.gpg ]; then
+# Skip anything todo with automated key creation if this script is running in
+# an OpenVZ container.
+if [ `imvirt` != "OpenVZ" ]; then
+    # Do we need to create signing keys
+    if [ ! -e /var/local/oab/gpg/pubring.gpg ] && [ ! -e /var/local/oab/gpg/secring.gpg ] && [ ! -e /var/local/oab/gpg/trustdb.gpg ]; then
 
-    ncecho " [x] Create GnuPG configuration "
-    echo "Key-Type: DSA" > /var/local/oab/gpg-key.conf
-    echo "Key-Length: 1024" >> /var/local/oab/gpg-key.conf
-    echo "Subkey-Type: ELG-E" >> /var/local/oab/gpg-key.conf
-    echo "Subkey-Length: 2048" >> /var/local/oab/gpg-key.conf
-    echo "Name-Real: `hostname --fqdn`" >> /var/local/oab/gpg-key.conf
-    echo "Name-Email: root@`hostname --fqdn`" >> /var/local/oab/gpg-key.conf
-    echo "Expire-Date: 0" >> /var/local/oab/gpg-key.conf
-    cecho success
-  
-    # Stop the system 'rngd'.
-    /etc/init.d/rng-tools stop >> "$log" 2>&1
+        ncecho " [x] Create GnuPG configuration "
+        echo "Key-Type: DSA" > /var/local/oab/gpg-key.conf
+        echo "Key-Length: 1024" >> /var/local/oab/gpg-key.conf
+        echo "Subkey-Type: ELG-E" >> /var/local/oab/gpg-key.conf
+        echo "Subkey-Length: 2048" >> /var/local/oab/gpg-key.conf
+        echo "Name-Real: `hostname --fqdn`" >> /var/local/oab/gpg-key.conf
+        echo "Name-Email: root@`hostname --fqdn`" >> /var/local/oab/gpg-key.conf
+        echo "Expire-Date: 0" >> /var/local/oab/gpg-key.conf
+        cecho success
+      
+        # Stop the system 'rngd'.
+        /etc/init.d/rng-tools stop >> "$log" 2>&1
 
-    ncecho " [x] Start generating entropy "  
-    rngd -r /dev/urandom -p /tmp/rngd.pid >> "$log" 2>&1 &
-    pid=$!;progress $pid
+        ncecho " [x] Start generating entropy "  
+        rngd -r /dev/urandom -p /tmp/rngd.pid >> "$log" 2>&1 &
+        pid=$!;progress $pid
 
-    ncecho " [x] Creating signing key "
-    gpg --homedir /var/local/oab/gpg --batch --gen-key /var/local/oab/gpg-key.conf >> "$log" 2>&1 &
-    pid=$!;progress $pid
+        ncecho " [x] Creating signing key "
+        gpg --homedir /var/local/oab/gpg --batch --gen-key /var/local/oab/gpg-key.conf >> "$log" 2>&1 &
+        pid=$!;progress $pid
 
-    ncecho " [x] Stop generating entropy "
-    kill -9 `cat /tmp/rngd.pid` >> "$log" 2>&1 &
-    pid=$!;progress $pid  
-    rm /tmp/rngd.pid 2>/dev/null
-        
-    # Start the system 'rngd'.
-    /etc/init.d/rng-tools start >> "$log" 2>&1
+        ncecho " [x] Stop generating entropy "
+        kill -9 `cat /tmp/rngd.pid` >> "$log" 2>&1 &
+        pid=$!;progress $pid  
+        rm /tmp/rngd.pid 2>/dev/null
+            
+        # Start the system 'rngd'.
+        /etc/init.d/rng-tools start >> "$log" 2>&1
+    fi
 fi
 
 # Do we have signing keys, if so use them.
 if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg ] && [ -e /var/local/oab/gpg/trustdb.gpg ]; then
-
     # Sign the Release
     ncecho " [x] Signing the 'Release' file "
     rm /var/local/oab/deb/Release.gpg 2>/dev/null
@@ -395,8 +412,7 @@ if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg 
     ncecho " [x] Adding public key "
     apt-key add /var/local/oab/deb/pubkey.asc >> "$log" 2>&1 &
     pid=$!;progress $pid             
-fi
-    
+fi    
 
 # Update apt cache
 echo "deb file:///var/local/oab/deb /" > /etc/apt/sources.list.d/oab.list

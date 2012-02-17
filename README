@@ -1,4 +1,4 @@
-oab-java6.sh v0.1.5 - Create a local 'apt' repository for Ubuntu Java packages.
+oab-java6.sh v0.1.6 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -86,6 +86,22 @@ Because, O.A.B! ;-)
 History
 =======
 
+0.1.6
+-----
+ 
+  * Fixed downloading of common.sh when ca-certificates is not installed.
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/3
+  * Updated to support Java6u31.
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/7
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/8
+     - NOTE! Requires that the upstream script tags Java6u31 as stable, see the 
+       following ticket https://github.com/rraptorr/sun-java6/issues/3     
+  * Prevent script from running under Ubuntu Precise as it is currently 
+    known to be unsupported.
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/4
+  * Prevent automated key generation when running in an OpenVZ 
+    container because I'm too stupid to work out a proper solution.
+
 0.1.5
 -----
 
@@ -137,13 +153,16 @@ History
 Todo
 ====
 
+* Remove automatic signing key generation and add support for selecting a
+  pre-existing signing key.
+* Add support to build for a given Ubuntu distribution.
+* Add support to optionally build using 'pbuilder'.
 * Dynamically determine the download URLs for the Java installers.
 * Add support for Java 7.
 
 License
 =======
 
-Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) 2012 Martin Wimpress, http://flexion.org/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of

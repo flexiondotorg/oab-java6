@@ -2,5 +2,9 @@
 Todo
 ====
 
+* Remove automatic signing key generation and add support for selecting a
+  pre-existing signing key.
+* Add support to build for a given Ubuntu distribution.
+* Add support to optionally build using 'pbuilder'.
 * Dynamically determine the download URLs for the Java installers.
 * Add support for Java 7.

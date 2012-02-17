@@ -2,6 +2,22 @@
 History
 =======
 
+0.1.6
+-----
+ 
+  * Fixed downloading of common.sh when ca-certificates is not installed.
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/3
+  * Updated to support Java6u31.
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/7
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/8
+     - NOTE! Requires that the upstream script tags Java6u31 as stable, see the 
+       following ticket https://github.com/rraptorr/sun-java6/issues/3     
+  * Prevent script from running under Ubuntu Precise as it is currently 
+    known to be unsupported.
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/4
+  * Prevent automated key generation when running in an OpenVZ 
+    container because I'm too stupid to work out a proper solution.
+
 0.1.5
 -----
 
