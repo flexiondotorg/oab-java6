@@ -16,7 +16,7 @@ Usage
   sudo ./oab-java6.sh
 
 Optional parameters
-  -c : Remove pre-existing packages from '/var/local/oab-java/deb'
+  -c : Remove pre-existing packages from '/var/local/oab/deb'
   -h : This help
 
 How do I download and run this thing?

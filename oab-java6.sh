@@ -64,7 +64,7 @@ function usage() {
     echo "  sudo ${0}"
     echo
     echo "Optional parameters"
-    echo "  -c : Remove pre-existing packages from '/var/local/oab-java/deb'"
+    echo "  -c : Remove pre-existing packages from '/var/local/oab/deb'"
     echo "  -h : This help"
     echo
     echo "How do I download and run this thing?"
@@ -253,7 +253,7 @@ pid=$!;progress $pid
 cd /var/local/oab/src >> "$log" 2>&1
 TAG=`git tag -l | tail -n1`
 
-# Check the tagged, stable, version.
+# Checkout the tagged, stable, version.
 ncecho " [x] Checking out ${TAG} "
 git checkout ${TAG} >> "$log" 2>&1 &
 pid=$!;progress $pid
@@ -272,7 +272,7 @@ wget "http://www.oracle.com/technetwork/java/javase/downloads/index.html" -O /tm
 pid=$!;progress $pid
 
 # See if the Java version is on the download frontpage, otherwise look for it in
-# the previous releases.
+# the previous releases page.
 DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" /tmp/oab-index.html | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`
 if [ -n "${DOWNLOAD_INDEX}" ]; then
     ncecho " [x] Getting current release download page "
