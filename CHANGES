@@ -2,20 +2,27 @@
 History
 =======
 
+0.1.8
+-----
+ 
+  * Added dynamic determination of Java package URLs and sizes
+  * Added an option (-c) to optionally clean .deb package
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/10
+
 0.1.7
 -----
 
   * Fixed GPG key creation on VMware ESX Server
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/11
   * Fixed clone of the 'sun-java6' repository for users behind restrictive 
-    firewalls, thanks to Thorsten Möllers.
+    firewalls, thanks to Thorsten Möllers
 
 0.1.6
 -----
  
-  * Fixed downloading of common.sh when ca-certificates is not installed.
+  * Fixed downloading of common.sh when ca-certificates is not installed
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/3
-  * Updated to support Java6u31.
+  * Updated to support Java6u31
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/7
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/8
      - NOTE! Requires that the upstream script tags Java6u31 as stable, see the 
@@ -24,7 +31,7 @@ History
     known to be unsupported.
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/4
   * Prevent automated key generation when running in an OpenVZ 
-    container because I'm too stupid to work out a proper solution.
+    container because I'm too stupid to work out a proper solution
 
 0.1.5
 -----

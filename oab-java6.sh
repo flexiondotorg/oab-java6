@@ -32,7 +32,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-VER="0.1.7"
+VER="0.1.8"
 
 function copyright_msg() {
     local MODE=${1}
@@ -64,6 +64,7 @@ function usage() {
     echo "  sudo ${0}"
     echo
     echo "Optional parameters"
+    echo "  -c : Remove pre-existing packages from '/var/local/oab-java/deb'"
     echo "  -h : This help"
     echo
     echo "How do I download and run this thing?"
@@ -121,10 +122,6 @@ function usage() {
     echo
     echo "  - The Oracle download servers can be horribly slow. My script caches the"
     echo "    downloads so you only need download each file once."
-    echo "  - This script doesn't dynamically determine the download URLs for the"
-    echo "    Java installers released by Oracle. Currently, when a new Java version is"
-    echo "    released by Oracle this script must be updated to support that new version."
-    echo "    I hope to address this limitation in the future."
     echo
     echo "What is 'oab'?"
     echo "=============="
@@ -192,17 +189,19 @@ check_sudo
 check_ubuntu "all"
 
 if [ "${LSB_CODE}" == "precise" ]; then
-    error_msg
+    error_msg "ERROR! Ubuntu Precise is not currently supported"
 fi
 
 BUILD_KEY=""
+BUILD_CLEAN=0
 
 # Parse the options
-OPTSTRING=bhk
+OPTSTRING=bchk:
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
         b) build_docs;;
+        c) BUILD_CLEAN=1;;
         h) usage;;
         k) BUILD_KEY=${OPTARG};;
         *) usage;;
@@ -267,30 +266,38 @@ DEB_URGENCY=`head -n1 /var/local/oab/src/debian/changelog | cut -d'=' -f2`
 JAVA_VER=`echo ${DEB_VERSION} | cut -d'.' -f1`
 JAVA_UPD=`echo ${DEB_VERSION} | cut -d'.' -f2 | cut -d'-' -f1`
 
-# Determine the JAVA_REL for known Java releases
-# Damn it, if it weren't for having to know the release number this could be
-# entirely dynamic!
-#  - http://www.oracle.com/technetwork/java/javase/downloads/index.html
-if [ "${JAVA_VER}" == "6" ]; then
-    if [ "${JAVA_UPD}" == "30" ]; then
-        JAVA_REL="b12"
-    elif [ "${JAVA_UPD}" == "31" ]; then
-        JAVA_REL="b04"
-    else
-        error_msg "ERROR! A new version of Java has been released. Please raise a ticket - https://github.com/flexiondotorg/oab-java6/issues/new"
-    fi
+# Try and dynamic find the JDK downloads
+ncecho " [x] Getting Java SE download page"
+wget "http://www.oracle.com/technetwork/java/javase/downloads/index.html" -O /tmp/oab-index.html >> "$log" 2>&1 &
+pid=$!;progress $pid
+
+# See if the Java version is on the download frontpage, otherwise look for it in
+# the previous releases.
+DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" /tmp/oab-index.html | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`
+if [ -n "${DOWNLOAD_INDEX}" ]; then
+    ncecho " [x] Getting current release download page "
+    wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download.html >> "$log" 2>&1 &
+    pid=$!;progress $pid
+else
+    ncecho " [x] Getting previous releases download page "
+    wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
+    pid=$!;progress $pid    
 fi
 
 # Download the Oracle install packages.
 for JAVA_BIN in jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin
 do
-    ncecho " [x] Downloading ${JAVA_BIN} : ~80MB "
-    wget -c http://download.oracle.com/otn-pub/java/jdk/${JAVA_VER}u${JAVA_UPD}-${JAVA_REL}/${JAVA_BIN} -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
+    # Get the download URL and size
+    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
+    DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
+    
+    ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
+    wget -c "${DOWNLOAD_URL}" -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
     ln -s /var/local/oab/pkg/${JAVA_BIN} /var/local/oab/src/${JAVA_BIN} >> "$log" 2>&1 &
-    pid=$!;progress_loop $pid
+    pid=$!;progress_loop $pid    
 done
 
 # Determine the new version
@@ -312,11 +319,22 @@ ncecho " [x] Building the packages "
 dpkg-buildpackage -b >> "$log" 2>&1 &
 pid=$!;progress_can_fail $pid
 
-# Populate the 'apt' repository with .debs
-ncecho " [x] Moving the packages "
-mv -v /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
-mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
-pid=$!;progress $pid
+if [ -e /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
+    # Remove any existing .deb files if the 'clean' option was selected.
+    if [ ${BUILD_CLEAN} -eq 1 ]; then
+        ncecho " [x] Removing existing .deb packages "
+        rm -fv /var/local/oab/deb/* >> "$log" 2>&1 &
+        pid=$!;progress $pid
+    fi
+
+    # Populate the 'apt' repository with .debs
+    ncecho " [x] Moving the packages "
+    mv -v /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
+    mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
+    pid=$!;progress $pid
+else    
+    error_msg "ERROR! Packages failed to build. Please raise an issue with the upstream script developer - https://github.com/rraptorr/sun-java6/issues"
+fi
 
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override

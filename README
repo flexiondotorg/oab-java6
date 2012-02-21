@@ -1,4 +1,4 @@
-oab-java6.sh v0.1.7 - Create a local 'apt' repository for Ubuntu Java packages.
+oab-java6.sh v0.1.8 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -16,6 +16,7 @@ Usage
   sudo ./oab-java6.sh
 
 Optional parameters
+  -c : Remove pre-existing packages from '/var/local/oab-java/deb'
   -h : This help
 
 How do I download and run this thing?
@@ -73,10 +74,6 @@ Known Issues
 
   - The Oracle download servers can be horribly slow. My script caches the
     downloads so you only need download each file once.
-  - This script doesn't dynamically determine the download URLs for the
-    Java installers released by Oracle. Currently, when a new Java version is
-    released by Oracle this script must be updated to support that new version.
-    I hope to address this limitation in the future.
 
 What is 'oab'?
 ==============
@@ -86,20 +83,27 @@ Because, O.A.B! ;-)
 History
 =======
 
+0.1.8
+-----
+ 
+  * Added dynamic determination of Java package URLs and sizes
+  * Added an option (-c) to optionally clean .deb package
+     - Closes : https://github.com/flexiondotorg/oab-java6/issues/10
+
 0.1.7
 -----
 
   * Fixed GPG key creation on VMware ESX Server
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/11
   * Fixed clone of the 'sun-java6' repository for users behind restrictive 
-    firewalls, thanks to Thorsten Möllers.
+    firewalls, thanks to Thorsten Möllers
 
 0.1.6
 -----
  
-  * Fixed downloading of common.sh when ca-certificates is not installed.
+  * Fixed downloading of common.sh when ca-certificates is not installed
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/3
-  * Updated to support Java6u31.
+  * Updated to support Java6u31
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/7
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/8
      - NOTE! Requires that the upstream script tags Java6u31 as stable, see the 
@@ -108,7 +112,7 @@ History
     known to be unsupported.
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/4
   * Prevent automated key generation when running in an OpenVZ 
-    container because I'm too stupid to work out a proper solution.
+    container because I'm too stupid to work out a proper solution
 
 0.1.5
 -----
@@ -165,7 +169,6 @@ Todo
   pre-existing signing key.
 * Add support to build for a given Ubuntu distribution.
 * Add support to optionally build using 'pbuilder'.
-* Dynamically determine the download URLs for the Java installers.
 * Add support for Java 7.
 
 License
