@@ -32,7 +32,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-VER="0.1.6"
+VER="0.1.7"
 
 function copyright_msg() {
     local MODE=${1}
@@ -360,7 +360,7 @@ cecho success
 
 # Skip anything todo with automated key creation if this script is running in
 # an OpenVZ container.
-if [ `imvirt` != "OpenVZ" ]; then
+if [[ `imvirt` != "OpenVZ" ]]; then
     # Do we need to create signing keys
     if [ ! -e /var/local/oab/gpg/pubring.gpg ] && [ ! -e /var/local/oab/gpg/secring.gpg ] && [ ! -e /var/local/oab/gpg/trustdb.gpg ]; then
 
@@ -373,7 +373,7 @@ if [ `imvirt` != "OpenVZ" ]; then
         echo "Name-Email: root@`hostname --fqdn`" >> /var/local/oab/gpg-key.conf
         echo "Expire-Date: 0" >> /var/local/oab/gpg-key.conf
         cecho success
-      
+
         # Stop the system 'rngd'.
         /etc/init.d/rng-tools stop >> "$log" 2>&1
 
@@ -387,9 +387,9 @@ if [ `imvirt` != "OpenVZ" ]; then
 
         ncecho " [x] Stop generating entropy "
         kill -9 `cat /tmp/rngd.pid` >> "$log" 2>&1 &
-        pid=$!;progress $pid  
+        pid=$!;progress $pid
         rm /tmp/rngd.pid 2>/dev/null
-            
+
         # Start the system 'rngd'.
         /etc/init.d/rng-tools start >> "$log" 2>&1
     fi
@@ -401,18 +401,18 @@ if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg 
     ncecho " [x] Signing the 'Release' file "
     rm /var/local/oab/deb/Release.gpg 2>/dev/null
     gpg --homedir /var/local/oab/gpg --armor --detach-sign --output /var/local/oab/deb/Release.gpg /var/local/oab/deb/Release >> "$log" 2>&1 &
-    pid=$!;progress $pid     
-    
+    pid=$!;progress $pid
+
     # Export public signing key
     ncecho " [x] Exporting public key "
     gpg --homedir /var/local/oab/gpg --export -a "`hostname --fqdn`" > /var/local/oab/deb/pubkey.asc
     cecho success
-        
+
     # Add the public signing key
     ncecho " [x] Adding public key "
     apt-key add /var/local/oab/deb/pubkey.asc >> "$log" 2>&1 &
-    pid=$!;progress $pid             
-fi    
+    pid=$!;progress $pid
+fi
 
 # Update apt cache
 echo "deb file:///var/local/oab/deb /" > /etc/apt/sources.list.d/oab.list
