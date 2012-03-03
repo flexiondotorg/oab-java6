@@ -27,12 +27,17 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # References
-#  - https://github.com/rraptorr/sun-java6
+#  - https://github.com/rraptorr/oracle-java7
 #  - http://ubuntuforums.org/showthread.php?t=1090731
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-VER="0.1.8"
+VER="j7-0.1.8"
+
+function fork_msg() {
+    echo "This is a fork of https://github.com/flexiondotorg/oab-java6, but to work create an 'apt' repository for Oracle Java 7."
+    echo
+}
 
 function copyright_msg() {
     local MODE=${1}
@@ -72,7 +77,7 @@ function usage() {
     echo "Like this."
     echo
     echo "  cd ~/"
-    echo "  wget https://raw.github.com/flexiondotorg/oab-java6/master/`basename ${0}` -O `basename ${0}`"
+    echo "  wget https://raw.github.com/tamersaadeh/oab-java7/master/`basename ${0}` -O `basename ${0}`"
     echo "  chmod +x `basename ${0}`"
     echo "  sudo ./`basename ${0}`"
     echo
@@ -81,7 +86,11 @@ function usage() {
     echo "This script is merely a wrapper for the most excllent Debian packaging"
     echo "scripts prepared by Janusz Dziemidowicz."
     echo
-    echo "  - https://github.com/rraptorr/sun-java6"
+    echo "  - https://github.com/rraptorr/oracle-java7"
+    echo
+    echo "This script is Based on the scirpt prepared by Martin Wimpress."
+    echo
+    echo "  - https://github.com/flexiondotorg/oab-java6"
     echo
     echo "The basic execution steps are:"
     echo
@@ -89,7 +98,7 @@ function usage() {
     echo "  - Install the tools required to build the Java packages."
     echo "  - Create download cache in '/var/local/oab/pkg'."
     echo "  - Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
-    echo "  - Clone the build scripts from https://github.com/rraptorr/sun-java6"
+    echo "  - Clone the build scripts from https://github.com/rraptorr/oracle-java7"
     echo "  - Build the Java packages applicable to your system."    
     echo "  - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages."
     echo "  - Create a GnuPG signing key in '/var/local/oab/gpg' if none exists."
@@ -106,7 +115,7 @@ function usage() {
     echo "'synaptic', etc. For example, once this script has been run you can simply"
     echo "install the JRE by executing the following from a shell."
     echo
-    echo "  sudo apt-get install sun-java6-jre"
+    echo "  sudo apt-get install oracle-java7-jre"
     echo
     echo "Or if you already have the \"official\" Ubuntu packages installed then you"
     echo "can upgrade by executing the folowing from a shell."
@@ -135,7 +144,11 @@ function usage() {
 }
 
 function build_docs() {
-    copyright_msg build_docs > README
+    # Add fork details
+    fork_msg build_docs > README
+
+    # Add copywright
+    copyright_msg build_docs >> README
 
     # Add the usage instructions
     usage build_docs >> README
@@ -189,7 +202,7 @@ check_sudo
 check_ubuntu "all"
 
 if [ "${LSB_CODE}" == "precise" ]; then
-    error_msg "ERROR! Ubuntu Precise is not currently supported"
+    error_msg "ERROR! Ubuntu Precise is not currently supported see https://github.com/rraptorr/sun-java6/issues/5"
 fi
 
 BUILD_KEY=""
@@ -238,15 +251,15 @@ chown root:root /var/local/oab/gpg 2>/dev/null
 chmod 0700 /var/local/oab/gpg 2>/dev/null
 
 # Remove the 'src' directory everytime.
-ncecho " [x] Removing clones of https://github.com/rraptorr/sun-java6 "
-rm -rfv /var/local/oab/sun-java6* 2>/dev/null >> "$log" 2>&1
+ncecho " [x] Removing clones of https://github.com/rraptorr/oracle-java7 "
+rm -rfv /var/local/oab/oracle-java7* 2>/dev/null >> "$log" 2>&1
 rm -rfv /var/local/oab/src 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Clone the code
-ncecho " [x] Cloning https://github.com/rraptorr/sun-java6 "
+ncecho " [x] Cloning https://github.com/rraptorr/oracle-java7 "
 cd /var/local/oab/ >> "$log" 2>&1
-git clone https://github.com/rraptorr/sun-java6 src >> "$log" 2>&1 &
+git clone https://github.com/rraptorr/oracle-java7 src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Get the last commit tag.
@@ -304,7 +317,7 @@ done
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
 # Genereate a build message
-BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/sun-java6"
+BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/oracle-java7"
 
 # Change directory to the build directory
 cd /var/local/oab/src
@@ -319,7 +332,7 @@ ncecho " [x] Building the packages "
 dpkg-buildpackage -b >> "$log" 2>&1 &
 pid=$!;progress_can_fail $pid
 
-if [ -e /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
+if [ -e /var/local/oab/oracle-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
     # Remove any existing .deb files if the 'clean' option was selected.
     if [ ${BUILD_CLEAN} -eq 1 ]; then
         ncecho " [x] Removing existing .deb packages "
@@ -329,11 +342,11 @@ if [ -e /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ];
 
     # Populate the 'apt' repository with .debs
     ncecho " [x] Moving the packages "
-    mv -v /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
-    mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
+    mv -v /var/local/oab/oracle-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
+    mv -v /var/local/oab/*oracle-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
     pid=$!;progress $pid
 else    
-    error_msg "ERROR! Packages failed to build. Please raise an issue with the upstream script developer - https://github.com/rraptorr/sun-java6/issues"
+    error_msg "ERROR! Packages failed to build. Please raise an issue with the upstream script developer - https://github.com/rraptorr/oracle-java7/issues"
 fi
 
 # Create a temporary 'override' file, which may contain duplicates

@@ -1,4 +1,6 @@
-oab-java6.sh v0.1.8 - Create a local 'apt' repository for Ubuntu Java packages.
+This is a fork of https://github.com/flexiondotorg/oab-java6, but to work create an 'apt' repository for Oracle Java 7.
+
+oab-java7.sh vj7-0.1.8 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -9,11 +11,11 @@ read and accepted the terms of the Oracle end user license agreement.
 If you want to see what this is script is doing while it is running then execute
 the following from another shell:
 
-  tail -f ./oab-java6.sh.log
+  tail -f ./oab-java7.sh.log
 
 Usage
 
-  sudo ./oab-java6.sh
+  sudo ./oab-java7.sh
 
 Optional parameters
   -c : Remove pre-existing packages from '/var/local/oab/deb'
@@ -24,16 +26,20 @@ How do I download and run this thing?
 Like this.
 
   cd ~/
-  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O oab-java6.sh
-  chmod +x oab-java6.sh
-  sudo ./oab-java6.sh
+  wget https://raw.github.com/tamersaadeh/oab-java7/master/oab-java7.sh -O oab-java7.sh
+  chmod +x oab-java7.sh
+  sudo ./oab-java7.sh
 
 How it works
 ============
 This script is merely a wrapper for the most excllent Debian packaging
 scripts prepared by Janusz Dziemidowicz.
 
-  - https://github.com/rraptorr/sun-java6
+  - https://github.com/rraptorr/oracle-java7
+
+This script is Based on the scirpt prepared by Martin Wimpress.
+
+  - https://github.com/flexiondotorg/oab-java6
 
 The basic execution steps are:
 
@@ -41,7 +47,7 @@ The basic execution steps are:
   - Install the tools required to build the Java packages.
   - Create download cache in '/var/local/oab/pkg'.
   - Download the i586 and x64 Java install binaries from Oracle. Yes, both are required.
-  - Clone the build scripts from https://github.com/rraptorr/sun-java6
+  - Clone the build scripts from https://github.com/rraptorr/oracle-java7
   - Build the Java packages applicable to your system.
   - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages.
   - Create a GnuPG signing key in '/var/local/oab/gpg' if none exists.
@@ -58,7 +64,7 @@ or upgrade the Java packages you require using 'apt-get', 'aptitude' or
 'synaptic', etc. For example, once this script has been run you can simply
 install the JRE by executing the following from a shell.
 
-  sudo apt-get install sun-java6-jre
+  sudo apt-get install oracle-java7-jre
 
 Or if you already have the "official" Ubuntu packages installed then you
 can upgrade by executing the folowing from a shell.
@@ -66,7 +72,7 @@ can upgrade by executing the folowing from a shell.
   sudo apt-get upgrade
 
 The local 'apt' repository is just that, **local**. It is not accessible
-remotely and oab-java6.sh will never enable that capability to ensure
+remotely and oab-java7.sh will never enable that capability to ensure
 compliance with Oracle's asinine license requirements.
 
 Known Issues
@@ -82,6 +88,11 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+j7-0.1.8
+-----
+ 
+  * Builds Java 7 packages
 
 0.1.8
 -----
@@ -169,7 +180,6 @@ Todo
   pre-existing signing key.
 * Add support to build for a given Ubuntu distribution.
 * Add support to optionally build using 'pbuilder'.
-* Add support for Java 7.
 
 License
 =======
