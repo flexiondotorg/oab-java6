@@ -1,3 +1,4 @@
+source /tmp/common.sh
 # Remove the 'src' directory everytime.
 ncecho " [x] Removing previous clones of build scripts "
 rm -rfv $1/$3* 2>/dev/null >> "$2" 2>&1

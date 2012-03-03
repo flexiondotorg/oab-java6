@@ -46,6 +46,7 @@ JAVA7="oracle-java7"
 sh $SCRIPTS/copywright_msg.sh
 
 sh $SCRIPTS/use_common.sh
+source /tmp/common.sh
 
 # Override log
 log="${PWD}/`basename ${0}`.log"

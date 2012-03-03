@@ -1,3 +1,4 @@
+source /tmp/common.sh
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override
 echo "#Package priority section" >> /tmp/override

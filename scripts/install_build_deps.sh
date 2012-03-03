@@ -1,3 +1,4 @@
+source /tmp/common.sh
 # Determine the build and runtime requirements.
 BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core \
 gnupg imvirt libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"

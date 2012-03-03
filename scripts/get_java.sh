@@ -11,6 +11,7 @@ ncecho " [x] Getting Java SE download page"
 wget "http://www.oracle.com/technetwork/java/javase/downloads/index.html" -O /tmp/oab-index.html >> "$2" 2>&1 &
 pid=$!;progress $pid
 
+source /tmp/common.sh
 # See if the Java version is on the download frontpage, otherwise look for it in
 # the previous releases page.
 DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" /tmp/oab-index.html | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`

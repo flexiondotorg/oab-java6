@@ -1,3 +1,4 @@
+source /tmp/common.sh
 # Determine the new version
 NEW_VERSION="$1"
 
