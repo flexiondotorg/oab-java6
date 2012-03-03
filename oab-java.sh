@@ -5,6 +5,8 @@
 # Create a local 'apt' repository for Ubuntu Java packages.
 # Copyright (c) 2012 Flexion.Org, http://flexion.org/
 #
+# Copyright (c) 2012 Tamer Saadeh <tamersaadeh@gmail.com>
+#
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -56,20 +58,29 @@ check_root
 check_sudo
 check_ubuntu "all"
 
-if [ "${LSB_CODE}" == "precise" ]; then
-    error_msg "ERROR! Ubuntu Precise is not currently supported see https://github.com/rraptorr/sun-java6/issues/5"
-fi
+#if [ "${LSB_CODE}" == "precise" ]; then
+#    error_msg "ERROR! Ubuntu Precise is not currently supported see https://github.com/rraptorr/sun-java6/issues/5"
+#fi
 
 # Parse the options
 OPTSTRING=bchk:
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
-        b|-build-docs) ./$SCRIPTS/build_docs.sh;;
+        b|-build-docs)
+          ./$SCRIPTS/build_docs.sh
+          exit 0
+        ;;
         c|-clean) BUILD_CLEAN=1;;
-        h|-help) ./$SCRIPTS/usage.sh;;
+        h|-help)
+          ./$SCRIPTS/usage.sh
+          exit 0
+        ;;
         k) BUILD_KEY=${OPTARG};;
-        *) ./$SCRIPTS/usage.sh;;
+        *)
+          ./$SCRIPTS/usage.sh
+          exit 1
+        ;;
     esac
 done
 shift "$(( $OPTIND - 1 ))"

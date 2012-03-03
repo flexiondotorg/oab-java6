@@ -1,5 +1,5 @@
 source /tmp/common.sh
-# Cet the current Debian package version and package urgency
+# Get the current Debian package version and package urgency
 DEB_VERSION=`head -n1 $2/src/$4/debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
 DEB_URGENCY=`head -n1 $2/src/$4/debian/changelog | cut -d'=' -f2`
 
@@ -47,7 +47,7 @@ do
 done
 
 # remove download index and download release page
-rm -rf /tmp/oab-index.html
-rm -rf /tmp/oab-download.html 
+#rm -rf /tmp/oab-index.html
+#rm -rf /tmp/oab-download.html 
 
-./build_packages "${DEB_VERSION}~${LSB_CODE}1" "${DEB_URGENCY}" "$4" "$3" "$5"
+./scripts/build_packages "${DEB_VERSION}~${LSB_CODE}1" "${DEB_URGENCY}" "$4" "$3" "$5"

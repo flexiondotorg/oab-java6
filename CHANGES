@@ -2,10 +2,11 @@
 History
 =======
 
-j7-0.1.8
+0.2.0
 -----
  
-  * Builds Java 7 packages
+  * Builds Java 7 packages as well
+  * Huge code refactor to make it much easier to maintain
 
 0.1.8
 -----

@@ -4,7 +4,7 @@ function usage() {
     local MODE=${1}
     echo "Usage"
     echo
-    echo "  sudo ${0}"
+    echo "  sudo ./$NAME"
     echo
     echo "Optional parameters"
     echo "  -c | --clean : Remove pre-existing packages from '/var/local/oab/deb'"
@@ -55,7 +55,7 @@ function usage() {
     echo "install the JRE by executing the following from a shell."
     echo
     echo "  sudo apt-get install sun-java6-jre"
-    echo "or"
+    echo "  or:"
     echo "  sudo apt-get install oracle-java7-jre"
     echo
     echo "Or if you already have the \"official\" Ubuntu packages installed then you"
@@ -77,11 +77,6 @@ function usage() {
     echo "=============="
     echo "Because, O.A.B! ;-)"
     echo
-
-    # Only exit if we are not build docs.
-    if [ "${MODE}" != "build_docs" ]; then
-        exit 1
-    fi
 }
 
 usage

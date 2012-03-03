@@ -4,6 +4,8 @@ VER="0.2.0"
 echo "$NAME v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
 echo "Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"
 echo
+echo "Copyright (c) `date +%Y` Tamer Saadeh <tamersaadeh@gmail.com>. MIT License"
+echo
 echo "By running this script to download Java you acknowledge that you have"
 echo "read and accepted the terms of the Oracle end user license agreement."
 echo
