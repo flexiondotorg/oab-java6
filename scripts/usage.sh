@@ -15,8 +15,8 @@ function usage() {
     echo "Like this."
     echo
     echo "  cd ~/"
-    echo "  wget https://raw.github.com/tamersaadeh/oab-java7/master/$NAME -O $NAME"
-    echo "  chmod +x $NAME scripts/"
+    echo "  git clone https://github.com/tamersaadeh/oab-java.git"
+    echo "  cd oab-java/"
     echo "  sudo ./$NAME"
     echo
     echo "How it works"
