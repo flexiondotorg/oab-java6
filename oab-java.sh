@@ -58,9 +58,9 @@ check_root
 check_sudo
 check_ubuntu "all"
 
-#if [ "${LSB_CODE}" == "precise" ]; then
-#    error_msg "ERROR! Ubuntu Precise is not currently supported see https://github.com/rraptorr/sun-java6/issues/5"
-#fi
+if [ "${LSB_CODE}" == "precise" ]; then
+    error_msg "ERROR! Ubuntu Precise is not currently supported see https://github.com/rraptorr/sun-java6/issues/5"
+fi
 
 # Parse the options
 OPTSTRING=bchk:
