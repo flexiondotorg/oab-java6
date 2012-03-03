@@ -14,7 +14,7 @@ read and accepted the terms of the Oracle end user license agreement.
 If you want to see what this is script is doing while it is running then execute
 the following from another shell:
 
-  tail -f ./oab-java.sh.log
+  tail -f ./build.log
 
 Usage
 

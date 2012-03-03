@@ -17,8 +17,8 @@ echo
 
 # Adjust the output if we are building the docs.
 if [ "$1" != "build_docs" ]; then
-    echo "  tail -f `pwd`/$NAME.log"
+    echo "  tail -f `pwd`/build.log"
 else
-    echo "  tail -f ./$NAME.log"
+    echo "  tail -f ./build.log"
 fi
 echo

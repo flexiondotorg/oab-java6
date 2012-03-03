@@ -42,8 +42,8 @@ export LOG="build.log"
 export BUILD_KEY=""
 export BUILD_CLEAN=0
 
-JAVA6="sun-java6"
-JAVA7="oracle-java7"
+export JAVA6="sun-java6"
+export JAVA7="oracle-java7"
 
 ./$SCRIPTS/copywright_msg.sh
 
@@ -86,6 +86,8 @@ shift "$(( $OPTIND - 1 ))"
 
 ./$SCRIPTS/install_build_deps.sh
 
+./$SCRIPTS/create_build_dirs.sh
+
 # for sun-java6
 ./$SCRIPTS/get_build_scripts.sh "$JAVA6"
 ./$SCRIPTS/get_java.sh "$JAVA6"
@@ -102,6 +104,11 @@ shift "$(( $OPTIND - 1 ))"
 echo "deb file://$BASE/deb /" > /etc/apt/sources.list.d/oab.list
 apt_update
 
+# remove download index and download release page
+echo "removing extra files..." >> $LOG
+rm -rf /tmp/oab-index.html
+rm -rf /tmp/oab-download.html
+
 # unset global variables
 echo "unsetting variables..." >> $LOG
 unset SCRIPTS
@@ -113,5 +120,7 @@ unset DEB_VERSION
 unset DEB_URGENCY
 unset JAVA_VER
 unset JAVA_UPD
+unset JAVA6
+unset JAVA7
 
 echo "All done!"

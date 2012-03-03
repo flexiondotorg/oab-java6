@@ -14,18 +14,18 @@ pid=$!;progress $pid
 
 # See if the Java version is on the download frontpage, otherwise look for it in
 # the previous releases page.
-DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" /tmp/oab-index.html | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`
+DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" "/tmp/oab-index.html" | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`
 if [ -n "${DOWNLOAD_INDEX}" ]; then
     ncecho " [x] Getting current release download page "
-    wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download.html >> "$LOG" 2>&1 &
+    wget http://www.oracle.com/${DOWNLOAD_INDEX} -O "/tmp/oab-download-$1.html" >> "$LOG" 2>&1 &
     pid=$!;progress $pid
 else
     ncecho " [x] Failed to get current release page, getting previous releases download page "
     if [ "$1" == "sun-java6" ]; then
-        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$LOG" 2>&1 &
+        wget "http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html" -O "/tmp/oab-download-$1.html" >> "$LOG" 2>&1 &
         pid=$!;progress $pid
     else
-        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html -O /tmp/oab-download.html >> "$LOG" 2>&1 &
+        wget "http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html" -O "/tmp/oab-download-$1.html" >> "$LOG" 2>&1 &
         pid=$!;progress $pid
     fi
 fi
@@ -34,8 +34,8 @@ fi
 for JAVA_BIN in "jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin" "jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin"
 do
     # Get the download URL and size
-    DOWNLOAD_URL=`grep "${JAVA_BIN}" /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
-    DOWNLOAD_SIZE=`grep "${JAVA_BIN}" /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`
+    DOWNLOAD_URL=`grep "${JAVA_BIN}" "/tmp/oab-download-$1.html" | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
+    DOWNLOAD_SIZE=`grep "${JAVA_BIN}" "/tmp/oab-download-$1.html" | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`
 
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
     wget -c "${DOWNLOAD_URL}" -O "$BASE/pkg/${JAVA_BIN}" >> "$LOG" 2>&1 &
@@ -46,8 +46,4 @@ do
     pid=$!;progress_loop $pid    
 done
 
-# remove download index and download release page
-rm -rf /tmp/oab-index.html
-rm -rf /tmp/oab-download.html
-
-./scripts/build_packages "$1"
+./scripts/build_packages.sh "$1"

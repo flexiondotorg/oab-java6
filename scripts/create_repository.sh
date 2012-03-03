@@ -2,7 +2,7 @@ source /tmp/common.sh
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override
 echo "#Package priority section" >> /tmp/override
-for FILE in "$BASE/deb/*.deb"
+for FILE in "$BASE/deb/"*".deb"
 do
     DEB_PACKAGE=`dpkg --info ${FILE} | grep Package | cut -d':' -f2`
     DEB_SECTION=`dpkg --info ${FILE} | grep Section | cut -d'/' -f2`
@@ -13,28 +13,26 @@ done
 uniq /tmp/override > "$BASE/deb/override"
 
 # Create the 'apt' Packages.gz
-ncecho " [x] Creating Packages.gz file "
-cd "$BASE/deb"
-dpkg-scanpackages . override 2>/dev/null > Packages
-cat Packages | gzip -c9 > Packages.gz
+ncecho " [x] Creating $BASE/deb/Packages.gz file "
+dpkg-scanpackages . override 2>/dev/null > "$BASE/deb/Packages.gz"
+cat Packages | gzip -c9 > "$BASE/deb/Packages.gz"
 rm "$BASE/deb/override" 2>/dev/null
 cecho success
 
-# Create a 'Release' file
-ncecho " [x] Creating Release file "
-cd "$BASE/deb"
-echo "Origin: `hostname --fqdn`"                 >  Release
-echo "Label: Java"                                >> Release
-echo "Suite: ${LSB_CODE}"                       >> Release
-echo "Version: ${LSB_REL}"                      >> Release
-echo "Codename: ${LSB_CODE}"                    >> Release
-echo "Date: `date -R`"                           >> Release
-echo "Architectures: ${LSB_ARCH}"               >> Release
-echo "Components: restricted"                     >> Release
-echo "Description: Local Java Repository"         >> Release 
-echo "MD5Sum:"                                    >> Release
-for PACKAGE in Packages*
+# Create a '"$BASE/deb/Release"' file
+ncecho " [x] Creating $BASE/deb/Release file "
+echo "Origin: `hostname --fqdn`"                 >  "$BASE/deb/Release"
+echo "Label: Java"                                >> "$BASE/deb/Release"
+echo "Suite: ${LSB_CODE}"                       >> "$BASE/deb/Release"
+echo "Version: ${LSB_REL}"                      >> "$BASE/deb/Release"
+echo "Codename: ${LSB_CODE}"                    >> "$BASE/deb/Release"
+echo "Date: `date -R`"                           >> "$BASE/deb/Release"
+echo "Architectures: ${LSB_ARCH}"               >> "$BASE/deb/Release"
+echo "Components: restricted"                     >> "$BASE/deb/Release"
+echo "Description: Local Java Repository"         >> "$BASE/deb/Release"
+echo "MD5Sum:"                                    >> "$BASE/deb/Release"
+for PACKAGE in "$BASE/deb/Packages"*
 do
-    printf ' '`md5sum ${PACKAGE} | cut -d' ' -f1`" %16d ${PACKAGE}\n" `wc --bytes ${PACKAGE} | cut -d' ' -f1` >> Release
+    printf ' '`md5sum ${PACKAGE} | cut -d' ' -f1`" %16d ${PACKAGE}\n" `wc --bytes ${PACKAGE} | cut -d' ' -f1` >> "$BASE/deb/Release"
 done
 cecho success

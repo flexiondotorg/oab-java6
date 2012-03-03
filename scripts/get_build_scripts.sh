@@ -8,7 +8,7 @@ pid=$!;progress $pid
 # Clone the code
 ncecho " [x] Cloning build scripts "
 cd "$BASE/" >> "$LOG" 2>&1
-git clone "https://github.com/rraptorr/$1" "src/$1" >> "$LOG" 2>&1 &
+git clone "https://github.com/rraptorr/$1" "$BASE/src/$1" >> "$LOG" 2>&1 &
 pid=$!;progress $pid
 
 # Get the last commit tag.
