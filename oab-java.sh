@@ -36,11 +36,11 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-SCRIPTS="scripts"
-BASE="/var/local/oab"
-
-BUILD_KEY=""
-BUILD_CLEAN=0
+export SCRIPTS="scripts"
+export BASE="/var/local/oab"
+export LOG="build.log"
+export BUILD_KEY=""
+export BUILD_CLEAN=0
 
 JAVA6="sun-java6"
 JAVA7="oracle-java7"
@@ -49,9 +49,6 @@ JAVA7="oracle-java7"
 
 ./$SCRIPTS/use_common.sh
 source /tmp/common.sh
-
-# Override log
-log="${PWD}/`basename ${0}`.log"
 
 # Check we are running on a supported system in the correct way.
 check_root
@@ -85,26 +82,36 @@ do
 done
 shift "$(( $OPTIND - 1 ))"
 
-./$SCRIPTS/remove_ppa.sh "$log"
+./$SCRIPTS/remove_ppa.sh
 
-./$SCRIPTS/install_build_deps.sh "$log"
-
-./$SCRIPTS/build_scripts.sh "$BASE" "$log"
+./$SCRIPTS/install_build_deps.sh
 
 # for sun-java6
-./$SCRIPTS/build_scripts.sh "$BASE" "$log" "$JAVA6"
-./$SCRIPTS/get_java.sh "$BASE" "$log" "$JAVA6" "$BUILD_CLEAN"
+./$SCRIPTS/get_build_scripts.sh "$JAVA6"
+./$SCRIPTS/get_java.sh "$JAVA6"
 
 # for oracle-java7
-./$SCRIPTS/build_scripts.sh "$BASE" "$log" "$JAVA7"
-./$SCRIPTS/get_java.sh "$BASE" "$log" "$JAVA7" "$BUILD_CLEAN"
+./$SCRIPTS/get_build_scripts.sh "$JAVA7"
+./$SCRIPTS/get_java.sh "$JAVA7"
 
-./$SCRIPTS/create_repository.sh "$BASE" "$log"
+./$SCRIPTS/create_repository.sh
 
-./$SCRIPTS/sign_packages.sh "$BASE" "$log"
+./$SCRIPTS/sign_packages.sh
 
 # Update apt cache
 echo "deb file://$BASE/deb /" > /etc/apt/sources.list.d/oab.list
 apt_update
+
+# unset global variables
+echo "unsetting variables..." >> $LOG
+unset SCRIPTS
+unset BASE
+unset LOG
+unset BUILD_KEY
+unset BUILD_CLEAN
+unset DEB_VERSION
+unset DEB_URGENCY
+unset JAVA_VER
+unset JAVA_UPD
 
 echo "All done!"
