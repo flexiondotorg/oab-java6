@@ -1,3 +1,5 @@
+NAME="oab-java.sh"
+
 function usage() {
     local MODE=${1}
     echo "Usage"
@@ -13,9 +15,9 @@ function usage() {
     echo "Like this."
     echo
     echo "  cd ~/"
-    echo "  wget https://raw.github.com/tamersaadeh/oab-java7/master/`basename ${0}` -O `basename ${0}`"
-    echo "  chmod +x `basename ${0}`"
-    echo "  sudo ./`basename ${0}`"
+    echo "  wget https://raw.github.com/tamersaadeh/oab-java7/master/$NAME -O $NAME"
+    echo "  chmod +x $NAME scripts/"
+    echo "  sudo ./$NAME"
     echo
     echo "How it works"
     echo "============"
@@ -62,7 +64,7 @@ function usage() {
     echo "  sudo apt-get upgrade"
     echo
     echo "The local 'apt' repository is just that, **local**. It is not accessible"
-    echo "remotely and `basename ${0}` will never enable that capability to ensure"
+    echo "remotely and $NAME will never enable that capability to ensure"
     echo "compliance with Oracle's asinine license requirements."
     echo
     echo "Known Issues"

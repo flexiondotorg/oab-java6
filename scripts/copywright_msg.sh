@@ -1,10 +1,8 @@
+NAME="oab-java.sh"
 VER="0.2.0"
 
-MODE=${1}
-echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
+echo "$NAME v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
 echo "Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"
-echo
-echo "Copyright (c) `date +%Y` Tamer Saadeh <tamersaadeh@gmail.com>. MIT License"
 echo
 echo "By running this script to download Java you acknowledge that you have"
 echo "read and accepted the terms of the Oracle end user license agreement."
@@ -16,11 +14,9 @@ echo "the following from another shell:"
 echo
 
 # Adjust the output if we are building the docs.
-if [ "${MODE}" != "build_docs" ]; then
-    echo "  tail -f `pwd`/`basename ${0}`.log"
+if [ "$1" != "build_docs" ]; then
+    echo "  tail -f `pwd`/$NAME.log"
 else
-    echo "  tail -f ./`basename ${0}`.log"
+    echo "  tail -f ./$NAME.log"
 fi
 echo
-
-unset $MODE

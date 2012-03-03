@@ -2,7 +2,7 @@ source /tmp/common.sh
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override
 echo "#Package priority section" >> /tmp/override
-for FILE in $1/deb/*.deb
+for FILE in $2/deb/*.deb
 do
     DEB_PACKAGE=`dpkg --info ${FILE} | grep Package | cut -d':' -f2`
     DEB_SECTION=`dpkg --info ${FILE} | grep Section | cut -d'/' -f2`
@@ -10,19 +10,19 @@ do
 done
 
 # Remove the duplicates from the overide file
-uniq /tmp/override > $1/deb/override
+uniq /tmp/override > $2/deb/override
 
 # Create the 'apt' Packages.gz
 ncecho " [x] Creating Packages.gz file "
-cd $1/deb
+cd $2/deb
 dpkg-scanpackages . override 2>/dev/null > Packages
 cat Packages | gzip -c9 > Packages.gz
-rm $1/deb/override 2>/dev/null
+rm $2/deb/override 2>/dev/null
 cecho success
 
 # Create a 'Release' file
 ncecho " [x] Creating Release file "
-cd $1/deb
+cd $2/deb
 echo "Origin: `hostname --fqdn`"                 >  Release
 echo "Label: Java"                                >> Release
 echo "Suite: ${LSB_CODE}"                       >> Release
