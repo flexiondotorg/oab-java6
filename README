@@ -1,8 +1,10 @@
-This is a fork of https://github.com/flexiondotorg/oab-java6,
-but to create an 'apt' repository for both Sun Java 6 and Oracle Java 7.
+This is a fork of https://github.com/flexiondotorg/oab-java6
+that creates an 'apt' repository for both Sun Java 6 and Oracle Java 7.
 
 oab-java.sh v0.2.0 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) 2012 Flexion.Org, http://flexion.org. MIT License
+
+Copyright (c) 2012 Tamer Saadeh <tamersaadeh@gmail.com>. MIT License
 
 By running this script to download Java you acknowledge that you have
 read and accepted the terms of the Oracle end user license agreement.
@@ -93,10 +95,11 @@ Because, O.A.B! ;-)
 History
 =======
 
-j7-0.1.8
+0.2.0
 -----
  
-  * Builds Java 7 packages
+  * Builds Java 7 packages as well
+  * Huge code refactor to make it much easier to maintain
 
 0.1.8
 -----
@@ -189,6 +192,8 @@ License
 =======
 
 Copyright (c) 2012 Martin Wimpress, http://flexion.org/
+
+Copyright (c) 2012 Tamer Saadeh <tamersaadeh@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
