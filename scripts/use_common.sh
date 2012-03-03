@@ -6,6 +6,7 @@ if [ -r /tmp/common.sh ]; then
         rm /tmp/common.sh 2>/dev/null
         exit 1
     else
+        source /tmp/common.sh
         update_thyself        
     fi
 else
