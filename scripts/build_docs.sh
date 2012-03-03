@@ -9,10 +9,10 @@ function build_docs() {
     fork_msg build_docs > ../README
 
     # Add copywright
-    sh copyright_msg.sh build_docs >> ../README
+    bash copyright_msg.sh build_docs >> ../README
 
     # Add the usage instructions
-    sh usage.sh build_docs >> ../README
+    bash usage.sh build_docs >> ../README
 
     # Add the CHANGES
     if [ -e ../CHANGES ]; then

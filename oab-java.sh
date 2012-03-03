@@ -43,9 +43,9 @@ BUILD_CLEAN=0
 JAVA6="sun-java6"
 JAVA7="oracle-java7"
 
-sh $SCRIPTS/copywright_msg.sh
+bash $SCRIPTS/copywright_msg.sh
 
-sh $SCRIPTS/use_common.sh
+bash $SCRIPTS/use_common.sh
 source /tmp/common.sh
 
 # Override log
@@ -74,23 +74,23 @@ do
 done
 shift "$(( $OPTIND - 1 ))"
 
-sh $SCRIPTS/remove_ppa.sh "$log"
+bash $SCRIPTS/remove_ppa.sh "$log"
 
-sh $SCRIPTS/install_build_deps.sh "$log"
+bash $SCRIPTS/install_build_deps.sh "$log"
 
-sh $SCRIPTS/build_scripts.sh "$BASE" "$log"
+bash $SCRIPTS/build_scripts.sh "$BASE" "$log"
 
 # for sun-java6
-sh $SCRIPTS/build_scripts.sh "$BASE" "$log" "$JAVA6"
-sh $SCRIPTS/get_java.sh "$BASE" "$log" "$JAVA6" "$BUILD_CLEAN"
+bash $SCRIPTS/build_scripts.sh "$BASE" "$log" "$JAVA6"
+bash $SCRIPTS/get_java.sh "$BASE" "$log" "$JAVA6" "$BUILD_CLEAN"
 
 # for oracle-java7
-sh $SCRIPTS/build_scripts.sh "$BASE" "$log" "$JAVA7"
-sh $SCRIPTS/get_java.sh "$BASE" "$log" "$JAVA7" "$BUILD_CLEAN"
+bash $SCRIPTS/build_scripts.sh "$BASE" "$log" "$JAVA7"
+bash $SCRIPTS/get_java.sh "$BASE" "$log" "$JAVA7" "$BUILD_CLEAN"
 
-sh $SCRIPTS/create_repository.sh "$BASE" "$log"
+bash $SCRIPTS/create_repository.sh "$BASE" "$log"
 
-sh $SCRIPTS/sign_packages.sh "$BASE" "$log"
+bash $SCRIPTS/sign_packages.sh "$BASE" "$log"
 
 # Update apt cache
 echo "deb file://$BASE/deb /" > /etc/apt/sources.list.d/oab.list

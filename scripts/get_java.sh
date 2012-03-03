@@ -1,3 +1,4 @@
+source /tmp/common.sh
 # Cet the current Debian package version and package urgency
 DEB_VERSION=`head -n1 $1/src/$3/debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
 DEB_URGENCY=`head -n1 $1/src/$3/debian/changelog | cut -d'=' -f2`
@@ -11,7 +12,6 @@ ncecho " [x] Getting Java SE download page"
 wget "http://www.oracle.com/technetwork/java/javase/downloads/index.html" -O /tmp/oab-index.html >> "$2" 2>&1 &
 pid=$!;progress $pid
 
-source /tmp/common.sh
 # See if the Java version is on the download frontpage, otherwise look for it in
 # the previous releases page.
 DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" /tmp/oab-index.html | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`
@@ -50,4 +50,4 @@ done
 rm -rf /tmp/oab-index.html
 rm -rf /tmp/oab-download.html 
 
-sh build_packages "${DEB_VERSION}~${LSB_CODE}1" "${DEB_URGENCY}" "$3" "$2" "$4"
+bash build_packages "${DEB_VERSION}~${LSB_CODE}1" "${DEB_URGENCY}" "$3" "$2" "$4"

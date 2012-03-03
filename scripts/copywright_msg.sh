@@ -1,6 +1,6 @@
 VER="0.2.0"
 
-local MODE=${1}
+MODE=${1}
 echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
 echo "Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"
 echo
@@ -22,3 +22,5 @@ else
     echo "  tail -f ./`basename ${0}`.log"
 fi
 echo
+
+unset $MODE
