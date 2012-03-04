@@ -1,5 +1,5 @@
 NAME="oab-java.sh"
-VER="0.2.0"
+VER="0.2.1"
 
 echo "$NAME v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
 echo "Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"

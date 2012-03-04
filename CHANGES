@@ -2,6 +2,12 @@
 History
 =======
 
+0.2.1
+-----
+ 
+  * Updated script to work with Ubuntu Precise
+    (see https://github.com/rraptorr/sun-java6/issues/5#issuecomment-4312028)
+
 0.2.0
 -----
  

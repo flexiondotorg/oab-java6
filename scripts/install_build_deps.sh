@@ -6,6 +6,10 @@ if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
 fi
 
+if [ "${LSB_CODE}" == "precise" ]; then
+    BUILD_DEPS="${BUILD_DEPS}  libxtst6:i386"
+fi
+
 # Install the Java build requirements
 ncecho " [x] Installing Java build requirements "
 apt-get install -y --no-install-recommends ${BUILD_DEPS} >> "$LOG" 2>&1 &
