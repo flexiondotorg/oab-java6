@@ -6,6 +6,8 @@ if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
 fi
 
+LSB_CODE=`lsb_release -c | cut -f2 | sed 's/ //g'`
+
 if [ "${LSB_CODE}" == "precise" ]; then
     BUILD_DEPS="${BUILD_DEPS}  libxtst6:i386"
 fi
