@@ -86,11 +86,11 @@ shift "$(( $OPTIND - 1 ))"
 
 # for sun-java6
 ./$SCRIPTS/get_build_scripts.sh "$JAVA6"
-./$SCRIPTS/get_java.sh "$JAVA6"
+./$SCRIPTS/get_java6.sh
 
 # for oracle-java7
 ./$SCRIPTS/get_build_scripts.sh "$JAVA7"
-./$SCRIPTS/get_java.sh "$JAVA7"
+./$SCRIPTS/get_java7.sh
 
 ./$SCRIPTS/create_repository.sh
 

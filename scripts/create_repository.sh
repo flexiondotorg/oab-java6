@@ -1,4 +1,8 @@
 source /tmp/common.sh
+lsb
+
+##cd "$BASE/src/$1"
+
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override
 echo "#Package priority section" >> /tmp/override
@@ -14,8 +18,8 @@ uniq /tmp/override > "$BASE/deb/override"
 
 # Create the 'apt' Packages.gz
 ncecho " [x] Creating $BASE/deb/Packages.gz file "
-dpkg-scanpackages . override 2>/dev/null > "$BASE/deb/Packages.gz"
-cat Packages | gzip -c9 > "$BASE/deb/Packages.gz"
+dpkg-scanpackages "$BASE/deb/" "$BASE/deb/override" 2>/dev/null > "$BASE/deb/Packages"
+cat "$BASE/deb/Packages" | gzip -c9 > "$BASE/deb/Packages.gz"
 rm "$BASE/deb/override" 2>/dev/null
 cecho success
 
