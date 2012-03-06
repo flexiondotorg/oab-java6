@@ -25,18 +25,16 @@ cecho success
 
 # Create a '"$BASE/deb/Release"' file
 ncecho " [x] Creating $BASE/deb/Release file "
-echo "Origin: `hostname --fqdn`"                 >  "$BASE/deb/Release"
-echo "Label: Java"                                >> "$BASE/deb/Release"
-echo "Suite: ${LSB_CODE}"                       >> "$BASE/deb/Release"
-echo "Version: ${LSB_REL}"                      >> "$BASE/deb/Release"
-echo "Codename: ${LSB_CODE}"                    >> "$BASE/deb/Release"
-echo "Date: `date -R`"                           >> "$BASE/deb/Release"
-echo "Architectures: ${LSB_ARCH}"               >> "$BASE/deb/Release"
-echo "Components: restricted"                     >> "$BASE/deb/Release"
-echo "Description: Local Java Repository"         >> "$BASE/deb/Release"
-echo "MD5Sum:"                                    >> "$BASE/deb/Release"
-for PACKAGE in "$BASE/deb/Packages"*
-do
-    printf ' '`md5sum ${PACKAGE} | cut -d' ' -f1`" %16d ${PACKAGE}\n" `wc --bytes ${PACKAGE} | cut -d' ' -f1` >> "$BASE/deb/Release"
-done
+rm -f $BASE/deb/Release
+echo "APT::FTPArchive::Release {"				> "$BASE/apt.conf"
+echo "Origin \"`hostname --fqdn`\";"			>> "$BASE/apt.conf"
+echo "Label \"Java\";"							>> "$BASE/apt.conf"
+echo "Suite \"${LSB_CODE}\";"                   >> "$BASE/apt.conf"
+echo "Codename \"${LSB_CODE}\";"                >> "$BASE/apt.conf"
+echo "Architectures \"${LSB_ARCH}\";"           >> "$BASE/apt.conf"
+echo "Components \"restricted\";"               >> "$BASE/apt.conf"
+echo "Description \"Local Java Repository\";"   >> "$BASE/apt.conf"
+echo "}"										>> "$BASE/apt.conf"
+apt-ftparchive -c "$BASE/apt.conf" release "$BASE/deb/" > "$BASE/Release"
+mv "$BASE/Release" "$BASE/deb/Release"
 cecho success
