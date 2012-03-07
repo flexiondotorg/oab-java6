@@ -8,7 +8,7 @@ History
     (see https://github.com/rraptorr/sun-java6/issues/5#issuecomment-4312028)
   * Refactored documentation and added support for GitHub Markdown
   * Fixed an issue that caused the Release file to be malformed
-    (thanks to Jeff Cooper <repoocaj@gmail.com> commit: 30711df3b7efc16bd8927988d071c83bbdb174cd)
+    (thanks to Jeff Cooper <repoocaj@gmail.com>, commit: 30711df3b7efc16bd8927988d071c83bbdb174cd )
 
 0.2.0
 -----

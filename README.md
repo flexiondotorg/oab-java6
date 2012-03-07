@@ -35,17 +35,17 @@ Like this.
 ```cd oab-java/```
 ```sudo ./oab-java.sh```
 
-How it works
+How it works?
 ===
 This script is merely a wrapper for the most excllent Debian packaging
 scripts prepared by Janusz Dziemidowicz.
 
-[rraptorr/sun-java6](https://github.com/rraptorr/sun-java6)
-[rraptorr/oracle-java7](https://github.com/rraptorr/oracle-java7)
+  1. [rraptorr/sun-java6](https://github.com/rraptorr/sun-java6)
+  2. [rraptorr/oracle-java7](https://github.com/rraptorr/oracle-java7)
 
 This script is Based on the scirpt prepared by Martin Wimpress.
 
-[flexiondotorg/oab-java6](https://github.com/flexiondotorg/oab-java6)
+  1. [flexiondotorg/oab-java6](https://github.com/flexiondotorg/oab-java6)
 
 The basic execution steps are:
 ===
@@ -53,7 +53,7 @@ The basic execution steps are:
   * Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'.
   * Install the tools required to build the Java packages.
   * Create download cache in `/var/local/oab/pkg`.
-  * Download the i586 and x64 Java install binaries from Oracle. Yes, **both are required**.
+  * Download the i586 and x64 Java install binaries from Oracle. Yes, **both are required**. (total 4 files)
   * Clone the build scripts from [rraptorr/sun-java6](https://github.com/rraptorr/sun-java6) and [rraptorr/oracle-java7](https://github.com/rraptorr/oracle-java7).
   * Build the Java packages applicable to your system.
   * Create local `apt` repository in `/var/local/oab/deb` for the newly built Java Packages.
@@ -64,10 +64,10 @@ What gets installed?
 ===
 **Nothing!**
 
-This script will no longer try and directly install or upgrade any Java packages, instead a local 'apt' repository is created that hosts locally built Java packages applicable to your system. It is up to you to installor upgrade the Java packages you require using `apt-get`, `aptitude` , or `synaptic`, etc. For example, once this script has been run you can simply install the JRE by executing the following from a shell.
+This script will no longer try and directly install or upgrade any Java packages, instead a local 'apt' repository is created that hosts locally built Java packages applicable to your system. It is up to you to install or upgrade the Java packages you require using `apt-get`, `aptitude` , or `synaptic`, etc. For example, once this script has been run you can simply install the JRE by executing the following from a shell.
 
 ```sudo apt-get install sun-java6-jre```
-or:
+or
 ```sudo apt-get install oracle-java7-jre```
 
 Or if you already have the "official" Ubuntu packages installed then you can upgrade by executing the folowing from a shell.
@@ -81,7 +81,7 @@ Known Issues
 
   * The Oracle download servers can be horribly slow. My script caches the downloads so you only need download each file once.
 
-What is `oab`?
+What is 'oab'?
 ===
 *Because, O.A.B! ;-)*
 
@@ -95,7 +95,7 @@ History
     (see https://github.com/rraptorr/sun-java6/issues/5#issuecomment-4312028)
   * Refactored documentation and added support for GitHub Markdown
   * Fixed an issue that caused the Release file to be malformed
-    (thanks to Jeff Cooper <repoocaj@gmail.com> commit: 30711df3b7efc16bd8927988d071c83bbdb174cd)
+    (thanks to Jeff Cooper <repoocaj@gmail.com>, commit: 30711df3b7efc16bd8927988d071c83bbdb174cd )
 
 0.2.0
 -----
