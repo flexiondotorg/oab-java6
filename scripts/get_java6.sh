@@ -15,7 +15,7 @@ pid=$!;progress $pid
 
 # See if the Java version is on the download frontpage, otherwise look for it in
 # the previous releases page.
-DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" "/tmp/oab-index.html" | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`
+DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" "/tmp/oab-index.html" | cut -d'"' -f4`
 if [ -n "${DOWNLOAD_INDEX}" ]; then
     ncecho " [x] $JAVA6: Getting current release download page "
     wget "http://www.oracle.com/${DOWNLOAD_INDEX}" -O "/tmp/oab-download-$JAVA6.html" >> "$LOG" 2>&1 &
