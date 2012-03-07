@@ -37,6 +37,7 @@
 
 # Variables
 export SCRIPTS="`pwd`/scripts"
+export DOCS="$SCRIPTS/docs"
 
 export LOG="`pwd`/build.log"
 export BUILD_KEY=""
@@ -45,13 +46,7 @@ export BASE="/var/local/oab"
 export JAVA6="sun-java6"
 export JAVA7="oracle-java7"
 
-./$SCRIPTS/copywright_msg.sh
-
-source ./$SCRIPTS/common.sh
-
-# Check we are running on a supported system in the correct way.
-check_root
-check_sudo
+"$DOCS/copywright.sh"
 
 # Parse the options
 OPTSTRING=bchk:
@@ -59,40 +54,46 @@ while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
         b|-build-docs)
-          ./$SCRIPTS/build_docs.sh
+          "$DOCS/build.sh" "`pwd`"
           exit 0
         ;;
         c|-clean) BUILD_CLEAN=1;;
         h|-help)
-          ./$SCRIPTS/usage.sh
+          "$DOCS/usage.sh"
           exit 0
         ;;
         k) BUILD_KEY=${OPTARG};;
         *)
-          ./$SCRIPTS/usage.sh
+          "$DOCS/usage.sh"
           exit 1
         ;;
     esac
 done
 shift "$(( $OPTIND - 1 ))"
 
-./$SCRIPTS/remove_ppa.sh
+source "$SCRIPTS/common.sh"
 
-./$SCRIPTS/install_build_deps.sh
+# Check we are running on a supported system in the correct way.
+check_root
+check_sudo
 
-./$SCRIPTS/create_build_dirs.sh
+"$SCRIPTS/remove_ppa.sh"
+
+"$SCRIPTS/install_build_deps.sh"
+
+"$SCRIPTS/create_build_dirs.sh"
 
 # for sun-java6
-./$SCRIPTS/get_build_scripts.sh "$JAVA6"
-./$SCRIPTS/get_java6.sh
+"$SCRIPTS/get_build_scripts.sh" "$JAVA6"
+"$SCRIPTS/get_java6.sh"
 
 # for oracle-java7
-./$SCRIPTS/get_build_scripts.sh "$JAVA7"
-./$SCRIPTS/get_java7.sh
+"$SCRIPTS/get_build_scripts.sh" "$JAVA7"
+"$SCRIPTS/get_java7.sh"
 
-./$SCRIPTS/create_repository.sh
+"$SCRIPTS/create_repository.sh"
 
-./$SCRIPTS/sign_packages.sh
+"$SCRIPTS/sign_packages.sh"
 
 # Update apt cache
 echo "deb file://$BASE/deb /" > /etc/apt/sources.list.d/oab.list
@@ -106,6 +107,7 @@ rm -rf /tmp/oab-download.html
 # unset global variables
 echo "unsetting variables..." >> $LOG
 unset SCRIPTS
+unset DOCS
 unset BASE
 unset LOG
 unset BUILD_KEY

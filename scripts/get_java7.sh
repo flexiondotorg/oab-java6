@@ -42,4 +42,4 @@ do
     pid=$!;progress_loop $pid    
 done
 
-"./$SCRIPTS/build_packages.sh" "$JAVA7"
+"$SCRIPTS/build_packages.sh" "$JAVA7"

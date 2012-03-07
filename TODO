@@ -6,4 +6,4 @@ Todo
   pre-existing signing key.
 * Add support to build for a given Ubuntu distribution.
 * Add support to optionally build using 'pbuilder'.
-* New Issue: Does not exit after an error occurs.
+* Fully exit after an error occurs.

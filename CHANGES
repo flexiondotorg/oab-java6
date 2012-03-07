@@ -1,4 +1,3 @@
-
 History
 =======
 
@@ -7,6 +6,9 @@ History
  
   * Updated script to work with Ubuntu Precise
     (see https://github.com/rraptorr/sun-java6/issues/5#issuecomment-4312028)
+  * Refactored documentation and added support for GitHub Markdown
+  * Fixed an issue that caused the Release file to be malformed
+    (thanks to Jeff Cooper <repoocaj@gmail.com> commit: 30711df3b7efc16bd8927988d071c83bbdb174cd)
 
 0.2.0
 -----
@@ -38,7 +40,7 @@ History
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/7
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/8
      - NOTE! Requires that the upstream script tags Java6u31 as stable, see the 
-       following ticket https://github.com/rraptorr/sun-java6/issues/3     
+       following ticket https://github.com/rraptorr/sun-java6/issues/3
   * Prevent script from running under Ubuntu Precise as it is currently 
     known to be unsupported.
      - Closes : https://github.com/flexiondotorg/oab-java6/issues/4
