@@ -29,7 +29,20 @@ cecho success
 
 # Create the 'apt' Packages.gz file
 ncecho " [x] Creating $BASE/deb/Packages.gz file "
-apt-ftparchive -c="$BASE/apt.conf" packages "$BASE/deb/" "$BASE/deb/override" 2>/dev/null > "$BASE/deb/Packages"
+
+# This prevents the Filename field from containing a path other than './'.
+# Having a filename with a path was generating the following error
+# when running 'apt-get install sun-java6-jre':
+#
+# Failed to fetch file:///var/local/oab/deb//var/local/oab/deb//sun-java6-jre_6.31-1~precise1_all.deb  File not found
+#
+# The path was appearing twice and eliminating it from the filename field
+# addressed the issue and allowed a successful install.
+
+pushd "$BASE/deb"
+apt-ftparchive -c="$BASE/apt.conf" packages . "$BASE/deb/override" 2>/dev/null > "$BASE/deb/Packages"
+popd
+
 cat "$BASE/deb/Packages" | gzip -c9 > "$BASE/deb/Packages.gz"
 rm "$BASE/deb/override" 2>/dev/null
 cecho success
@@ -37,11 +50,4 @@ cecho success
 # Create the 'apt' Release file
 ncecho " [x] Creating $BASE/deb/Release file "
 apt-ftparchive -c="$BASE/apt.conf" release "$BASE/deb/"	> "$BASE/deb/Release"
-cecho success
-
-# Moving .deb file to the correct position
-# This is a workaround until I figure out how to fix this bug
-ncecho " [x] Moving .deb file "
-mkdir -pv "$BASE/deb$BASE/deb/" >> "$LOG"
-mv -v "$BASE/deb/"*".deb" "$BASE/deb$BASE/deb/" >>"$LOG"
 cecho success
