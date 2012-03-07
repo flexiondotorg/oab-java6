@@ -1,4 +1,5 @@
-source /tmp/common.sh
+source "$SCRIPTS/common.sh"
+
 # Skip anything todo with automated key creation if this script is running in
 # an OpenVZ container.
 if [[ `imvirt` != "OpenVZ" ]]; then

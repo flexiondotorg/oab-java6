@@ -9,10 +9,10 @@ function build_docs() {
     fork_msg build_docs > README
 
     # Add copywright
-    ./scripts/copywright_msg.sh build_docs >> README
+    "./$SCRIPTS/copywright_msg.sh" build_docs >> README
 
     # Add the usage instructions
-    ./scripts/usage.sh build_docs >> README
+    "./$SCRIPTS/usage.sh build_docs" >> README
 
     # Add the CHANGES
     if [ -e CHANGES ]; then
@@ -34,4 +34,3 @@ function build_docs() {
 }
 
 build_docs
-

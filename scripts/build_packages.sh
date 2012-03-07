@@ -1,6 +1,4 @@
-#function build(){
-
-source /tmp/common.sh
+source "$SCRIPTS/common.sh"
 lsb
 
 # Determine the new version
@@ -40,7 +38,3 @@ if [ -e "$BASE/src/$1_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
 else    
     error_msg "ERROR! Packages failed to build. Please raise an issue with the upstream script developer - https://github.com/rraptorr/$1/issues"
 fi
-
-#}
-
-#build "$1"

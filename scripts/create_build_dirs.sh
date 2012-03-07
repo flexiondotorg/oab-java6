@@ -1,4 +1,5 @@
-source /tmp/common.sh
+source "$SCRIPTS/common.sh"
+
 # Make sure the required dirs exist.
 ncecho " [x] Making build directories "
 mkdir -p "$BASE/deb" >> "$LOG" 2>&1 &

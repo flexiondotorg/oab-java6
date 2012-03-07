@@ -1,7 +1,5 @@
-source /tmp/common.sh
+source "$SCRIPTS/common.sh"
 lsb
-
-##cd "$BASE/src/$1"
 
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override
@@ -23,18 +21,18 @@ cat "$BASE/deb/Packages" | gzip -c9 > "$BASE/deb/Packages.gz"
 rm "$BASE/deb/override" 2>/dev/null
 cecho success
 
-# Create a '"$BASE/deb/Release"' file
+# Create a "$BASE/apt.conf" file
 ncecho " [x] Creating $BASE/deb/Release file "
-rm -f $BASE/deb/Release
-echo "APT::FTPArchive::Release {"				> "$BASE/apt.conf"
-echo "Origin \"`hostname --fqdn`\";"			>> "$BASE/apt.conf"
-echo "Label \"Java\";"							>> "$BASE/apt.conf"
+rm -f "$BASE/deb/Release" 2>/dev/null
+echo "APT::FTPArchive::Release {"		> "$BASE/apt.conf"
+echo "Origin \"`hostname --fqdn`\";"		>> "$BASE/apt.conf"
+echo "Label \"Java\";"				>> "$BASE/apt.conf"
 echo "Suite \"${LSB_CODE}\";"                   >> "$BASE/apt.conf"
 echo "Codename \"${LSB_CODE}\";"                >> "$BASE/apt.conf"
 echo "Architectures \"${LSB_ARCH}\";"           >> "$BASE/apt.conf"
 echo "Components \"restricted\";"               >> "$BASE/apt.conf"
 echo "Description \"Local Java Repository\";"   >> "$BASE/apt.conf"
-echo "}"										>> "$BASE/apt.conf"
-apt-ftparchive -c "$BASE/apt.conf" release "$BASE/deb/" > "$BASE/Release"
-mv "$BASE/Release" "$BASE/deb/Release"
+echo "}"					>> "$BASE/apt.conf"
+apt-ftparchive -c "$BASE/apt.conf" release "$BASE/deb/"	> "$BASE/deb/Release"
+
 cecho success

@@ -36,24 +36,22 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-export SCRIPTS="scripts"
-export BASE="/var/local/oab"
-export LOG="build.log"
+export SCRIPTS="`pwd`/scripts"
+
+export LOG="`pwd`/build.log"
 export BUILD_KEY=""
 export BUILD_CLEAN=0
-
+export BASE="/var/local/oab"
 export JAVA6="sun-java6"
 export JAVA7="oracle-java7"
 
 ./$SCRIPTS/copywright_msg.sh
 
-./$SCRIPTS/use_common.sh
-source /tmp/common.sh
+source ./$SCRIPTS/common.sh
 
 # Check we are running on a supported system in the correct way.
 check_root
 check_sudo
-check_ubuntu "all"
 
 # Parse the options
 OPTSTRING=bchk:

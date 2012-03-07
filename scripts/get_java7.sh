@@ -1,4 +1,5 @@
-source /tmp/common.sh
+source "$SCRIPTS/common.sh"
+
 # Get the current Debian package version and package urgency
 export DEB_VERSION=`head -n1 "$BASE/src/$JAVA7/debian/changelog" | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
 export DEB_URGENCY=`head -n1 "$BASE/src/$JAVA7/debian/changelog" | cut -d'=' -f2`
@@ -21,13 +22,8 @@ if [ -n "${DOWNLOAD_INDEX}" ]; then
     pid=$!;progress $pid
 else
     ncecho " [x] $JAVA7: Failed to get current release page, getting previous releases download page "
-    if [ "$JAVA7" == "sun-java6" ]; then
-        wget "http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html" -O "/tmp/oab-download-$JAVA7.html" >> "$LOG" 2>&1 &
-        pid=$!;progress $pid
-    else
-        wget "http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html" -O "/tmp/oab-download-$JAVA7.html" >> "$LOG" 2>&1 &
-        pid=$!;progress $pid
-    fi
+    wget "http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html" -O "/tmp/oab-download-$JAVA7.html" >> "$LOG" 2>&1 &
+    pid=$!;progress $pid
 fi
 
 # Download the Oracle install packages.
@@ -46,4 +42,4 @@ do
     pid=$!;progress_loop $pid    
 done
 
-./scripts/build_packages.sh "$JAVA7"
+"./$SCRIPTS/build_packages.sh" "$JAVA7"
