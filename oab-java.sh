@@ -100,12 +100,12 @@ echo "deb file://$BASE/deb /" > /etc/apt/sources.list.d/oab.list
 apt_update
 
 # remove download index and download release page
-echo "removing extra files..." >> $LOG
+echo "removing extra files..." >> "$LOG"
 rm -rf /tmp/oab-index.html
 rm -rf /tmp/oab-download.html
 
 # unset global variables
-echo "unsetting variables..." >> $LOG
+echo "unsetting variables..." >> "$LOG"
 unset SCRIPTS
 unset DOCS
 unset BASE

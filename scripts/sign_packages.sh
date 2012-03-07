@@ -7,13 +7,13 @@ if [[ `imvirt` != "OpenVZ" ]]; then
     if [ ! -e "$BASE/gpg/pubring.gpg" ] && [ ! -e "$BASE/gpg/secring.gpg" ] && [ ! -e "$BASE/gpg/trustdb.gpg" ]; then
 
         ncecho " [x] Create GnuPG configuration "
-        echo "Key-Type: DSA" > "$BASE/gpg-key.conf"
-        echo "Key-Length: 1024" >> "$BASE/gpg-key.conf"
-        echo "Subkey-Type: ELG-E" >> "$BASE/gpg-key.conf"
-        echo "Subkey-Length: 2048" >> "$BASE/gpg-key.conf"
-        echo "Name-Real: `hostname --fqdn`" >> "$BASE/gpg-key.conf"
-        echo "Name-Email: root@`hostname --fqdn`" >> "$BASE/gpg-key.conf"
-        echo "Expire-Date: 0" >> "$BASE/gpg-key.conf"
+        echo "Key-Type: DSA"				> "$BASE/gpg-key.conf"
+        echo "Key-Length: 1024"				>> "$BASE/gpg-key.conf"
+        echo "Subkey-Type: ELG-E"			>> "$BASE/gpg-key.conf"
+        echo "Subkey-Length: 2048"			>> "$BASE/gpg-key.conf"
+        echo "Name-Real: `hostname --fqdn`"		>> "$BASE/gpg-key.conf"
+        echo "Name-Email: root@`hostname --fqdn`"	>> "$BASE/gpg-key.conf"
+        echo "Expire-Date: 0"				>> "$BASE/gpg-key.conf"
         cecho success
 
         # Stop the system 'rngd'.
