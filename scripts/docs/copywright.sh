@@ -11,7 +11,7 @@ VER="0.2.1"
 
 echo "\`$NAME\` v${VER} - Create a local `partial_code "apt"` repository for Ubuntu Java packages."
 echo
-echo "Copyright (c) `date +%Y` Tamer Saadeh <tamersaadeh@gmail.com>. MIT License"
+echo "Copyright (c) `date +%Y` Tamer Saadeh, <tamersaadeh@gmail.com>. MIT License"
 echo
 echo "Original Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"
 echo
