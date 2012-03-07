@@ -38,10 +38,12 @@ ncecho " [x] Creating $BASE/deb/Packages.gz file "
 #
 # The path was appearing twice and eliminating it from the filename field
 # addressed the issue and allowed a successful install.
+#
+# See issue https://github.com/tamersaadeh/oab-java/issues/1
 
-pushd "$BASE/deb"
+pushd "$BASE/deb" >> "$LOG"
 apt-ftparchive -c="$BASE/apt.conf" packages . "$BASE/deb/override" 2>/dev/null > "$BASE/deb/Packages"
-popd
+popd >> "$LOG"
 
 cat "$BASE/deb/Packages" | gzip -c9 > "$BASE/deb/Packages.gz"
 rm "$BASE/deb/override" 2>/dev/null

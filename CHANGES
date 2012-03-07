@@ -1,6 +1,13 @@
 History
 =======
 
+0.2.2
+-----
+ 
+  * Fixed an issue that caused the path was appearing twice and eliminating it from the filename field.
+      - Closes : https://github.com/tamersaadeh/oab-java/issues/1
+        Thanks to Jeff Cooper <repoocaj@gmail.com> for fixing this.
+
 0.2.1
 -----
  
@@ -13,6 +20,7 @@ History
 0.2.0
 -----
  
+  * Initial fork from the [original repository](https://github.com/flexiondotorg/oab-java6)
   * Builds Java 7 packages as well
   * Huge code refactor to make it much easier to maintain
 
