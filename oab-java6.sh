@@ -64,6 +64,7 @@ function usage() {
     echo "  sudo ${0}"
     echo
     echo "Optional parameters"
+    echo "  -s : Skip building if the package exists"
     echo "  -c : Remove pre-existing packages from '/var/local/oab/deb'"
     echo "  -h : This help"
     echo
@@ -196,7 +197,7 @@ BUILD_KEY=""
 BUILD_CLEAN=0
 
 # Parse the options
-OPTSTRING=bchk:
+OPTSTRING=bchk:s
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
@@ -204,6 +205,7 @@ do
         c) BUILD_CLEAN=1;;
         h) usage;;
         k) BUILD_KEY=${OPTARG};;
+        s) SKIP_REBUILD=1;;
         *) usage;;
     esac
 done
@@ -302,6 +304,11 @@ done
 
 # Determine the new version
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
+
+if [ -n "$SKIP_REBUILD" -a -r "/var/local/oab/deb/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
+  echo " [x] Package exists, skipping build "
+  exit
+fi
 
 # Genereate a build message
 BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/sun-java6"
