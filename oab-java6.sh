@@ -249,7 +249,7 @@ pid=$!;progress $pid
 # Clone the code
 ncecho " [x] Cloning https://github.com/rraptorr/sun-java6 "
 cd /var/local/oab/ >> "$log" 2>&1
-git clone https://github.com/rraptorr/sun-java6 src >> "$log" 2>&1 &
+git clone git://github.com/rraptorr/sun-java6.git src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Get the last commit tag.
