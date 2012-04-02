@@ -32,7 +32,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-VER="0.1.8"
+VER="0.1.9"
 
 function copyright_msg() {
     local MODE=${1}
@@ -187,10 +187,6 @@ fi
 check_root
 check_sudo
 check_ubuntu "all"
-
-if [ "${LSB_CODE}" == "precise" ]; then
-    error_msg "ERROR! Ubuntu Precise is not currently supported"
-fi
 
 BUILD_KEY=""
 BUILD_CLEAN=0
