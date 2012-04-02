@@ -6,11 +6,15 @@ History
 -----
     
 * Fixed download of the Oracle binary packages, which now requires cookies. Thanks to Martin Polden and Miah Johnson.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/18
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/18
+
 * Added an option (-s) to skip rebuilding if packages already exist, tanks to Derek Chen-Becker.
 * Added a comment to the apt source file, thanks to Eshwar Andhavarapu.
 * Added documentation for user running the script behind a proxy server, thanks to Olzhas.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/12
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/12
+
 * Should now build on Ubuntu 12.04 LTS, but untested.
 * Updated documentation which is now correctly formatted as reStructuredText.
 
@@ -19,26 +23,35 @@ History
  
 * Added dynamic determination of Java package URLs and sizes.
 * Added an option (``-c``) to optionally clean .deb package.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/10
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/10
 
 0.1.7
 -----
 
 * Fixed GPG key creation on VMware ESX Server.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/11
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/11
+
 * Fixed clone of the ``sun-java6`` repository for users behind restrictive firewalls, thanks to Thorsten Möllers.
 
 0.1.6
 -----
  
 * Fixed downloading of ``common.sh`` when ca-certificates is not installed.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/3
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/3
+
 * Updated to support Java6u31
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/7
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/8
- * NOTE! Requires that the upstream script tags Java6u31 as stable, see the following ticket https://github.com/rraptorr/sun-java6/issues/3     
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/7
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/8
+  * NOTE! Requires that the upstream script tags Java6u31 as stable, see the following ticket https://github.com/rraptorr/sun-java6/issues/3
+
 * Prevent script from running under Ubuntu Precise as it is currently known to be unsupported.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/4
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/4
+
 * Prevent automated key generation when running in an OpenVZ container because I'm too stupid to work out a proper solution
 
 0.1.5
@@ -59,9 +72,13 @@ History
 -----
 
 * Added checking out of tagged releases of the upstream scripts.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/1
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/1
+
 * Added loose distribution checking so it should now work with Linux Mint and other Ubuntu derivatives.
- * Closes : https://github.com/flexiondotorg/oab-java6/issues/2
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/2
+
 * Added the creation of a local ``apt`` repository
 * Removed installation of Java packages, you can now use ``apt-get`` yourself
 * Updated documentation
