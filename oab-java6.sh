@@ -1,31 +1,8 @@
 #!/usr/bin/env bash
+# Copyright (c) Martin Wimpress
+# http://flexion.org/
+# See the file "LICENSE" for the full license governing this code.
 
-# License
-#
-# Create a local 'apt' repository for Ubuntu Java packages.
-# Copyright (c) 2012 Flexion.Org, http://flexion.org/
-#
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation
-# files (the "Software"), to deal in the Software without
-# restriction, including without limitation the rights to use,
-# copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following
-# conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-# OTHER DEALINGS IN THE SOFTWARE.
-#
 # References
 #  - https://github.com/rraptorr/sun-java6
 #  - http://ubuntuforums.org/showthread.php?t=1090731
@@ -36,96 +13,118 @@ VER="0.1.9"
 
 function copyright_msg() {
     local MODE=${1}
+    if [ "${MODE}" == "build_docs" ]; then
+        echo "OAB-Java6"
+        echo "========="                
+    fi    
     echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
-    echo "Copyright (c) `date +%Y` Flexion.Org, http://flexion.org. MIT License"
+    echo "Copyright (c) Martin Wimpress, http://flexion.org. MIT License"
 	echo
 	echo "By running this script to download Java you acknowledge that you have"
 	echo "read and accepted the terms of the Oracle end user license agreement."
 	echo
-	echo "  - http://www.oracle.com/technetwork/java/javase/terms/license/"
+	echo "* http://www.oracle.com/technetwork/java/javase/terms/license/"
 	echo
-	echo "If you want to see what this is script is doing while it is running then execute"
-	echo "the following from another shell:"
-	echo
-
-    # Adjust the output if we are building the docs.
+    # Adjust the output if we are executing the script.
     if [ "${MODE}" != "build_docs" ]; then
+        echo "If you want to see what this is script is doing while it is running then execute"
+        echo "the following from another shell:"        
+        echo 
         echo "  tail -f `pwd`/`basename ${0}`.log"
-    else
-	    echo "  tail -f ./`basename ${0}`.log"
-    fi
-    echo
+        echo
+    #else
+	#    echo "  tail -f ./`basename ${0}`.log"
+    fi            
 }
 
 function usage() {
     local MODE=${1}
     echo "Usage"
+    echo "-----"
+    echo "::"
     echo
-    echo "  sudo ${0}"
+    echo "  sudo ${0}"    
     echo
     echo "Optional parameters"
-    echo "  -s : Skip building if the package exists"
-    echo "  -c : Remove pre-existing packages from '/var/local/oab/deb'"
-    echo "  -h : This help"
+    echo
+    echo "* ``-c`` : Remove pre-existing packages from ``/var/local/oab/deb``"
+    echo "* ``-s`` : Skip building if the packages already exist"
+    echo "* ``-h`` : This help"
     echo
     echo "How do I download and run this thing?"
-    echo "====================================="
+    echo "-------------------------------------"
     echo "Like this."
+    echo "::"
     echo
     echo "  cd ~/"
     echo "  wget https://raw.github.com/flexiondotorg/oab-java6/master/`basename ${0}` -O `basename ${0}`"
     echo "  chmod +x `basename ${0}`"
     echo "  sudo ./`basename ${0}`"
     echo
+    echo "If you are behind a proxy you may need to run using:"
+    echo "::"
+    echo
+    echo "  sudo -i ./`basename ${0}`"
+    echo	
+    # Adjust the output if we are building the docs.
+    if [ "${MODE}" == "build_docs" ]; then
+        echo "If you want to see what this is script is doing while it is running then execute"
+        echo "the following from another shell:"
+        echo "::"    
+        echo
+	    echo "  tail -f ./`basename ${0}`.log"
+    fi        
+    echo
     echo "How it works"
-    echo "============"
-    echo "This script is merely a wrapper for the most excllent Debian packaging"
+    echo "------------"
+    echo "This script is merely a wrapper for the most excellent Debian packaging"
     echo "scripts prepared by Janusz Dziemidowicz."
     echo
-    echo "  - https://github.com/rraptorr/sun-java6"
+    echo "* https://github.com/rraptorr/sun-java6"
     echo
     echo "The basic execution steps are:"
     echo
-    echo "  - Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
-    echo "  - Install the tools required to build the Java packages."
-    echo "  - Create download cache in '/var/local/oab/pkg'."
-    echo "  - Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
-    echo "  - Clone the build scripts from https://github.com/rraptorr/sun-java6"
-    echo "  - Build the Java packages applicable to your system."    
-    echo "  - Create local 'apt' repository in '/var/local/oab/deb' for the newly built Java Packages."
-    echo "  - Create a GnuPG signing key in '/var/local/oab/gpg' if none exists."
-    echo "  - Sign the local 'apt' repository using the local GnuPG signing key."
+    echo "* Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
+    echo "* Install the tools required to build the Java packages."
+    echo "* Create download cache in ``/var/local/oab/pkg``."
+    echo "* Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
+    echo "* Clone the build scripts from https://github.com/rraptorr/sun-java6"
+    echo "* Build the Java packages applicable to your system."    
+    echo "* Create local ``apt`` repository in ``/var/local/oab/deb`` for the newly built Java Packages."
+    echo "* Create a GnuPG signing key in ``/var/local/oab/gpg`` if none exists."
+    echo "* Sign the local ``apt`` repository using the local GnuPG signing key."
     echo
     echo "What gets installed?"
-    echo "===================="
+    echo "--------------------"
     echo "Nothing!"
     echo
     echo "This script will no longer try and directly install or upgrade any Java"
-    echo "packages, instead a local 'apt' repository is created that hosts locally"
+    echo "packages, instead a local ``apt`` repository is created that hosts locally"
     echo "built Java packages applicable to your system. It is up to you to install"
-    echo "or upgrade the Java packages you require using 'apt-get', 'aptitude' or"
-    echo "'synaptic', etc. For example, once this script has been run you can simply"
+    echo "or upgrade the Java packages you require using ``apt-get``, ``aptitude`` or"
+    echo "``synaptic``, etc. For example, once this script has been run you can simply"
     echo "install the JRE by executing the following from a shell."
+    echo "::"
     echo
     echo "  sudo apt-get install sun-java6-jre"
     echo
-    echo "Or if you already have the \"official\" Ubuntu packages installed then you"
-    echo "can upgrade by executing the folowing from a shell."
+    echo "Or if you already have the *\"official\"* Ubuntu packages installed then you"
+    echo "can upgrade by executing the following from a shell."
+    echo "::"
     echo
     echo "  sudo apt-get upgrade"
     echo
-    echo "The local 'apt' repository is just that, **local**. It is not accessible"
+    echo "The local ``apt`` repository is just that, **local**. It is not accessible"
     echo "remotely and `basename ${0}` will never enable that capability to ensure"
     echo "compliance with Oracle's asinine license requirements."
     echo
     echo "Known Issues"
-    echo "============"
+    echo "------------"
     echo
-    echo "  - The Oracle download servers can be horribly slow. My script caches the"
-    echo "    downloads so you only need download each file once."
+    echo "* The Oracle download servers can be horribly slow. My script caches the downloads so you only need download each file once."
     echo
     echo "What is 'oab'?"
-    echo "=============="
+    echo "--------------"
     echo "Because, O.A.B! ;-)"
     echo
 
@@ -136,24 +135,29 @@ function usage() {
 }
 
 function build_docs() {
-    copyright_msg build_docs > README
+    copyright_msg build_docs > README.rst
 
     # Add the usage instructions
-    usage build_docs >> README
+    usage build_docs >> README.rst
 
     # Add the CHANGES
     if [ -e CHANGES ]; then
-        cat CHANGES >> README
+        cat CHANGES >> README.rst
+    fi
+
+    # Add the AUTHORS
+    if [ -e AUTHORS ]; then
+        cat AUTHORS >> README.rst
     fi
 
     # Add the TODO
     if [ -e TODO ]; then
-        cat TODO >> README
+        cat TODO >> README.rst
     fi
 
     # Add the LICENSE
     if [ -e LICENSE ]; then
-        cat LICENSE >> README
+        cat LICENSE >> README.rst
     fi
 
     echo "Documentation built."
@@ -191,6 +195,7 @@ check_ubuntu "all"
 
 BUILD_KEY=""
 BUILD_CLEAN=0
+SKIP_REBUILD=0
 
 # Parse the options
 OPTSTRING=bchk:s
@@ -303,8 +308,9 @@ done
 # Determine the new version
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
-if [ -n "$SKIP_REBUILD" -a -r "/var/local/oab/deb/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
-  echo " [x] Package exists, skipping build "
+if [ -n "${SKIP_REBUILD}" -a -r "/var/local/oab/deb/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
+  echo " [!] Package exists, skipping build "
+  echo "All done!"  
   exit
 fi
 
@@ -438,7 +444,8 @@ if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg 
 fi
 
 # Update apt cache
-echo "deb file:///var/local/oab/deb / # Sun Java 6 by flexiondotorg" > /etc/apt/sources.list.d/oab.list
+echo "# Sun Java6 - https://github.com/flexiondotorg/oab-java6" >  /etc/apt/sources.list.d/oab.list
+echo "deb file:///var/local/oab/deb /"                          >> /etc/apt/sources.list.d/oab.list
 apt_update
 
 echo "All done!"
