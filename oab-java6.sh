@@ -433,7 +433,7 @@ if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg 
 fi
 
 # Update apt cache
-echo "deb file:///var/local/oab/deb /" > /etc/apt/sources.list.d/oab.list
+echo "deb file:///var/local/oab/deb / # Sun Java 6 by flexiondotorg" > /etc/apt/sources.list.d/oab.list
 apt_update
 
 echo "All done!"
