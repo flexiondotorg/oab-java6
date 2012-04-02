@@ -344,7 +344,7 @@ if [ -e /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ];
     mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
     pid=$!;progress $pid
 else    
-    error_msg "ERROR! Packages failed to build. Please raise an issue with the upstream script developer - https://github.com/rraptorr/sun-java6/issues"
+    error_msg "ERROR! Packages failed to build."    
 fi
 
 # Create a temporary 'override' file, which may contain duplicates
