@@ -64,6 +64,7 @@ function usage() {
     echo "  sudo ${0}"
     echo
     echo "Optional parameters"
+    echo "  -s : Skip building if the package exists"
     echo "  -c : Remove pre-existing packages from '/var/local/oab/deb'"
     echo "  -h : This help"
     echo
@@ -192,7 +193,7 @@ BUILD_KEY=""
 BUILD_CLEAN=0
 
 # Parse the options
-OPTSTRING=bchk:
+OPTSTRING=bchk:s
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
@@ -200,6 +201,7 @@ do
         c) BUILD_CLEAN=1;;
         h) usage;;
         k) BUILD_KEY=${OPTARG};;
+        s) SKIP_REBUILD=1;;
         *) usage;;
     esac
 done
@@ -286,9 +288,11 @@ do
     # Get the download URL and size
     DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
     DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
+    # Cookies required for download
+    COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
     
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
-    wget -c "${DOWNLOAD_URL}" -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
+    wget --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
@@ -298,6 +302,11 @@ done
 
 # Determine the new version
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
+
+if [ -n "$SKIP_REBUILD" -a -r "/var/local/oab/deb/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
+  echo " [x] Package exists, skipping build "
+  exit
+fi
 
 # Genereate a build message
 BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/sun-java6"
@@ -429,7 +438,7 @@ if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg 
 fi
 
 # Update apt cache
-echo "deb file:///var/local/oab/deb /" > /etc/apt/sources.list.d/oab.list
+echo "deb file:///var/local/oab/deb / # Sun Java 6 by flexiondotorg" > /etc/apt/sources.list.d/oab.list
 apt_update
 
 echo "All done!"
