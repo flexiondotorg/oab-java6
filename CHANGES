@@ -2,6 +2,13 @@
 History
 =======
 
+0.2.0
+-----
+
+* Corrected the skip rebuilding behaviour so it works as described.
+* Corrected the format of ``apt`` source file.
+* Documentation is now self referencing.
+
 0.1.9
 -----
     
@@ -10,7 +17,7 @@ History
   * Closes : https://github.com/flexiondotorg/oab-java6/issues/18
 
 * Added an option (-s) to skip rebuilding if packages already exist, tanks to Derek Chen-Becker.
-* Added a comment to the apt source file, thanks to Eshwar Andhavarapu.
+* Added a comment to the ``apt`` source file, thanks to Eshwar Andhavarapu.
 * Added documentation for user running the script behind a proxy server, thanks to Olzhas.
 
   * Closes : https://github.com/flexiondotorg/oab-java6/issues/12

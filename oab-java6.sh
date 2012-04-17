@@ -26,15 +26,14 @@ function copyright_msg() {
 	echo "* http://www.oracle.com/technetwork/java/javase/terms/license/"
 	echo
     # Adjust the output if we are executing the script.
+    # It doesn't make sense to see this message here in the documentation.
     if [ "${MODE}" != "build_docs" ]; then
         echo "If you want to see what this is script is doing while it is running then execute"
-        echo "the following from another shell:"        
+        echo "the following from another shell:"
         echo 
         echo "  tail -f `pwd`/`basename ${0}`.log"
         echo
-    #else
-	#    echo "  tail -f ./`basename ${0}`.log"
-    fi            
+    fi
 }
 
 function usage() {
@@ -57,7 +56,7 @@ function usage() {
     echo "::"
     echo
     echo "  cd ~/"
-    echo "  wget https://raw.github.com/flexiondotorg/oab-java6/master/`basename ${0}` -O `basename ${0}`"
+    echo "  wget https://github.com/flexiondotorg/oab-java6/raw/${VER}/`basename ${0}` -O `basename ${0}`"
     echo "  chmod +x `basename ${0}`"
     echo "  sudo ./`basename ${0}`"
     echo
@@ -73,8 +72,8 @@ function usage() {
         echo "::"    
         echo
 	    echo "  tail -f ./`basename ${0}`.log"
-    fi        
-    echo
+        echo
+    fi            
     echo "How it works"
     echo "------------"
     echo "This script is merely a wrapper for the most excellent Debian packaging"
@@ -195,7 +194,7 @@ check_ubuntu "all"
 
 BUILD_KEY=""
 BUILD_CLEAN=0
-SKIP_REBUILD=0
+SKIP_REBUILD=""
 
 # Parse the options
 OPTSTRING=bchk:s
