@@ -296,7 +296,7 @@ do
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
     
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
-    wget --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
+    wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "

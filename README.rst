@@ -26,7 +26,7 @@ Like this.
 ::
 
   cd ~/
-  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O oab-java6.sh
+  wget https://github.com/flexiondotorg/oab-java6/raw/0.1.9/oab-java6.sh -O oab-java6.sh
   chmod +x oab-java6.sh
   sudo ./oab-java6.sh
 
@@ -97,6 +97,17 @@ Because, O.A.B! ;-)
 History
 =======
 
+0.2.0
+-----
+
+* Fixed downloading from ``edelivery.oracle.com`` when ``ca-certificates`` is not installed.
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/22
+
+* Fixed the skip rebuilding behaviour so it works as described.
+* Fixed the format of ``apt`` source file.
+* Documentation is now self referencing.
+
 0.1.9
 -----
     
@@ -105,7 +116,7 @@ History
   * Closes : https://github.com/flexiondotorg/oab-java6/issues/18
 
 * Added an option (-s) to skip rebuilding if packages already exist, tanks to Derek Chen-Becker.
-* Added a comment to the apt source file, thanks to Eshwar Andhavarapu.
+* Added a comment to the ``apt`` source file, thanks to Eshwar Andhavarapu.
 * Added documentation for user running the script behind a proxy server, thanks to Olzhas.
 
   * Closes : https://github.com/flexiondotorg/oab-java6/issues/12

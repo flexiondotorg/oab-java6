@@ -5,8 +5,12 @@ History
 0.2.0
 -----
 
-* Corrected the skip rebuilding behaviour so it works as described.
-* Corrected the format of ``apt`` source file.
+* Fixed downloading from ``edelivery.oracle.com`` when ``ca-certificates`` is not installed.
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/22
+
+* Fixed the skip rebuilding behaviour so it works as described.
+* Fixed the format of ``apt`` source file.
 * Documentation is now self referencing.
 
 0.1.9
