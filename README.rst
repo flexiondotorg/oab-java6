@@ -1,6 +1,6 @@
 OAB-Java6
 =========
-oab-java6.sh v0.1.9 - Create a local 'apt' repository for Ubuntu Java packages.
+oab-java6.sh v0.2.0 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -26,7 +26,7 @@ Like this.
 ::
 
   cd ~/
-  wget https://github.com/flexiondotorg/oab-java6/raw/0.1.9/oab-java6.sh -O oab-java6.sh
+  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.0/oab-java6.sh -O oab-java6.sh
   chmod +x oab-java6.sh
   sudo ./oab-java6.sh
 
