@@ -1,0 +1,6 @@
+BINDMOUNT_DIR="$1"
+SIGN_KEY="$2"
+
+cd $BINDMOUNT_DIR
+sudo ./oab-java6-makerepo.sh $SIGN_KEY $BINDMOUNT_DIR/output
+

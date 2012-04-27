@@ -1,0 +1,1 @@
+apt-get install -y build-essential debhelper defoma devscripts dpkg-dev git-core gnupg libasound2 libxi6 libxt6 libxtst6 unixodbc unzip sudo wget lsb-release
