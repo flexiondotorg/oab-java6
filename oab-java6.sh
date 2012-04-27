@@ -275,7 +275,7 @@ pid=$!;progress $pid
 
 # See if the Java version is on the download frontpage, otherwise look for it in
 # the previous releases page.
-DOWNLOAD_INDEX=`grep "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}" /tmp/oab-index.html | grep "alt=\"Download JDK\"" | cut -d'<' -f3 | cut -d'"' -f2`
+DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jdk-${JAVA_VER}u${JAVA_UPD}-downloads-\d+\.html" /tmp/oab-index.html | uniq`
 if [ -n "${DOWNLOAD_INDEX}" ]; then
     ncecho " [x] Getting current release download page "
     wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download.html >> "$log" 2>&1 &
@@ -443,7 +443,7 @@ if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg 
 fi
 
 # Update apt cache
-echo "deb file:///var/local/oab/deb / #Sun Java6 - https://github.com/flexiondotorg/oab-java6" >> /etc/apt/sources.list.d/oab.list
+echo "deb file:///var/local/oab/deb / #Sun Java6 - https://github.com/flexiondotorg/oab-java6" > /etc/apt/sources.list.d/oab.list
 apt_update
 
 echo "All done!"
