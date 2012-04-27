@@ -2,6 +2,12 @@
 History
 =======
 
+0.2.1
+-----
+* Fixed downloading from ``edelivery.oracle.com`` (again). Thanks to onlymostlydead (Mark).
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/28
+
 0.2.0
 -----
 
