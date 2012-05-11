@@ -35,7 +35,7 @@ If you are behind a proxy you may need to run using:
 
   sudo -i ./oab-java6.sh
 
-If you want to see what this is script is doing while it is running then execute
+If you want to see what this script is doing while it is running then execute
 the following from another shell:
 ::
 
