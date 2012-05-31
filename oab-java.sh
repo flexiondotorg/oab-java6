@@ -8,16 +8,171 @@
 #  - http://ubuntuforums.org/showthread.php?t=1090731
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
-# Variables
-VER="0.2.2"
+# Version
+VER="0.2.3"
+
+# common ############################################################### START #
+sp="/-\|"
+log="${PWD}/`basename ${0}`.log"
+
+function error_msg() {
+    local MSG="${1}"
+    echo "${MSG}"
+    exit 1
+}
+
+function cecho() {
+    echo -e "$1"
+    echo -e "$1" >>"$log"
+    tput sgr0;
+}
+
+function ncecho() {
+    echo -ne "$1"
+    echo -ne "$1" >>"$log"
+    tput sgr0
+}
+
+function spinny() {
+    echo -ne "\b${sp:i++%${#sp}:1}"
+}
+
+function progress() {
+    ncecho "  ";
+    while [ /bin/true ]; do
+        kill -0 $pid 2>/dev/null;
+        if [[ $? = "0" ]]; then
+            spinny
+            sleep 0.25
+        else
+            ncecho "\b\b";
+            wait $pid
+            retcode=$?
+            echo "$pid's retcode: $retcode" >> "$log"
+            if [[ $retcode = "0" ]] || [[ $retcode = "255" ]]; then
+                cecho success
+            else
+                cecho failed
+                echo -e " [i] Showing the last 5 lines from the logfile ($log)...";
+                tail -n5 "$log"
+                exit 1;
+            fi
+            break 2;
+        fi
+    done
+}
+
+function progress_loop() {
+    ncecho "  ";
+    while [ /bin/true ]; do
+        kill -0 $pid 2>/dev/null;
+        if [[ $? = "0" ]]; then
+            spinny
+            sleep 0.25
+        else
+            ncecho "\b\b";
+            wait $pid
+            retcode=$?
+            echo "$pid's retcode: $retcode" >> "$log"
+            if [[ $retcode = "0" ]] || [[ $retcode = "255" ]]; then
+                cecho success
+            else
+                cecho failed
+                echo -e " [i] Showing the last 5 lines from the logfile ($log)...";
+                tail -n5 "$log"
+                exit 1;
+            fi
+            break 1;
+        fi
+    done
+}
+
+function progress_can_fail() {
+    ncecho "  ";
+    while [ /bin/true ]; do
+        kill -0 $pid 2>/dev/null;
+        if [[ $? = "0" ]]; then
+            spinny
+            sleep 0.25
+        else
+            ncecho "\b\b";
+            wait $pid
+            retcode=$?
+            echo "$pid's retcode: $retcode" >> "$log"
+            cecho success
+            break 2;
+        fi
+    done
+}
+
+function check_root() {
+    if [ "$(id -u)" != "0" ]; then
+        error_msg "ERROR! You must execute the script as the 'root' user."
+    fi
+}
+
+function check_sudo() {
+    if [ ! -n ${SUDO_USER} ]; then
+        error_msg "ERROR! You must invoke the script using 'sudo'."
+    fi
+}
+
+function check_ubuntu() {
+    if [ "${1}" != "" ]; then
+        SUPPORTED_CODENAMES="${1}"
+    else
+        SUPPORTED_CODENAMES="all"
+    fi
+
+    # Source the lsb-release file.
+    lsb
+
+    # Check if this script is supported on this version of Ubuntu.
+    if [ "${SUPPORTED_CODENAMES}" == "all" ]; then
+        SUPPORTED=1
+    else
+        SUPPORTED=0
+        for CHECK_CODENAME in `echo ${SUPPORTED_CODENAMES}`
+        do
+            if [ "${LSB_CODE}" == "${CHECK_CODENAME}" ]; then
+                SUPPORTED=1
+            fi
+        done
+    fi
+
+    if [ ${SUPPORTED} -eq 0 ]; then
+        error_msg "ERROR! ${0} is not supported on this version of Ubuntu."
+    fi
+}
+
+function lsb() {
+    local CMD_LSB_RELEASE=`which lsb_release`
+    if [ "${CMD_LSB_RELEASE}" == "" ]; then
+	    error_msg "ERROR! 'lsb_release' was not found. I can't identify your distribution."
+    fi
+    LSB_ID=`lsb_release -i | cut -f2 | sed 's/ //g'`
+    LSB_REL=`lsb_release -r | cut -f2 | sed 's/ //g'`
+    LSB_CODE=`lsb_release -c | cut -f2 | sed 's/ //g'`
+    LSB_DESC=`lsb_release -d | cut -f2`
+    LSB_ARCH=`dpkg --print-architecture`
+    LSB_MACH=`uname -m`
+    LSB_NUM=`echo ${LSB_REL} | sed s'/\.//g'`
+}
+
+function apt_update() {
+    ncecho " [x] Update package list "
+    apt-get -y update >>"$log" 2>&1 &
+    pid=$!;progress $pid
+}
+# common ################################################################# END #
 
 function copyright_msg() {
     local MODE=${1}
     if [ "${MODE}" == "build_docs" ]; then
-        echo "OAB-Java6"
-        echo "========="                
+        echo "OAB-Java"
+        echo "========"                
     fi    
-    echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Ubuntu Java packages."
+    echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages."
     echo "Copyright (c) Martin Wimpress, http://flexion.org. MIT License"
 	echo
 	echo "By running this script to download Java you acknowledge that you have"
@@ -46,10 +201,11 @@ function usage() {
     echo
     echo "Optional parameters"
     echo
-    echo "* ``-c``              : Remove pre-existing packages from ``${WORK_PATH}/deb``"
-    echo "* ``-k <gpg-key-id>`` : Use the specified existing key instead of generating one"
-    echo "* ``-s``              : Skip building if the packages already exist"
-    echo "* ``-h`` : This help"
+    echo "* -7              : Build ``oracle-java7`` packages instead of ``sun-java6``"
+    echo "* -c              : Remove pre-existing packages from ``${WORK_PATH}/deb``"
+    echo "* -k <gpg-key-id> : Use the specified existing key instead of generating one"
+    echo "* -s              : Skip building if the packages already exist"
+    echo "* -h              : This help"
     echo
     echo "How do I download and run this thing?"
     echo "-------------------------------------"
@@ -81,6 +237,7 @@ function usage() {
     echo "scripts prepared by Janusz Dziemidowicz."
     echo
     echo "* https://github.com/rraptorr/sun-java6"
+    echo "* https://github.com/rraptorr/oracle-java7"    
     echo
     echo "The basic execution steps are:"
     echo
@@ -88,7 +245,7 @@ function usage() {
     echo "* Install the tools required to build the Java packages."
     echo "* Create download cache in ``${WORK_PATH}/pkg``."
     echo "* Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
-    echo "* Clone the build scripts from https://github.com/rraptorr/sun-java6"
+    echo "* Clone the build scripts from https://github.com/rraptorr/"
     echo "* Build the Java packages applicable to your system."    
     echo "* Create local ``apt`` repository in ``${WORK_PATH}/deb`` for the newly built Java Packages."
     echo "* Create a GnuPG signing key in ``${WORK_PATH}/gpg`` if none exists."
@@ -108,7 +265,11 @@ function usage() {
     echo
     echo "  sudo apt-get install sun-java6-jre"
     echo
-    echo "Or if you already have the *\"official\"* Ubuntu packages installed then you"
+    echo "Or if you ran the script with the ``-7`` option."
+    echo
+    echo "  sudo apt-get install oracle-java7-jre"            
+    echo
+    echo "If you already have the *\"official\"* Ubuntu packages installed then you"
     echo "can upgrade by executing the following from a shell."
     echo "::"
     echo
@@ -121,13 +282,12 @@ function usage() {
     echo "By default, the script creates a temporary GPG keyring in the working"
     echo "directory. In order to use the current user's GPG chain instead, specify"
     echo "the key ID of an existing secret key. Run ``gpg -K`` to list available keys."
-    echo    
-    
-    
+    echo            
     echo "Known Issues"
     echo "------------"
     echo
-    echo "* The Oracle download servers can be horribly slow. My script caches the downloads so you only need download each file once."
+    echo "* The Oracle download servers can be horribly slow. My script caches the downloads"
+    echo "  so you only need download each file once."
     echo
     echo "What is 'oab'?"
     echo "--------------"
@@ -172,51 +332,37 @@ function build_docs() {
 
 copyright_msg
 
-# 'source' my common functions
-if [ -r /tmp/common.sh ]; then
-    source /tmp/common.sh
-    if [ $? -ne 0 ]; then
-        echo "ERROR! Couldn't import common functions from /tmp/common.sh"
-        rm /tmp/common.sh 2>/dev/null
-        exit 1
-    else
-        update_thyself        
-    fi
-else
-    echo "Downloading common.sh"
-    wget --no-check-certificate -q "https://github.com/flexiondotorg/common/raw/master/common.sh" -O /tmp/common.sh
-    chmod 666 /tmp/common.sh
-    source /tmp/common.sh
-    if [ $? -ne 0 ]; then
-        echo "ERROR! Couldn't import common functions from /tmp/common.sh"
-        rm /tmp/common.sh 2>/dev/null
-        exit 1
-    fi
-fi
-
-if [ ! -f /tmp/common.sh ]; then
-    echo "ERROR! /tmp/common.sh is missing. Run this script again to resolve the problem."
-    exit 1
-fi
-
 # Check we are running on a supported system in the correct way.
 check_root
 check_sudo
 check_ubuntu "all"
 
+# Init variables
 BUILD_KEY=""
 BUILD_CLEAN=0
 SKIP_REBUILD=""
 WORK_PATH="/var/local/oab"
+JAVA_DEV="sun-java"
+JAVA_UPSTREAM="sun-java6"
+
+# Remove a pre-existing log file.
+if [ -f $log ]; then
+    rm -f $log 2>/dev/null
+fi
 
 # Parse the options
-OPTSTRING=bchk:s
+OPTSTRING=7bchk:s
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
+        7) 
+           JAVA_DEV="oracle-java"
+           JAVA_UPSTREAM="oracle-java7"            
+           ;;
         b) build_docs;;
         c) BUILD_CLEAN=1;;
         h) usage;;
+
         k) BUILD_KEY=${OPTARG};;
         s) SKIP_REBUILD=1;;
         *) usage;;
@@ -253,15 +399,15 @@ chown root:root ${WORK_PATH}/gpg 2>/dev/null
 chmod 0700 ${WORK_PATH}/gpg 2>/dev/null
 
 # Remove the 'src' directory everytime.
-ncecho " [x] Removing clones of https://github.com/rraptorr/sun-java6 "
-rm -rfv ${WORK_PATH}/sun-java6* 2>/dev/null >> "$log" 2>&1
+ncecho " [x] Removing clones of http://github.com/rraptorr/${JAVA_UPSTREAM} "
+rm -rfv ${WORK_PATH}/${JAVA_UPSTREAM}* 2>/dev/null >> "$log" 2>&1
 rm -rfv ${WORK_PATH}/src 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Clone the code
-ncecho " [x] Cloning http://github.com/rraptorr/sun-java6 "
+ncecho " [x] Cloning http://github.com/rraptorr/${JAVA_UPSTREAM} "
 cd ${WORK_PATH}/ >> "$log" 2>&1
-git clone http://github.com/rraptorr/sun-java6 src >> "$log" 2>&1 &
+git clone http://github.com/rraptorr/${JAVA_UPSTREAM} src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Get the last commit tag.
@@ -282,7 +428,7 @@ JAVA_VER=`echo ${DEB_VERSION} | cut -d'.' -f1`
 JAVA_UPD=`echo ${DEB_VERSION} | cut -d'.' -f2 | cut -d'-' -f1`
 
 # Try and dynamic find the JDK downloads
-ncecho " [x] Getting Java SE download page"
+ncecho " [x] Getting Java SE download page "
 wget "http://www.oracle.com/technetwork/java/javase/downloads/index.html" -O /tmp/oab-index.html >> "$log" 2>&1 &
 pid=$!;progress $pid
 
@@ -295,12 +441,22 @@ if [ -n "${DOWNLOAD_INDEX}" ]; then
     pid=$!;progress $pid
 else
     ncecho " [x] Getting previous releases download page "
-    wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
+    if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
+        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
+    else
+        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html -O /tmp/oab-download.html >> "$log" 2>&1 &    
+    fi        
     pid=$!;progress $pid    
 fi
 
-# Download the Oracle install packages.
-for JAVA_BIN in jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin
+# Set the files we're downloading since sun-java6 and oracle-java7 differ.
+if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
+    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin"
+else
+    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.tar.gz jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.tar.gz"
+fi
+
+for JAVA_BIN in ${JAVA_BINS}
 do
     # Get the download URL and size
     DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
@@ -320,14 +476,14 @@ done
 # Determine the new version
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
-if [ -n "${SKIP_REBUILD}" -a -r "${WORK_PATH}/deb/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
+if [ -n "${SKIP_REBUILD}" -a -r "${WORK_PATH}/deb/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
   echo " [!] Package exists, skipping build "
   echo "All done!"  
   exit
 fi
 
 # Genereate a build message
-BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/sun-java6"
+BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/${JAVA_UPSTREAM}"
 
 # Change directory to the build directory
 cd ${WORK_PATH}/src
@@ -342,7 +498,7 @@ ncecho " [x] Building the packages "
 dpkg-buildpackage -b >> "$log" 2>&1 &
 pid=$!;progress_can_fail $pid
 
-if [ -e ${WORK_PATH}/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
+if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
     # Remove any existing .deb files if the 'clean' option was selected.
     if [ ${BUILD_CLEAN} -eq 1 ]; then
         ncecho " [x] Removing existing .deb packages "
@@ -352,8 +508,8 @@ if [ -e ${WORK_PATH}/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; t
 
     # Populate the 'apt' repository with .debs
     ncecho " [x] Moving the packages "
-    mv -v ${WORK_PATH}/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ${WORK_PATH}/deb/ >> "$log" 2>&1
-    mv -v ${WORK_PATH}/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb ${WORK_PATH}/deb/ >> "$log" 2>&1 &
+    mv -v ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ${WORK_PATH}/deb/ >> "$log" 2>&1
+    mv -v ${WORK_PATH}/*${JAVA_DEV}${JAVA_VER}-*_${NEW_VERSION}_*.deb ${WORK_PATH}/deb/ >> "$log" 2>&1 &
     pid=$!;progress $pid
 else    
     error_msg "ERROR! Packages failed to build."    
@@ -383,16 +539,16 @@ cecho success
 # Create a 'Release' file
 ncecho " [x] Creating Release file "
 cd ${WORK_PATH}/deb
-echo "Origin: `hostname --fqdn`"                 >  Release
-echo "Label: Java"                                >> Release
-echo "Suite: ${LSB_CODE}"                       >> Release
-echo "Version: ${LSB_REL}"                      >> Release
-echo "Codename: ${LSB_CODE}"                    >> Release
-echo "Date: `date -R`"                           >> Release
-echo "Architectures: ${LSB_ARCH}"               >> Release
-echo "Components: restricted"                     >> Release
-echo "Description: Local Java Repository"         >> Release 
-echo "MD5Sum:"                                    >> Release
+echo "Origin: `hostname --fqdn`"         >  Release
+echo "Label: Java"                        >> Release
+echo "Suite: ${LSB_CODE}"               >> Release
+echo "Version: ${LSB_REL}"              >> Release
+echo "Codename: ${LSB_CODE}"            >> Release
+echo "Date: `date -R`"                   >> Release
+echo "Architectures: ${LSB_ARCH}"       >> Release
+echo "Components: restricted"             >> Release
+echo "Description: Local Java Repository" >> Release 
+echo "MD5Sum:"                            >> Release
 for PACKAGE in Packages*
 do
     printf ' '`md5sum ${PACKAGE} | cut -d' ' -f1`" %16d ${PACKAGE}\n" `wc --bytes ${PACKAGE} | cut -d' ' -f1` >> Release
@@ -449,7 +605,6 @@ if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_P
     gpg "${GPG_OPTION[@]}" --armor --detach-sign --output ${WORK_PATH}/deb/Release.gpg ${WORK_PATH}/deb/Release >> "$log" 2>&1 &
     pid=$!;progress $pid
 
-
     if [ -z "${BUILD_KEY}" ] ; then
         # Export public signing key
         ncecho " [x] Exporting public key "
@@ -464,7 +619,7 @@ if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_P
 fi
 
 # Update apt cache
-echo "deb file://${WORK_PATH}/deb / #Sun Java6 - https://github.com/flexiondotorg/oab-java6" > /etc/apt/sources.list.d/oab.list
+echo "deb file://${WORK_PATH}/deb / #Local Java - https://github.com/flexiondotorg/oab-java6" > /etc/apt/sources.list.d/oab.list
 apt_update
 
 echo "All done!"

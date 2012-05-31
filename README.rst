@@ -1,6 +1,6 @@
-OAB-Java6
-=========
-oab-java6.sh v0.2.2 - Create a local 'apt' repository for Ubuntu Java packages.
+OAB-Java
+========
+oab-java.sh v0.2.3 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -12,14 +12,15 @@ Usage
 -----
 ::
 
-  sudo ./oab-java6.sh
+  sudo ./oab-java.sh
 
 Optional parameters
 
+* -7              : Build oracle-java7 packages instead of sun-java6
 * -c              : Remove pre-existing packages from /var/local/oab/deb
 * -k <gpg-key-id> : Use the specified existing key instead of generating one
 * -s              : Skip building if the packages already exist
-* -h : This help
+* -h              : This help
 
 How do I download and run this thing?
 -------------------------------------
@@ -27,20 +28,20 @@ Like this.
 ::
 
   cd ~/
-  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.2/oab-java6.sh -O oab-java6.sh
-  chmod +x oab-java6.sh
-  sudo ./oab-java6.sh
+  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.3/oab-java.sh -O oab-java.sh
+  chmod +x oab-java.sh
+  sudo ./oab-java.sh
 
 If you are behind a proxy you may need to run using:
 ::
 
-  sudo -i ./oab-java6.sh
+  sudo -i ./oab-java.sh
 
 If you want to see what this script is doing while it is running then execute
 the following from another shell:
 ::
 
-  tail -f ./oab-java6.sh.log
+  tail -f ./oab-java.sh.log
 
 How it works
 ------------
@@ -48,6 +49,7 @@ This script is merely a wrapper for the most excellent Debian packaging
 scripts prepared by Janusz Dziemidowicz.
 
 * https://github.com/rraptorr/sun-java6
+* https://github.com/rraptorr/oracle-java7
 
 The basic execution steps are:
 
@@ -55,7 +57,7 @@ The basic execution steps are:
 * Install the tools required to build the Java packages.
 * Create download cache in /var/local/oab/pkg.
 * Download the i586 and x64 Java install binaries from Oracle. Yes, both are required.
-* Clone the build scripts from https://github.com/rraptorr/sun-java6
+* Clone the build scripts from https://github.com/rraptorr/
 * Build the Java packages applicable to your system.
 * Create local apt repository in /var/local/oab/deb for the newly built Java Packages.
 * Create a GnuPG signing key in /var/local/oab/gpg if none exists.
@@ -75,14 +77,18 @@ install the JRE by executing the following from a shell.
 
   sudo apt-get install sun-java6-jre
 
-Or if you already have the *"official"* Ubuntu packages installed then you
+Or if you ran the script with the -7 option.
+
+  sudo apt-get install oracle-java7-jre
+
+If you already have the *"official"* Ubuntu packages installed then you
 can upgrade by executing the following from a shell.
 ::
 
   sudo apt-get upgrade
 
 The local apt repository is just that, **local**. It is not accessible
-remotely and oab-java6.sh will never enable that capability to ensure
+remotely and oab-java.sh will never enable that capability to ensure
 compliance with Oracle's asinine license requirements.
 
 By default, the script creates a temporary GPG keyring in the working
@@ -92,7 +98,8 @@ the key ID of an existing secret key. Run gpg -K to list available keys.
 Known Issues
 ------------
 
-* The Oracle download servers can be horribly slow. My script caches the downloads so you only need download each file once.
+* The Oracle download servers can be horribly slow. My script caches the downloads
+  so you only need download each file once.
 
 What is 'oab'?
 --------------
@@ -101,6 +108,13 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+0.2.3
+-----
+* Added an option to build ``oracle-java7`` packages.
+* Integrated common function into oab-java6.sh
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/23
 
 0.2.2
 -----
@@ -253,7 +267,6 @@ Todo
 * Check the binary packages downloaded from Oracle are the correct size.  
 * Add support to build for a given Ubuntu distribution.
 * Add support to optionally build using ``pbuilder``.
-* Add support for Java 7.
 
 License
 =======

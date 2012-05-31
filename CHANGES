@@ -2,6 +2,13 @@
 History
 =======
 
+0.2.3
+-----
+* Added an option to build ``oracle-java7`` packages.
+* Integrated common function into oab-java6.sh
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/23
+
 0.2.2
 -----
 * Added an option to use a pre-existing signing key. Thanks to Hannes Schmidt.
