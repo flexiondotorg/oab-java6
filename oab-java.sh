@@ -203,7 +203,7 @@ function usage() {
     echo
     echo "* -7              : Build ``oracle-java7`` packages instead of ``sun-java6``"
     echo "* -c              : Remove pre-existing packages from ``${WORK_PATH}/deb``"
-    echo "* -k <gpg-key-id> : Use the specified existing key instead of generating one"
+    echo "* ``-k <gpg-key-id>`` : Use the specified existing key instead of generating one"
     echo "* -s              : Skip building if the packages already exist"
     echo "* -h              : This help"
     echo
@@ -267,7 +267,7 @@ function usage() {
     echo
     echo "Or if you ran the script with the ``-7`` option."
     echo
-    echo "  sudo apt-get install oracle-java7-jre"            
+    echo "  sudo apt-get install oracle-java7-jre"
     echo
     echo "If you already have the *\"official\"* Ubuntu packages installed then you"
     echo "can upgrade by executing the following from a shell."
