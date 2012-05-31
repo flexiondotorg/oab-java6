@@ -173,6 +173,7 @@ function copyright_msg() {
         echo "========"                
     fi    
     echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages."
+    echo
     echo "Copyright (c) Martin Wimpress, http://flexion.org. MIT License"
 	echo
 	echo "By running this script to download Java you acknowledge that you have"
