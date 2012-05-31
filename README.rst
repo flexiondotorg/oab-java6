@@ -78,6 +78,7 @@ install the JRE by executing the following from a shell.
   sudo apt-get install sun-java6-jre
 
 Or if you ran the script with the -7 option.
+::
 
   sudo apt-get install oracle-java7-jre
 

@@ -266,6 +266,7 @@ function usage() {
     echo "  sudo apt-get install sun-java6-jre"
     echo
     echo "Or if you ran the script with the ``-7`` option."
+    echo "::"
     echo
     echo "  sudo apt-get install oracle-java7-jre"
     echo
