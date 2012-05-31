@@ -2,6 +2,13 @@
 History
 =======
 
+0.2.2
+-----
+* Added an option to use a pre-existing signing key. Thanks to Hannes Schmidt.
+* The ``git clone`` of ``rraptorr/sun-java6`` now uses http rather than https.
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/27
+
 0.2.1
 -----
 * Fixed downloading from ``edelivery.oracle.com`` (again). Thanks to onlymostlydead (Mark).

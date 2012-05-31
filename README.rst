@@ -1,6 +1,6 @@
 OAB-Java6
 =========
-oab-java6.sh v0.2.1 - Create a local 'apt' repository for Ubuntu Java packages.
+oab-java6.sh v0.2.2 - Create a local 'apt' repository for Ubuntu Java packages.
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
 By running this script to download Java you acknowledge that you have
@@ -16,8 +16,9 @@ Usage
 
 Optional parameters
 
-* -c : Remove pre-existing packages from /var/local/oab/deb
-* -s : Skip building if the packages already exist
+* -c              : Remove pre-existing packages from /var/local/oab/deb
+* -k <gpg-key-id> : Use the specified existing key instead of generating one
+* -s              : Skip building if the packages already exist
 * -h : This help
 
 How do I download and run this thing?
@@ -26,7 +27,7 @@ Like this.
 ::
 
   cd ~/
-  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.1/oab-java6.sh -O oab-java6.sh
+  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.2/oab-java6.sh -O oab-java6.sh
   chmod +x oab-java6.sh
   sudo ./oab-java6.sh
 
@@ -84,6 +85,10 @@ The local apt repository is just that, **local**. It is not accessible
 remotely and oab-java6.sh will never enable that capability to ensure
 compliance with Oracle's asinine license requirements.
 
+By default, the script creates a temporary GPG keyring in the working
+directory. In order to use the current user's GPG chain instead, specify
+the key ID of an existing secret key. Run gpg -K to list available keys.
+
 Known Issues
 ------------
 
@@ -96,6 +101,13 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+0.2.2
+-----
+* Added an option to use a pre-existing signing key. Thanks to Hannes Schmidt.
+* The ``git clone`` of ``rraptorr/sun-java6`` now uses http rather than https.
+
+  * Closes : https://github.com/flexiondotorg/oab-java6/issues/27
 
 0.2.1
 -----
@@ -226,6 +238,7 @@ Other contributors, listed alphabetically, are:
 
 * Derek Chen-Becker - Added an option to skip rebuilding packages.
 * Eshwar Andhavarapu - Added comments in the apt source file.
+* Hannes Schmidt - Added an option to use a pre-existing signing key.
 * Martin Polden - Fixed download binary packages from Oracle.
 * Miah Johnson - Fixed download binary packages from Oracle.
 * onlymostlydead - Fixed downloading from Oracle (again).
@@ -237,8 +250,6 @@ Todo
 ====
 
 * Add support for JCE Unlimited Strength Jurisdiction Policy Files.
-* Remove automatic signing key generation and add support for selecting a
-  pre-existing signing key.
 * Check the binary packages downloaded from Oracle are the correct size.  
 * Add support to build for a given Ubuntu distribution.
 * Add support to optionally build using ``pbuilder``.

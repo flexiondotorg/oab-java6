@@ -8,6 +8,7 @@ Other contributors, listed alphabetically, are:
 
 * Derek Chen-Becker - Added an option to skip rebuilding packages.
 * Eshwar Andhavarapu - Added comments in the apt source file.
+* Hannes Schmidt - Added an option to use a pre-existing signing key.
 * Martin Polden - Fixed download binary packages from Oracle.
 * Miah Johnson - Fixed download binary packages from Oracle.
 * onlymostlydead - Fixed downloading from Oracle (again).

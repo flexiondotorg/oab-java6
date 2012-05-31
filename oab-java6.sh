@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Variables
-VER="0.2.1"
+VER="0.2.2"
 
 function copyright_msg() {
     local MODE=${1}
@@ -46,8 +46,9 @@ function usage() {
     echo
     echo "Optional parameters"
     echo
-    echo "* ``-c`` : Remove pre-existing packages from ``/var/local/oab/deb``"
-    echo "* ``-s`` : Skip building if the packages already exist"
+    echo "* ``-c``              : Remove pre-existing packages from ``${WORK_PATH}/deb``"
+    echo "* ``-k <gpg-key-id>`` : Use the specified existing key instead of generating one"
+    echo "* ``-s``              : Skip building if the packages already exist"
     echo "* ``-h`` : This help"
     echo
     echo "How do I download and run this thing?"
@@ -85,12 +86,12 @@ function usage() {
     echo
     echo "* Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
     echo "* Install the tools required to build the Java packages."
-    echo "* Create download cache in ``/var/local/oab/pkg``."
+    echo "* Create download cache in ``${WORK_PATH}/pkg``."
     echo "* Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
     echo "* Clone the build scripts from https://github.com/rraptorr/sun-java6"
     echo "* Build the Java packages applicable to your system."    
-    echo "* Create local ``apt`` repository in ``/var/local/oab/deb`` for the newly built Java Packages."
-    echo "* Create a GnuPG signing key in ``/var/local/oab/gpg`` if none exists."
+    echo "* Create local ``apt`` repository in ``${WORK_PATH}/deb`` for the newly built Java Packages."
+    echo "* Create a GnuPG signing key in ``${WORK_PATH}/gpg`` if none exists."
     echo "* Sign the local ``apt`` repository using the local GnuPG signing key."
     echo
     echo "What gets installed?"
@@ -117,6 +118,12 @@ function usage() {
     echo "remotely and `basename ${0}` will never enable that capability to ensure"
     echo "compliance with Oracle's asinine license requirements."
     echo
+    echo "By default, the script creates a temporary GPG keyring in the working"
+    echo "directory. In order to use the current user's GPG chain instead, specify"
+    echo "the key ID of an existing secret key. Run ``gpg -K`` to list available keys."
+    echo    
+    
+    
     echo "Known Issues"
     echo "------------"
     echo
@@ -200,6 +207,7 @@ check_ubuntu "all"
 BUILD_KEY=""
 BUILD_CLEAN=0
 SKIP_REBUILD=""
+WORK_PATH="/var/local/oab"
 
 # Parse the options
 OPTSTRING=bchk:s
@@ -237,27 +245,27 @@ pid=$!;progress $pid
 
 # Make sure the required dirs exist.
 ncecho " [x] Making build directories "
-mkdir -p /var/local/oab/{deb,gpg,pkg} >> "$log" 2>&1 &
+mkdir -p ${WORK_PATH}/{deb,gpg,pkg} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Set the permissions appropriately for 'gpg'
-chown root:root /var/local/oab/gpg 2>/dev/null
-chmod 0700 /var/local/oab/gpg 2>/dev/null
+chown root:root ${WORK_PATH}/gpg 2>/dev/null
+chmod 0700 ${WORK_PATH}/gpg 2>/dev/null
 
 # Remove the 'src' directory everytime.
 ncecho " [x] Removing clones of https://github.com/rraptorr/sun-java6 "
-rm -rfv /var/local/oab/sun-java6* 2>/dev/null >> "$log" 2>&1
-rm -rfv /var/local/oab/src 2>/dev/null >> "$log" 2>&1 &
+rm -rfv ${WORK_PATH}/sun-java6* 2>/dev/null >> "$log" 2>&1
+rm -rfv ${WORK_PATH}/src 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Clone the code
-ncecho " [x] Cloning https://github.com/rraptorr/sun-java6 "
-cd /var/local/oab/ >> "$log" 2>&1
-git clone https://github.com/rraptorr/sun-java6 src >> "$log" 2>&1 &
+ncecho " [x] Cloning http://github.com/rraptorr/sun-java6 "
+cd ${WORK_PATH}/ >> "$log" 2>&1
+git clone http://github.com/rraptorr/sun-java6 src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Get the last commit tag.
-cd /var/local/oab/src >> "$log" 2>&1
+cd ${WORK_PATH}/src >> "$log" 2>&1
 TAG=`git tag -l | tail -n1`
 
 # Checkout the tagged, stable, version.
@@ -266,8 +274,8 @@ git checkout ${TAG} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Cet the current Debian package version and package urgency
-DEB_VERSION=`head -n1 /var/local/oab/src/debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
-DEB_URGENCY=`head -n1 /var/local/oab/src/debian/changelog | cut -d'=' -f2`
+DEB_VERSION=`head -n1 ${WORK_PATH}/src/debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'~' -f1`
+DEB_URGENCY=`head -n1 ${WORK_PATH}/src/debian/changelog | cut -d'=' -f2`
 
 # Determine the currently supported Java version and update
 JAVA_VER=`echo ${DEB_VERSION} | cut -d'.' -f1`
@@ -301,18 +309,18 @@ do
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
     
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
-    wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O /var/local/oab/pkg/${JAVA_BIN} >> "$log" 2>&1 &
+    wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
-    ln -s /var/local/oab/pkg/${JAVA_BIN} /var/local/oab/src/${JAVA_BIN} >> "$log" 2>&1 &
+    ln -s ${WORK_PATH}/pkg/${JAVA_BIN} ${WORK_PATH}/src/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid    
 done
 
 # Determine the new version
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
-if [ -n "${SKIP_REBUILD}" -a -r "/var/local/oab/deb/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
+if [ -n "${SKIP_REBUILD}" -a -r "${WORK_PATH}/deb/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
   echo " [!] Package exists, skipping build "
   echo "All done!"  
   exit
@@ -322,7 +330,7 @@ fi
 BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/sun-java6"
 
 # Change directory to the build directory
-cd /var/local/oab/src
+cd ${WORK_PATH}/src
 
 # Update the changelog
 ncecho " [x] Updating the changelog "
@@ -334,18 +342,18 @@ ncecho " [x] Building the packages "
 dpkg-buildpackage -b >> "$log" 2>&1 &
 pid=$!;progress_can_fail $pid
 
-if [ -e /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
+if [ -e ${WORK_PATH}/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
     # Remove any existing .deb files if the 'clean' option was selected.
     if [ ${BUILD_CLEAN} -eq 1 ]; then
         ncecho " [x] Removing existing .deb packages "
-        rm -fv /var/local/oab/deb/* >> "$log" 2>&1 &
+        rm -fv ${WORK_PATH}/deb/* >> "$log" 2>&1 &
         pid=$!;progress $pid
     fi
 
     # Populate the 'apt' repository with .debs
     ncecho " [x] Moving the packages "
-    mv -v /var/local/oab/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes /var/local/oab/deb/ >> "$log" 2>&1
-    mv -v /var/local/oab/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb /var/local/oab/deb/ >> "$log" 2>&1 &
+    mv -v ${WORK_PATH}/sun-java${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ${WORK_PATH}/deb/ >> "$log" 2>&1
+    mv -v ${WORK_PATH}/*sun-java${JAVA_VER}-*_${NEW_VERSION}_*.deb ${WORK_PATH}/deb/ >> "$log" 2>&1 &
     pid=$!;progress $pid
 else    
     error_msg "ERROR! Packages failed to build."    
@@ -354,7 +362,7 @@ fi
 # Create a temporary 'override' file, which may contain duplicates
 echo "#Override" > /tmp/override
 echo "#Package priority section" >> /tmp/override
-for FILE in /var/local/oab/deb/*.deb
+for FILE in ${WORK_PATH}/deb/*.deb
 do
     DEB_PACKAGE=`dpkg --info ${FILE} | grep Package | cut -d':' -f2`
     DEB_SECTION=`dpkg --info ${FILE} | grep Section | cut -d'/' -f2`
@@ -362,19 +370,19 @@ do
 done
 
 # Remove the duplicates from the overide file
-uniq /tmp/override > /var/local/oab/deb/override
+uniq /tmp/override > ${WORK_PATH}/deb/override
 
 # Create the 'apt' Packages.gz
 ncecho " [x] Creating Packages.gz file "
-cd /var/local/oab/deb
+cd ${WORK_PATH}/deb
 dpkg-scanpackages . override 2>/dev/null > Packages
 cat Packages | gzip -c9 > Packages.gz
-rm /var/local/oab/deb/override 2>/dev/null
+rm ${WORK_PATH}/deb/override 2>/dev/null
 cecho success
 
 # Create a 'Release' file
 ncecho " [x] Creating Release file "
-cd /var/local/oab/deb
+cd ${WORK_PATH}/deb
 echo "Origin: `hostname --fqdn`"                 >  Release
 echo "Label: Java"                                >> Release
 echo "Suite: ${LSB_CODE}"                       >> Release
@@ -395,16 +403,16 @@ cecho success
 # an OpenVZ container.
 if [[ `imvirt` != "OpenVZ" ]]; then
     # Do we need to create signing keys
-    if [ ! -e /var/local/oab/gpg/pubring.gpg ] && [ ! -e /var/local/oab/gpg/secring.gpg ] && [ ! -e /var/local/oab/gpg/trustdb.gpg ]; then
+    if [ -z "${BUILD_KEY}" ] && [ ! -e ${WORK_PATH}/gpg/pubring.gpg ] && [ ! -e ${WORK_PATH}/gpg/secring.gpg ] && [ ! -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
 
         ncecho " [x] Create GnuPG configuration "
-        echo "Key-Type: DSA" > /var/local/oab/gpg-key.conf
-        echo "Key-Length: 1024" >> /var/local/oab/gpg-key.conf
-        echo "Subkey-Type: ELG-E" >> /var/local/oab/gpg-key.conf
-        echo "Subkey-Length: 2048" >> /var/local/oab/gpg-key.conf
-        echo "Name-Real: `hostname --fqdn`" >> /var/local/oab/gpg-key.conf
-        echo "Name-Email: root@`hostname --fqdn`" >> /var/local/oab/gpg-key.conf
-        echo "Expire-Date: 0" >> /var/local/oab/gpg-key.conf
+        echo "Key-Type: DSA" > ${WORK_PATH}/gpg-key.conf
+        echo "Key-Length: 1024" >> ${WORK_PATH}/gpg-key.conf
+        echo "Subkey-Type: ELG-E" >> ${WORK_PATH}/gpg-key.conf
+        echo "Subkey-Length: 2048" >> ${WORK_PATH}/gpg-key.conf
+        echo "Name-Real: `hostname --fqdn`" >> ${WORK_PATH}/gpg-key.conf
+        echo "Name-Email: root@`hostname --fqdn`" >> ${WORK_PATH}/gpg-key.conf
+        echo "Expire-Date: 0" >> ${WORK_PATH}/gpg-key.conf
         cecho success
 
         # Stop the system 'rngd'.
@@ -415,7 +423,7 @@ if [[ `imvirt` != "OpenVZ" ]]; then
         pid=$!;progress $pid
 
         ncecho " [x] Creating signing key "
-        gpg --homedir /var/local/oab/gpg --batch --gen-key /var/local/oab/gpg-key.conf >> "$log" 2>&1 &
+        gpg --homedir ${WORK_PATH}/gpg --batch --gen-key ${WORK_PATH}/gpg-key.conf >> "$log" 2>&1 &
         pid=$!;progress $pid
 
         ncecho " [x] Stop generating entropy "
@@ -428,27 +436,35 @@ if [[ `imvirt` != "OpenVZ" ]]; then
     fi
 fi
 
-# Do we have signing keys, if so use them.
-if [ -e /var/local/oab/gpg/pubring.gpg ] && [ -e /var/local/oab/gpg/secring.gpg ] && [ -e /var/local/oab/gpg/trustdb.gpg ]; then
+# Do we have signing keys or a user specified key, if so use them.
+if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_PATH}/gpg/secring.gpg ] && [ -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
     # Sign the Release
-    ncecho " [x] Signing the 'Release' file "
-    rm /var/local/oab/deb/Release.gpg 2>/dev/null
-    gpg --homedir /var/local/oab/gpg --armor --detach-sign --output /var/local/oab/deb/Release.gpg /var/local/oab/deb/Release >> "$log" 2>&1 &
+    ncecho " [x] Signing the 'Release' file "    
+    rm ${WORK_PATH}/deb/Release.gpg 2>/dev/null
+    if [ -n "${BUILD_KEY}" ] ; then
+        GPG_OPTION=(--default-key "${BUILD_KEY}")
+    else
+        GPG_OPTION=(--homedir ${WORK_PATH}/gpg)
+    fi
+    gpg "${GPG_OPTION[@]}" --armor --detach-sign --output ${WORK_PATH}/deb/Release.gpg ${WORK_PATH}/deb/Release >> "$log" 2>&1 &
     pid=$!;progress $pid
 
-    # Export public signing key
-    ncecho " [x] Exporting public key "
-    gpg --homedir /var/local/oab/gpg --export -a "`hostname --fqdn`" > /var/local/oab/deb/pubkey.asc
-    cecho success
 
-    # Add the public signing key
-    ncecho " [x] Adding public key "
-    apt-key add /var/local/oab/deb/pubkey.asc >> "$log" 2>&1 &
-    pid=$!;progress $pid
+    if [ -z "${BUILD_KEY}" ] ; then
+        # Export public signing key
+        ncecho " [x] Exporting public key "
+        gpg --homedir ${WORK_PATH}/gpg --export -a "`hostname --fqdn`" > ${WORK_PATH}/deb/pubkey.asc
+        cecho success
+
+        # Add the public signing key
+        ncecho " [x] Adding public key "
+        apt-key add ${WORK_PATH}/deb/pubkey.asc >> "$log" 2>&1 &
+        pid=$!;progress $pid
+    fi        
 fi
 
 # Update apt cache
-echo "deb file:///var/local/oab/deb / #Sun Java6 - https://github.com/flexiondotorg/oab-java6" > /etc/apt/sources.list.d/oab.list
+echo "deb file://${WORK_PATH}/deb / #Sun Java6 - https://github.com/flexiondotorg/oab-java6" > /etc/apt/sources.list.d/oab.list
 apt_update
 
 echo "All done!"
