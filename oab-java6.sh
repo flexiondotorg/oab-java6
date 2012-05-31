@@ -67,7 +67,7 @@ function usage() {
     echo	
     # Adjust the output if we are building the docs.
     if [ "${MODE}" == "build_docs" ]; then
-        echo "If you want to see what this is script is doing while it is running then execute"
+        echo "If you want to see what this script is doing while it is running then execute"
         echo "the following from another shell:"
         echo "::"    
         echo
@@ -185,6 +185,11 @@ else
         rm /tmp/common.sh 2>/dev/null
         exit 1
     fi
+fi
+
+if [ ! -f /tmp/common.sh ]; then
+    echo "ERROR! /tmp/common.sh is missing. Run this script again to resolve the problem."
+    exit 1
 fi
 
 # Check we are running on a supported system in the correct way.

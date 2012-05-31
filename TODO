@@ -2,6 +2,7 @@
 Todo
 ====
 
+* Add support for JCE Unlimited Strength Jurisdiction Policy Files.
 * Remove automatic signing key generation and add support for selecting a
   pre-existing signing key.
 * Check the binary packages downloaded from Oracle are the correct size.  

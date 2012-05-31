@@ -228,7 +228,7 @@ Other contributors, listed alphabetically, are:
 * Eshwar Andhavarapu - Added comments in the apt source file.
 * Martin Polden - Fixed download binary packages from Oracle.
 * Miah Johnson - Fixed download binary packages from Oracle.
-* onlymostlydead - Fixed downloadinf from Oracle (again).
+* onlymostlydead - Fixed downloading from Oracle (again).
 * Thorsten Möllers - Fixed git cloning for users behind restrictive firewalls.
 
 Many thanks for all contributions!
@@ -236,6 +236,7 @@ Many thanks for all contributions!
 Todo
 ====
 
+* Add support for JCE Unlimited Strength Jurisdiction Policy Files.
 * Remove automatic signing key generation and add support for selecting a
   pre-existing signing key.
 * Check the binary packages downloaded from Oracle are the correct size.  
