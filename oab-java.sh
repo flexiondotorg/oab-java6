@@ -444,7 +444,7 @@ if [ -n "${DOWNLOAD_INDEX}" ]; then
 else
     ncecho " [x] Getting previous releases download page "
     if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
-        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
+        wget http://www.oracle.com/technetwork/java/javase/downloads/jdk6-downloads-1637591.html -O /tmp/oab-download.html >> "$log" 2>&1 &
     else
         wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html -O /tmp/oab-download.html >> "$log" 2>&1 &    
     fi        
@@ -461,11 +461,10 @@ fi
 for JAVA_BIN in ${JAVA_BINS}
 do
     # Get the download URL and size
-    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
+    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'"' -f12`
     DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
     # Cookies required for download
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
-    
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
     wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
@@ -474,6 +473,10 @@ do
     ln -s ${WORK_PATH}/pkg/${JAVA_BIN} ${WORK_PATH}/src/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid    
 done
+
+# Download the SCE
+SCE_URL="http://download.oracle.com/otn-pub/java/jce_policy/6/jce_policy-6.zip"
+wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${SCE_URL}" -O ${WORK_PATH}/pkg/jce_policy-6.zip >> "$log" 2>&1 &
 
 # Determine the new version
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
@@ -486,6 +489,9 @@ fi
 
 # Genereate a build message
 BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/${JAVA_UPSTREAM}"
+
+# copy over the jce?
+cp ${WORK_PATH}/pkg/*.zip ${WORK_PATH}/src/
 
 # Change directory to the build directory
 cd ${WORK_PATH}/src
