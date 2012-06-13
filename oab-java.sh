@@ -475,6 +475,33 @@ do
     pid=$!;progress_loop $pid    
 done
 
+# Get JCE download index
+DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jce-${JAVA_VER}-download-\d+\.html" /tmp/oab-index.html | uniq`
+ncecho " [x] Getting Java Cryptography Extension download page "
+wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download-jce.html >> "$log" 2>&1 &
+pid=$!;progress $pid
+
+# Get JCE download URL, size, and cookies required for download
+if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
+	JCE_POLICY="jce_policy-6.zip"
+	DOWNLOAD_PATH=`grep "jce[^']*-6-oth-JPR'\]\['path" /tmp/oab-download-jce.html | cut -d'=' -f2 | cut -d'"' -f2`
+	DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
+	COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+else
+	JCE_POLICY="UnlimitedJCEPolicyJDK7.zip"
+    DOWNLOAD_URL=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
+	COOKIES="oraclelicensejce-7-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+fi
+DOWNLOAD_SIZE=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d'"' -f4`
+
+ncecho " [x] Downloading ${JCE_POLICY} : ${DOWNLOAD_SIZE} "
+wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JCE_POLICY} >> "$log" 2>&1 &
+pid=$!;progress_loop $pid
+
+ncecho " [x] Symlinking ${JCE_POLICY} "
+ln -s ${WORK_PATH}/pkg/${JCE_POLICY} ${WORK_PATH}/src/${JCE_POLICY} >> "$log" 2>&1 &
+pid=$!;progress_loop $pid
+
 # Determine the new version
 NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
