@@ -2,6 +2,22 @@
 History
 =======
 
+0.2.4
+-----
+* Added support for JCE Unlimited Strength Jurisdiction Policy Files. Thanks to Ladios Jonquil and Jameson J Lee.
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/31
+
+* Reverted to https for git clone of upstream tools. 
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/32
+  
+* Updated download links to Sun Java 6 and Oracle Java 7. Thanks to Ladios Jonquil and Jameson J Lee.
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/33
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/34
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/39
+
 0.2.3
 -----
 * Added an option to build ``oracle-java7`` packages.

@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.3"
+VER="0.2.4"
 
 # common ############################################################### START #
 sp="/-\|"
@@ -401,15 +401,15 @@ chown root:root ${WORK_PATH}/gpg 2>/dev/null
 chmod 0700 ${WORK_PATH}/gpg 2>/dev/null
 
 # Remove the 'src' directory everytime.
-ncecho " [x] Removing clones of http://github.com/rraptorr/${JAVA_UPSTREAM} "
+ncecho " [x] Removing clones of https://github.com/rraptorr/${JAVA_UPSTREAM} "
 rm -rfv ${WORK_PATH}/${JAVA_UPSTREAM}* 2>/dev/null >> "$log" 2>&1
 rm -rfv ${WORK_PATH}/src 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Clone the code
-ncecho " [x] Cloning http://github.com/rraptorr/${JAVA_UPSTREAM} "
+ncecho " [x] Cloning https://github.com/rraptorr/${JAVA_UPSTREAM} "
 cd ${WORK_PATH}/ >> "$log" 2>&1
-git clone http://github.com/rraptorr/${JAVA_UPSTREAM} src >> "$log" 2>&1 &
+git clone https://github.com/rraptorr/${JAVA_UPSTREAM} src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Get the last commit tag.
