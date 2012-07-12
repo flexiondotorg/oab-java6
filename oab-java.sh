@@ -381,7 +381,11 @@ fi
 
 # Determine the build and runtime requirements.
 BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core \
-gnupg imvirt libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
+gnupg libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
+if [ -z ${NO_IMVIRT} ]; then
+    BUILD_DEPS="${BUILD_DEPS} imvirt"
+fi
+
 if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
 fi
@@ -586,7 +590,7 @@ cecho success
 
 # Skip anything todo with automated key creation if this script is running in
 # an OpenVZ container.
-if [[ `imvirt` != "OpenVZ" ]]; then
+if [ ${NO_IMVIRT} ] || [[ `imvirt` != "OpenVZ" ]]; then
     # Do we need to create signing keys
     if [ -z "${BUILD_KEY}" ] && [ ! -e ${WORK_PATH}/gpg/pubring.gpg ] && [ ! -e ${WORK_PATH}/gpg/secring.gpg ] && [ ! -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
 
