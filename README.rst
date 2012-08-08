@@ -111,6 +111,11 @@ Because, O.A.B! ;-)
 History
 =======
 
+0.2.5
+-----
+
+* Fixed building Oracle Java 7 by adding `libxrender1` to the dependencies.
+
 0.2.4
 -----
 * Added support for JCE Unlimited Strength Jurisdiction Policy Files. Thanks to Ladios Jonquil and Jameson J Lee.
