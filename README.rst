@@ -1,6 +1,6 @@
 OAB-Java
 ========
-oab-java.sh v0.2.4 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
+oab-java.sh v0.2.5 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
 
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
@@ -29,7 +29,7 @@ Like this.
 ::
 
   cd ~/
-  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.4/oab-java.sh -O oab-java.sh
+  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.5/oab-java.sh -O oab-java.sh
   chmod +x oab-java.sh
   sudo ./oab-java.sh
 
@@ -284,6 +284,7 @@ Todo
 ====
 
 * Check the binary packages downloaded from Oracle are the correct size.  
+* Use `fakeroot` rather than `sudo`.
 * Add support to build for a given Ubuntu distribution.
 * Add support to optionally build using ``pbuilder``.
 

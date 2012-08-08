@@ -3,6 +3,7 @@ Todo
 ====
 
 * Check the binary packages downloaded from Oracle are the correct size.  
+* Use `fakeroot` rather than `sudo`.
 * Add support to build for a given Ubuntu distribution.
 * Add support to optionally build using ``pbuilder``.
 

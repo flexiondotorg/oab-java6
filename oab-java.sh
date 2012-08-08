@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.4"
+VER="0.2.5"
 
 # common ############################################################### START #
 sp="/-\|"
@@ -357,9 +357,9 @@ OPTSTRING=7bchk:s
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
-        7) 
+        7)
            JAVA_DEV="oracle-java"
-           JAVA_UPSTREAM="oracle-java7"            
+           JAVA_UPSTREAM="oracle-java7"
            ;;
         b) build_docs;;
         c) BUILD_CLEAN=1;;
@@ -384,6 +384,10 @@ BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core \
 gnupg imvirt libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
 if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
+fi
+
+if [ "${JAVA_UPSTREAM}" == "oracle-java7" ]; then
+    BUILD_DEPS="${BUILD_DEPS} libxrender1"
 fi
 
 # Install the Java build requirements
@@ -447,8 +451,8 @@ if [ -z "${DOWNLOAD_FOUND}" ]; then
         wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
     else
         wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html -O /tmp/oab-download.html >> "$log" 2>&1 &    
-    fi        
-    pid=$!;progress $pid    
+    fi
+    pid=$!;progress $pid
 fi
 
 # Set the files we're downloading since sun-java6 and oracle-java7 differ.
