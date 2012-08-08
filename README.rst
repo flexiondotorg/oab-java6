@@ -114,7 +114,7 @@ History
 0.2.5
 -----
 
-* Fixed building Oracle Java 7 by adding `libxrender1` to the dependencies.
+* Fixed building Oracle Java 7 by adding ``libxrender1`` to the dependencies.
 
 0.2.4
 -----
@@ -289,9 +289,8 @@ Todo
 ====
 
 * Check the binary packages downloaded from Oracle are the correct size.  
-* Use `fakeroot` rather than `sudo`.
 * Add support to build for a given Ubuntu distribution.
-* Add support to optionally build using ``pbuilder``.
+* Add support to build using ``pbuilder`` or use ``fakeroot``.
 
 
 License
