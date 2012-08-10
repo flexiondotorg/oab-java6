@@ -29,7 +29,7 @@ Like this.
 ::
 
   cd ~/
-  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.5/oab-java.sh -O oab-java.sh
+  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java.sh -O oab-java.sh
   chmod +x oab-java.sh
   sudo ./oab-java.sh
 
