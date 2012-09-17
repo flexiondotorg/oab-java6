@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.5"
+VER="0.2.6"
 
 # common ############################################################### START #
 sp="/-\|"
@@ -440,7 +440,7 @@ pid=$!;progress $pid
 
 # See if the Java version is on the download frontpage, otherwise look for it in
 # the previous releases page.
-DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jdk${JAVA_VER}-downloads-\d+\.html" /tmp/oab-index.html | uniq`
+DOWNLOAD_INDEX="$(egrep -o /technetwork/java/javase/downloads/jdk"$JAVA_VER(u$JAVA_UPD)?"-downloads-[[:digit:]]+\\.html /tmp/oab-index.html | head -1)"
 ncecho " [x] Getting current release download page "
 wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download.html >> "$log" 2>&1 &
 pid=$!;progress $pid
