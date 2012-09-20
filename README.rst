@@ -111,6 +111,16 @@ Because, O.A.B! ;-)
 History
 =======
 
+0.2.6
+-----
+
+* Fixed screen scraping of the Oracle website.
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/55
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/56
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/57
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/58
+
 0.2.5
 -----
 
