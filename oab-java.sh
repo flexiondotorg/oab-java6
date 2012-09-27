@@ -353,7 +353,7 @@ if [ -f $log ]; then
 fi
 
 # Parse the options
-OPTSTRING=7bchk:s
+OPTSTRING=7bchk:st:
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
@@ -367,6 +367,7 @@ do
 
         k) BUILD_KEY=${OPTARG};;
         s) SKIP_REBUILD=1;;
+        t) TAG=${OPTARG};;
         *) usage;;
     esac
 done
@@ -418,7 +419,7 @@ pid=$!;progress $pid
 
 # Get the last commit tag.
 cd ${WORK_PATH}/src >> "$log" 2>&1
-TAG=`git tag -l | tail -n1`
+TAG=${TAG:-`git tag -l | tail -n1`}
 
 # Checkout the tagged, stable, version.
 ncecho " [x] Checking out ${TAG} "
