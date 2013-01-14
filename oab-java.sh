@@ -418,7 +418,7 @@ pid=$!;progress $pid
 
 # Get the last commit tag.
 cd ${WORK_PATH}/src >> "$log" 2>&1
-TAG=`git tag -l | tail -n1`
+TAG=`git describe --abbrev=0 --tags`
 
 # Checkout the tagged, stable, version.
 ncecho " [x] Checking out ${TAG} "
