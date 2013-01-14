@@ -397,32 +397,41 @@ pid=$!;progress $pid
 
 # Make sure the required dirs exist.
 ncecho " [x] Making build directories "
-mkdir -p ${WORK_PATH}/{deb,gpg,pkg} >> "$log" 2>&1 &
+mkdir -p ${WORK_PATH}/{deb,gpg,pkg,srcs} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Set the permissions appropriately for 'gpg'
 chown root:root ${WORK_PATH}/gpg 2>/dev/null
 chmod 0700 ${WORK_PATH}/gpg 2>/dev/null
 
+if [ -d ${WORK_PATH}/srcs/${JAVA_UPSTREAM}.git ]; then
+    # Update the code
+    ncecho " [x] Updating from https://github.com/rraptorr/${JAVA_UPSTREAM} "
+    cd ${WORK_PATH}/srcs/${JAVA_UPSTREAM}.git/ >> "$log" 2>&1
+    git fetch >> "$log" 2>&1 &
+    pid=$!;progress $pid
+else
+    # Mirror the code
+    ncecho " [x] Mirroring https://github.com/rraptorr/${JAVA_UPSTREAM} "
+    cd ${WORK_PATH}/srcs/ >> "$log" 2>&1
+    git clone --mirror https://github.com/rraptorr/${JAVA_UPSTREAM} >> "$log" 2>&1 &
+    pid=$!;progress $pid
+fi
+
 # Remove the 'src' directory everytime.
-ncecho " [x] Removing clones of https://github.com/rraptorr/${JAVA_UPSTREAM} "
+ncecho " [x] Removing local clones of ${JAVA_UPSTREAM} "
 rm -rfv ${WORK_PATH}/${JAVA_UPSTREAM}* 2>/dev/null >> "$log" 2>&1
 rm -rfv ${WORK_PATH}/src 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
-# Clone the code
-ncecho " [x] Cloning https://github.com/rraptorr/${JAVA_UPSTREAM} "
-cd ${WORK_PATH}/ >> "$log" 2>&1
-git clone https://github.com/rraptorr/${JAVA_UPSTREAM} src >> "$log" 2>&1 &
-pid=$!;progress $pid
-
 # Get the last commit tag.
-cd ${WORK_PATH}/src >> "$log" 2>&1
+cd ${WORK_PATH}/srcs/${JAVA_UPSTREAM}.git/ >> "$log" 2>&1
 TAG=`git describe --abbrev=0 --tags`
 
-# Checkout the tagged, stable, version.
-ncecho " [x] Checking out ${TAG} "
-git checkout ${TAG} >> "$log" 2>&1 &
+# Clone from mirror, pointing to the tagged, stable, version.
+ncecho " [x] Cloning ${JAVA_UPSTREAM} with ${TAG} "
+cd ${WORK_PATH}/ >> "$log" 2>&1
+git clone -b ${TAG} ${WORK_PATH}/srcs/${JAVA_UPSTREAM}.git src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Cet the current Debian package version and package urgency
@@ -457,9 +466,20 @@ fi
 
 # Set the files we're downloading since sun-java6 and oracle-java7 differ.
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
-    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin"
+    JAVA_EXT=.bin
 else
-    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.tar.gz jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.tar.gz"
+    JAVA_EXT=.tar.gz
+fi
+if grep -q ia32 ${WORK_PATH}/src/debian/rules; then
+    # Upstream still builds ia32 package, download both architectures
+    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586${JAVA_EXT} jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64${JAVA_EXT}"
+else
+    # Upstream has removed ia32 package, just download the appropriate one
+    if [ "${LSB_ARCH}" == "amd64" ]; then
+        JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64${JAVA_EXT}"
+    else
+        JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586${JAVA_EXT}"
+    fi
 fi
 
 for JAVA_BIN in ${JAVA_BINS}
