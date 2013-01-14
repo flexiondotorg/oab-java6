@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.3"
+VER="0.2.6"
 
 # common ############################################################### START #
 sp="/-\|"
@@ -357,9 +357,9 @@ OPTSTRING=7bchk:s
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
-        7) 
+        7)
            JAVA_DEV="oracle-java"
-           JAVA_UPSTREAM="oracle-java7"            
+           JAVA_UPSTREAM="oracle-java7"
            ;;
         b) build_docs;;
         c) BUILD_CLEAN=1;;
@@ -386,6 +386,10 @@ if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
 fi
 
+if [ "${JAVA_UPSTREAM}" == "oracle-java7" ]; then
+    BUILD_DEPS="${BUILD_DEPS} libxrender1"
+fi
+
 # Install the Java build requirements
 ncecho " [x] Installing Java build requirements "
 apt-get install -y --no-install-recommends ${BUILD_DEPS} >> "$log" 2>&1 &
@@ -401,15 +405,15 @@ chown root:root ${WORK_PATH}/gpg 2>/dev/null
 chmod 0700 ${WORK_PATH}/gpg 2>/dev/null
 
 # Remove the 'src' directory everytime.
-ncecho " [x] Removing clones of http://github.com/rraptorr/${JAVA_UPSTREAM} "
+ncecho " [x] Removing clones of https://github.com/rraptorr/${JAVA_UPSTREAM} "
 rm -rfv ${WORK_PATH}/${JAVA_UPSTREAM}* 2>/dev/null >> "$log" 2>&1
 rm -rfv ${WORK_PATH}/src 2>/dev/null >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Clone the code
-ncecho " [x] Cloning http://github.com/rraptorr/${JAVA_UPSTREAM} "
+ncecho " [x] Cloning https://github.com/rraptorr/${JAVA_UPSTREAM} "
 cd ${WORK_PATH}/ >> "$log" 2>&1
-git clone http://github.com/rraptorr/${JAVA_UPSTREAM} src >> "$log" 2>&1 &
+git clone https://github.com/rraptorr/${JAVA_UPSTREAM} src >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Get the last commit tag.
@@ -436,7 +440,7 @@ pid=$!;progress $pid
 
 # See if the Java version is on the download frontpage, otherwise look for it in
 # the previous releases page.
-DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jdk${JAVA_VER}-downloads-\d+\.html" /tmp/oab-index.html | uniq`
+DOWNLOAD_INDEX="$(egrep -o /technetwork/java/javase/downloads/jdk"$JAVA_VER(u$JAVA_UPD)?"-downloads-[[:digit:]]+\\.html /tmp/oab-index.html | head -1)"
 ncecho " [x] Getting current release download page "
 wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download.html >> "$log" 2>&1 &
 pid=$!;progress $pid
@@ -447,8 +451,8 @@ if [ -z "${DOWNLOAD_FOUND}" ]; then
         wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
     else
         wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html -O /tmp/oab-download.html >> "$log" 2>&1 &    
-    fi        
-    pid=$!;progress $pid    
+    fi
+    pid=$!;progress $pid
 fi
 
 # Set the files we're downloading since sun-java6 and oracle-java7 differ.

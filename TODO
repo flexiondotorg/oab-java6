@@ -2,7 +2,7 @@
 Todo
 ====
 
-* Add support for JCE Unlimited Strength Jurisdiction Policy Files.
 * Check the binary packages downloaded from Oracle are the correct size.  
 * Add support to build for a given Ubuntu distribution.
-* Add support to optionally build using ``pbuilder``.
+* Add support to build using ``pbuilder`` or use ``fakeroot``.
+

@@ -1,6 +1,6 @@
 OAB-Java
 ========
-oab-java.sh v0.2.3 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
+oab-java.sh v0.2.6 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
 
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
@@ -29,7 +29,7 @@ Like this.
 ::
 
   cd ~/
-  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.3/oab-java.sh -O oab-java.sh
+  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.6/oab-java.sh -O oab-java.sh
   chmod +x oab-java.sh
   sudo ./oab-java.sh
 
@@ -110,6 +110,37 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+0.2.6
+-----
+
+* Fixed screen scraping of the Oracle website.
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/55
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/56
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/57
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/58
+
+0.2.5
+-----
+
+* Fixed building Oracle Java 7 by adding ``libxrender1`` to the dependencies.
+
+0.2.4
+-----
+* Added support for JCE Unlimited Strength Jurisdiction Policy Files. Thanks to Ladios Jonquil and Jameson J Lee.
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/31
+
+* Reverted to https for git clone of upstream tools. 
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/32
+  
+* Updated download links to Sun Java 6 and Oracle Java 7. Thanks to Ladios Jonquil and Jameson J Lee.
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/33
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/34
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/39
 
 0.2.3
 -----
@@ -255,6 +286,8 @@ Other contributors, listed alphabetically, are:
 * Derek Chen-Becker - Added an option to skip rebuilding packages.
 * Eshwar Andhavarapu - Added comments in the apt source file.
 * Hannes Schmidt - Added an option to use a pre-existing signing key.
+* Jameson J Lee - Added support for JCE Unlimited Strength Jurisdiction Policy Files and fixed downloading from Oracle (yet again).
+* Ladios Jonquil - Added support for JCE Unlimited Strength Jurisdiction Policy Files and fixed downloading from Oracle (yet again).
 * Martin Polden - Fixed download binary packages from Oracle.
 * Miah Johnson - Fixed download binary packages from Oracle.
 * onlymostlydead - Fixed downloading from Oracle (again).
@@ -265,10 +298,10 @@ Many thanks for all contributions!
 Todo
 ====
 
-* Add support for JCE Unlimited Strength Jurisdiction Policy Files.
 * Check the binary packages downloaded from Oracle are the correct size.  
 * Add support to build for a given Ubuntu distribution.
-* Add support to optionally build using ``pbuilder``.
+* Add support to build using ``pbuilder`` or use ``fakeroot``.
+
 
 License
 =======
