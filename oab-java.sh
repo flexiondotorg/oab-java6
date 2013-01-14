@@ -457,9 +457,20 @@ fi
 
 # Set the files we're downloading since sun-java6 and oracle-java7 differ.
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
-    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.bin jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.bin"
+    JAVA_EXT=.bin
 else
-    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586.tar.gz jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64.tar.gz"
+    JAVA_EXT=.tar.gz
+fi
+if grep -q ia32 ${WORK_PATH}/src/debian/rules; then
+    # Upstream still builds ia32 package, download both architectures
+    JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586${JAVA_EXT} jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64${JAVA_EXT}"
+else
+    # Upstream has removed ia32 package, just download the appropriate one
+    if [ "${LSB_ARCH}" == "amd64" ]; then
+        JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64${JAVA_EXT}"
+    else
+        JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586${JAVA_EXT}"
+    fi
 fi
 
 for JAVA_BIN in ${JAVA_BINS}
