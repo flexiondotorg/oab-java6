@@ -2,6 +2,16 @@
 History
 =======
 
+0.2.7
+-----
+
+* Many fixes and improvements. Thanks for all the contributions!
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/72
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/74
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/75
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/77
+
 0.2.6
 -----
 
