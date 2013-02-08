@@ -9,7 +9,13 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.6"
+VER="0.2.7"
+
+# check the --fqdn version, if it's absent fall back to hostname
+HOSTNAME=$(hostname --fqdn 2>/dev/null)
+if [[ $HOSTNAME == "" ]]; then
+  HOSTNAME=$(hostname)
+fi
 
 # common ############################################################### START #
 sp="/-\|"
@@ -592,7 +598,7 @@ cecho success
 # Create a 'Release' file
 ncecho " [x] Creating Release file "
 cd ${WORK_PATH}/deb
-echo "Origin: `hostname --fqdn`"         >  Release
+echo "Origin: ${HOSTNAME}"         >  Release
 echo "Label: Java"                        >> Release
 echo "Suite: ${LSB_CODE}"               >> Release
 echo "Version: ${LSB_REL}"              >> Release
@@ -619,8 +625,8 @@ if [[ `imvirt` != "OpenVZ" ]]; then
         echo "Key-Length: 1024" >> ${WORK_PATH}/gpg-key.conf
         echo "Subkey-Type: ELG-E" >> ${WORK_PATH}/gpg-key.conf
         echo "Subkey-Length: 2048" >> ${WORK_PATH}/gpg-key.conf
-        echo "Name-Real: `hostname --fqdn`" >> ${WORK_PATH}/gpg-key.conf
-        echo "Name-Email: root@`hostname --fqdn`" >> ${WORK_PATH}/gpg-key.conf
+        echo "Name-Real: ${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
+        echo "Name-Email: root@${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
         echo "Expire-Date: 0" >> ${WORK_PATH}/gpg-key.conf
         cecho success
 
@@ -661,7 +667,7 @@ if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_P
     if [ -z "${BUILD_KEY}" ] ; then
         # Export public signing key
         ncecho " [x] Exporting public key "
-        gpg --homedir ${WORK_PATH}/gpg --export -a "`hostname --fqdn`" > ${WORK_PATH}/deb/pubkey.asc
+        gpg --homedir ${WORK_PATH}/gpg --export -a "${HOSTNAME}" > ${WORK_PATH}/deb/pubkey.asc
         cecho success
 
         # Add the public signing key

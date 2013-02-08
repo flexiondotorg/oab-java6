@@ -1,6 +1,6 @@
 OAB-Java
 ========
-oab-java.sh v0.2.6 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
+oab-java.sh v0.2.7 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
 
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
@@ -29,7 +29,7 @@ Like this.
 ::
 
   cd ~/
-  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.6/oab-java.sh -O oab-java.sh
+  wget https://github.com/flexiondotorg/oab-java6/raw/0.2.7/oab-java.sh -O oab-java.sh
   chmod +x oab-java.sh
   sudo ./oab-java.sh
 
@@ -110,6 +110,16 @@ Because, O.A.B! ;-)
 
 History
 =======
+
+0.2.7
+-----
+
+* Many fixes and improvements. Thanks for all the contributions!
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/72
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/74
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/75
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/77
 
 0.2.6
 -----
@@ -283,15 +293,20 @@ This package is written and maintained by Martin Wimpress, <code@flexion.org>
 
 Other contributors, listed alphabetically, are:
 
-* Derek Chen-Becker - Added an option to skip rebuilding packages.
-* Eshwar Andhavarapu - Added comments in the apt source file.
-* Hannes Schmidt - Added an option to use a pre-existing signing key.
-* Jameson J Lee - Added support for JCE Unlimited Strength Jurisdiction Policy Files and fixed downloading from Oracle (yet again).
-* Ladios Jonquil - Added support for JCE Unlimited Strength Jurisdiction Policy Files and fixed downloading from Oracle (yet again).
-* Martin Polden - Fixed download binary packages from Oracle.
-* Miah Johnson - Fixed download binary packages from Oracle.
-* onlymostlydead - Fixed downloading from Oracle (again).
-* Thorsten Möllers - Fixed git cloning for users behind restrictive firewalls.
+* Björgvin Ragnarsson
+* David Kovach
+* Derek Chen-Becker
+* Eshwar Andhavarapu
+* Greg Swallow
+* Hannes Schmidt
+* Ihor Kaharlichenko
+* Jameson J Lee
+* Ladios Jonquil
+* Martin Polden
+* Miah Johnson
+* onlymostlydead
+* Peter Leibiger
+* Thorsten Möllers
 
 Many thanks for all contributions!
 
