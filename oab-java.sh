@@ -390,7 +390,7 @@ if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list ]; then
 fi
 
 # Determine the build and runtime requirements.
-BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core \
+BUILD_DEPS="build-essential debhelper fontconfig devscripts dpkg-dev git-core \
 gnupg imvirt libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
 if [ "${LSB_ARCH}" == "amd64" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
