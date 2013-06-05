@@ -8,6 +8,8 @@
     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/92>
     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/66>
   * Added spinner overide support. Thanks to Paul Scott.
+  * Added manual overide of Java version to build using the upstream Git tags. Thanks to Jonathan Harker.
+    * Closes: <https://github.com/flexiondotorg/oab-java6/issues/40>
   * Updated (`-c`) option to optionally clean `.deb` packages and sources.
     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/95>
   * Updated documentation and migrated to Markdown.

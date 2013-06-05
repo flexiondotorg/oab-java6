@@ -213,6 +213,7 @@ function usage() {
     echo "  * -c              : Remove pre-existing packages from ``${WORK_PATH}/deb`` and sources from ``${WORK_PATH}/src``."
     echo "  * -k <gpg-key-id> : Use the specified existing key instead of generating one"
     echo "  * -s              : Skip building if the packages already exist"
+    echo "  * -t              : Specify the Java version tag to use from the upstream Debian packaging script."
     echo "  * -h              : This help"
     echo
     echo "## How do I download and run this thing?"
@@ -351,7 +352,7 @@ if [ -f $log ]; then
 fi
 
 # Parse the options
-OPTSTRING=7bchk:s
+OPTSTRING=7bchk:st:
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
@@ -362,9 +363,9 @@ do
         b) build_docs;;
         c) BUILD_CLEAN=1;;
         h) usage;;
-
         k) BUILD_KEY=${OPTARG};;
         s) SKIP_REBUILD=1;;
+        t) TAG=${OPTARG};;
         *) usage;;
     esac
 done
@@ -425,7 +426,7 @@ pid=$!;progress $pid
 
 # Get the last commit tag.
 cd ${WORK_PATH}/srcs/${JAVA_UPSTREAM}.git/ >> "$log" 2>&1
-TAG=`git describe --abbrev=0 --tags`
+TAG=${TAG:-`git describe --abbrev=0 --tags`}
 
 # Clone from mirror, pointing to the tagged, stable, version.
 ncecho " [x] Cloning ${JAVA_UPSTREAM} with ${TAG} "
