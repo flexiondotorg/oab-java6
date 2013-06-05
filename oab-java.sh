@@ -384,6 +384,14 @@ gnupg libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
 
 if [ "${LSB_ARCH}" == "amd64" ] && [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
+    if [ "${LSB_CODE}" == "wheezy" ]; then
+        # Wheezy need the i386 arch to enable provide access to the tranisitional ia32-libs.
+        # https://github.com/rraptorr/sun-java6/issues/26
+        ncecho " [x] Adding i386 architecture "
+        dpkg --add-architecture i386
+        pid=$!;progress $pid
+        apt_update
+    fi
 fi
 
 if [ "${JAVA_UPSTREAM}" == "oracle-java7" ]; then
@@ -649,7 +657,7 @@ fi
 # Do we have signing keys or a user specified key, if so use them.
 if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_PATH}/gpg/secring.gpg ] && [ -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
     # Sign the Release
-    ncecho " [x] Signing the 'Release' file "    
+    ncecho " [x] Signing the 'Release' file "
     rm ${WORK_PATH}/deb/Release.gpg 2>/dev/null
     if [ -n "${BUILD_KEY}" ] ; then
         GPG_OPTION=(--default-key "${BUILD_KEY}")
