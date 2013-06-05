@@ -11,6 +11,7 @@
   * Updated (`-c`) option to optionally clean `.deb` packages and sources.
     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/95>
   * Updated documentation and migrated to Markdown.
+  * Removed `imvirt` requirement.
   * Tested on Ubuntu 10.04, Ubuntu 12.04, Ubuntu 13.04, Debian 6 and Debian 7.
 
 ## 0.2.7

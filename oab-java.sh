@@ -206,7 +206,7 @@ function usage() {
     echo "Optional parameters"
     echo
     echo "  * -7              : Build ``oracle-java7`` packages instead of ``sun-java6``"
-    echo "  * -c              : Remove pre-existing packages from ``${WORK_PATH}/deb`` and sources from ``${WORK_PARTH}/src``."
+    echo "  * -c              : Remove pre-existing packages from ``${WORK_PATH}/deb`` and sources from ``${WORK_PATH}/src``."
     echo "  * -k <gpg-key-id> : Use the specified existing key instead of generating one"
     echo "  * -s              : Skip building if the packages already exist"
     echo "  * -h              : This help"
@@ -375,7 +375,7 @@ fi
 
 # Determine the build and runtime requirements.
 BUILD_DEPS="build-essential debhelper devscripts dpkg-dev git-core \
-gnupg imvirt libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
+gnupg libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
 
 if [ "${LSB_ARCH}" == "amd64" ] && [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
@@ -603,33 +603,34 @@ do
 done
 cecho success
 
-# Skip anything todo with automated key creation if this script is running in
-# an OpenVZ container.
-if [[ `imvirt` != "OpenVZ" ]]; then
-    # Do we need to create signing keys
-    if [ -z "${BUILD_KEY}" ] && [ ! -e ${WORK_PATH}/gpg/pubring.gpg ] && [ ! -e ${WORK_PATH}/gpg/secring.gpg ] && [ ! -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
+# Do we need to create signing keys
+if [ -z "${BUILD_KEY}" ] && [ ! -e ${WORK_PATH}/gpg/pubring.gpg ] && [ ! -e ${WORK_PATH}/gpg/secring.gpg ] && [ ! -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
+    ncecho " [x] Create GnuPG configuration "
+    echo "Key-Type: DSA" > ${WORK_PATH}/gpg-key.conf
+    echo "Key-Length: 1024" >> ${WORK_PATH}/gpg-key.conf
+    echo "Subkey-Type: ELG-E" >> ${WORK_PATH}/gpg-key.conf
+    echo "Subkey-Length: 2048" >> ${WORK_PATH}/gpg-key.conf
+    echo "Name-Real: ${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
+    echo "Name-Email: root@${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
+    echo "Expire-Date: 0" >> ${WORK_PATH}/gpg-key.conf
+    cecho success
 
-        ncecho " [x] Create GnuPG configuration "
-        echo "Key-Type: DSA" > ${WORK_PATH}/gpg-key.conf
-        echo "Key-Length: 1024" >> ${WORK_PATH}/gpg-key.conf
-        echo "Subkey-Type: ELG-E" >> ${WORK_PATH}/gpg-key.conf
-        echo "Subkey-Length: 2048" >> ${WORK_PATH}/gpg-key.conf
-        echo "Name-Real: ${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
-        echo "Name-Email: root@${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
-        echo "Expire-Date: 0" >> ${WORK_PATH}/gpg-key.conf
-        cecho success
-
+    # OpenVZ Check... Don't run if in OpenVZ
+    if [ ! -e /proc/user_beancounters ]; then
         # Stop the system 'rngd'.
         /etc/init.d/rng-tools stop >> "$log" 2>&1
 
-        ncecho " [x] Start generating entropy "  
+        ncecho " [x] Start generating entropy "
         rngd -r /dev/urandom -p /tmp/rngd.pid >> "$log" 2>&1 &
         pid=$!;progress $pid
+    fi
 
-        ncecho " [x] Creating signing key "
-        gpg --homedir ${WORK_PATH}/gpg --batch --gen-key ${WORK_PATH}/gpg-key.conf >> "$log" 2>&1 &
-        pid=$!;progress $pid
+    ncecho " [x] Creating signing key "
+    gpg --homedir ${WORK_PATH}/gpg --batch --gen-key ${WORK_PATH}/gpg-key.conf >> "$log" 2>&1 &
+    pid=$!;progress $pid
 
+    # OpenVZ Check... Don't run if in OpenVZ (same as above)
+    if [ ! -e /proc/user_beancounters ]; then
         ncecho " [x] Stop generating entropy "
         kill -9 `cat /tmp/rngd.pid` >> "$log" 2>&1 &
         pid=$!;progress $pid
