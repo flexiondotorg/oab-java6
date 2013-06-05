@@ -550,7 +550,7 @@ if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]
     # Remove any existing .deb files if the 'clean' option was selected.
     if [ ${BUILD_CLEAN} -eq 1 ]; then
         ncecho " [x] Removing existing .deb packages and sources "
-        rm -fv ${WORK_PATH}/{deb,src}/* >> "$log" 2>&1 &
+        rm -rfv ${WORK_PATH}/{deb,src}/* >> "$log" 2>&1 &
         pid=$!;progress $pid
     fi
 
