@@ -175,9 +175,8 @@ function apt_update() {
 function copyright_msg() {
     local MODE=${1}
     if [ "${MODE}" == "build_docs" ]; then
-        echo "OAB-Java"
-        echo "========"                
-    fi    
+        echo "# OAB-Java"
+    fi
     echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages."
     echo
     echo "Copyright (c) Martin Wimpress, http://flexion.org. MIT License"
@@ -185,7 +184,7 @@ function copyright_msg() {
 	echo "By running this script to download Java you acknowledge that you have"
 	echo "read and accepted the terms of the Oracle end user license agreement."
 	echo
-	echo "* http://www.oracle.com/technetwork/java/javase/terms/license/"
+	echo "* <http://www.oracle.com/technetwork/java/javase/terms/license/>"
 	echo
     # Adjust the output if we are executing the script.
     # It doesn't make sense to see this message here in the documentation.
@@ -193,74 +192,67 @@ function copyright_msg() {
         echo "If you want to see what this is script is doing while it is running then execute"
         echo "the following from another shell:"
         echo 
-        echo "  tail -f `pwd`/`basename ${0}`.log"
+        echo "    tail -f `pwd`/`basename ${0}`.log"
         echo
     fi
 }
 
 function usage() {
     local MODE=${1}
-    echo "Usage"
-    echo "-----"
-    echo "::"
+    echo "## Usage"
     echo
-    echo "  sudo ${0}"    
+    echo "    sudo ${0}"
     echo
     echo "Optional parameters"
     echo
-    echo "* -7              : Build ``oracle-java7`` packages instead of ``sun-java6``"
-    echo "* -c              : Remove pre-existing packages from ``${WORK_PATH}/deb``"
-    echo "* -k <gpg-key-id> : Use the specified existing key instead of generating one"
-    echo "* -s              : Skip building if the packages already exist"
-    echo "* -h              : This help"
+    echo "  * -7              : Build ``oracle-java7`` packages instead of ``sun-java6``"
+    echo "  * -c              : Remove pre-existing packages from ``${WORK_PATH}/deb`` and sources from ``${WORK_PARTH}/src``."
+    echo "  * -k <gpg-key-id> : Use the specified existing key instead of generating one"
+    echo "  * -s              : Skip building if the packages already exist"
+    echo "  * -h              : This help"
     echo
-    echo "How do I download and run this thing?"
-    echo "-------------------------------------"
+    echo "## How do I download and run this thing?"
+    echo
     echo "Like this."
-    echo "::"
     echo
-    echo "  cd ~/"
-    echo "  wget https://github.com/flexiondotorg/oab-java6/raw/${VER}/`basename ${0}` -O `basename ${0}`"
-    echo "  chmod +x `basename ${0}`"
-    echo "  sudo ./`basename ${0}`"
+    echo "    cd ~/"
+    echo "    wget https://github.com/flexiondotorg/oab-java6/raw/${VER}/`basename ${0}` -O `basename ${0}`"
+    echo "    chmod +x `basename ${0}`"
+    echo "    sudo ./`basename ${0}`"
     echo
     echo "If you are behind a proxy you may need to run using:"
-    echo "::"
     echo
-    echo "  sudo -i ./`basename ${0}`"
-    echo	
+    echo "    sudo -i ./`basename ${0}`"
+    echo
     # Adjust the output if we are building the docs.
     if [ "${MODE}" == "build_docs" ]; then
         echo "If you want to see what this script is doing while it is running then execute"
         echo "the following from another shell:"
-        echo "::"    
         echo
-	    echo "  tail -f ./`basename ${0}`.log"
+        echo "  tail -f ./`basename ${0}`.log"
         echo
-    fi            
-    echo "How it works"
-    echo "------------"
+    fi
+    echo "## How it works"
+    echo
     echo "This script is merely a wrapper for the most excellent Debian packaging"
     echo "scripts prepared by Janusz Dziemidowicz."
     echo
-    echo "* https://github.com/rraptorr/sun-java6"
-    echo "* https://github.com/rraptorr/oracle-java7"    
+    echo "  * <https://github.com/rraptorr/sun-java6>"
+    echo "  * <https://github.com/rraptorr/oracle-java7>"
     echo
     echo "The basic execution steps are:"
     echo
-    echo "* Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
-    echo "* Install the tools required to build the Java packages."
-    echo "* Create download cache in ``${WORK_PATH}/pkg``."
-    echo "* Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
-    echo "* Clone the build scripts from https://github.com/rraptorr/"
-    echo "* Build the Java packages applicable to your system."    
-    echo "* Create local ``apt`` repository in ``${WORK_PATH}/deb`` for the newly built Java Packages."
-    echo "* Create a GnuPG signing key in ``${WORK_PATH}/gpg`` if none exists."
-    echo "* Sign the local ``apt`` repository using the local GnuPG signing key."
+    echo "  * Remove, my now disabled, Java PPA ``ppa:flexiondotorg/java``."
+    echo "  * Install the tools required to build the Java packages."
+    echo "  * Create download cache in ``${WORK_PATH}/pkg``."
+    echo "  * Download the i586 and x64 Java install binaries from Oracle. Yes, both are required (for sun-java6 only)."
+    echo "  * Clone the build scripts from <https://github.com/rraptorr/>"
+    echo "  * Build the Java packages applicable to your system."
+    echo "  * Create local ``apt`` repository in ``${WORK_PATH}/deb`` for the newly built Java Packages."
+    echo "  * Create a GnuPG signing key in ``${WORK_PATH}/gpg`` if none exists."
+    echo "  * Sign the local ``apt`` repository using the local GnuPG signing key."
     echo
-    echo "What gets installed?"
-    echo "--------------------"
-    echo "Nothing!"
+    echo "## What gets installed?"
     echo
     echo "This script will no longer try and directly install or upgrade any Java"
     echo "packages, instead a local ``apt`` repository is created that hosts locally"
@@ -268,20 +260,17 @@ function usage() {
     echo "or upgrade the Java packages you require using ``apt-get``, ``aptitude`` or"
     echo "``synaptic``, etc. For example, once this script has been run you can simply"
     echo "install the JRE by executing the following from a shell."
-    echo "::"
     echo
-    echo "  sudo apt-get install sun-java6-jre"
+    echo "    sudo apt-get install sun-java6-jre"
     echo
     echo "Or if you ran the script with the ``-7`` option."
-    echo "::"
     echo
-    echo "  sudo apt-get install oracle-java7-jre"
+    echo "    sudo apt-get install oracle-java7-jre"
     echo
     echo "If you already have the *\"official\"* Ubuntu packages installed then you"
     echo "can upgrade by executing the following from a shell."
-    echo "::"
     echo
-    echo "  sudo apt-get upgrade"
+    echo "    sudo apt-get upgrade"
     echo
     echo "The local ``apt`` repository is just that, **local**. It is not accessible"
     echo "remotely and `basename ${0}` will never enable that capability to ensure"
@@ -290,15 +279,14 @@ function usage() {
     echo "By default, the script creates a temporary GPG keyring in the working"
     echo "directory. In order to use the current user's GPG chain instead, specify"
     echo "the key ID of an existing secret key. Run ``gpg -K`` to list available keys."
-    echo            
-    echo "Known Issues"
-    echo "------------"
     echo
-    echo "* The Oracle download servers can be horribly slow. My script caches the downloads"
+    echo "## Known Issues"
+    echo
+    echo "  * The Oracle download servers can be horribly slow. My script caches the downloads"
     echo "  so you only need download each file once."
     echo
-    echo "What is 'oab'?"
-    echo "--------------"
+    echo "## What is 'oab'?"
+    echo
     echo "Because, O.A.B! ;-)"
     echo
 
@@ -309,29 +297,29 @@ function usage() {
 }
 
 function build_docs() {
-    copyright_msg build_docs > README.rst
+    copyright_msg build_docs > README.md
 
     # Add the usage instructions
-    usage build_docs >> README.rst
+    usage build_docs >> README.md
 
     # Add the CHANGES
     if [ -e CHANGES ]; then
-        cat CHANGES >> README.rst
+        cat CHANGES >> README.md
     fi
 
     # Add the AUTHORS
     if [ -e AUTHORS ]; then
-        cat AUTHORS >> README.rst
+        cat AUTHORS >> README.md
     fi
 
     # Add the TODO
     if [ -e TODO ]; then
-        cat TODO >> README.rst
+        cat TODO >> README.md
     fi
 
     # Add the LICENSE
     if [ -e LICENSE ]; then
-        cat LICENSE >> README.rst
+        cat LICENSE >> README.md
     fi
 
     echo "Documentation built."
@@ -561,8 +549,8 @@ pid=$!;progress_can_fail $pid
 if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
     # Remove any existing .deb files if the 'clean' option was selected.
     if [ ${BUILD_CLEAN} -eq 1 ]; then
-        ncecho " [x] Removing existing .deb packages "
-        rm -fv ${WORK_PATH}/deb/* >> "$log" 2>&1 &
+        ncecho " [x] Removing existing .deb packages and sources "
+        rm -fv ${WORK_PATH}/{deb,src}/* >> "$log" 2>&1 &
         pid=$!;progress $pid
     fi
 

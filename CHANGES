@@ -2,6 +2,17 @@
 History
 =======
 
+0.2.8
+-----
+
+* Build now work on Raring Ringtail.
+
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/98
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/92
+  * Closes: https://github.com/flexiondotorg/oab-java6/issues/66
+
+* Added spinner overide support. Thanks to Paul Scott.
+
 0.2.7
 -----
 
