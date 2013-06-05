@@ -3,7 +3,7 @@
 
 ## 0.2.8
 
-  * Fixed building on Ubuntu 13.04.
+  * Fixed building on Ubuntu 13.04 and Debian 7.
     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/98>
     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/92>
     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/66>
