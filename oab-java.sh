@@ -18,7 +18,9 @@ if [[ $HOSTNAME == "" ]]; then
 fi
 
 # common ############################################################### START #
-sp="/-\|"
+if [ ! -v SPINNER ]; then
+    SPINNER="/-\|"
+fi
 log="${PWD}/`basename ${0}`.log"
 
 function error_msg() {
@@ -40,7 +42,9 @@ function ncecho() {
 }
 
 function spinny() {
-    echo -ne "\b${sp:i++%${#sp}:1}"
+    if [ -n "$SPINNER" ]; then
+        echo -ne "\b${SPINNER:i++%${#SPINNER}:1}"
+    fi
 }
 
 function progress() {
