@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.7"
+VER="0.2.8"
 
 # check the --fqdn version, if it's absent fall back to hostname
 HOSTNAME=$(hostname --fqdn 2>/dev/null)
@@ -158,7 +158,7 @@ function check_ubuntu() {
 function lsb() {
     local CMD_LSB_RELEASE=`which lsb_release`
     if [ "${CMD_LSB_RELEASE}" == "" ]; then
-	    error_msg "ERROR! 'lsb_release' was not found. I can't identify your distribution."
+        error_msg "ERROR! 'lsb_release' was not found. I can't identify your distribution."
     fi
     LSB_ID=`lsb_release -i | cut -f2 | sed 's/ //g'`
     LSB_REL=`lsb_release -r | cut -f2 | sed 's/ //g'`
@@ -184,18 +184,18 @@ function copyright_msg() {
     echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages."
     echo
     echo "Copyright (c) Martin Wimpress, http://flexion.org. MIT License"
-	echo
-	echo "By running this script to download Java you acknowledge that you have"
-	echo "read and accepted the terms of the Oracle end user license agreement."
-	echo
-	echo "* <http://www.oracle.com/technetwork/java/javase/terms/license/>"
-	echo
+    echo
+    echo "By running this script to download Java you acknowledge that you have"
+    echo "read and accepted the terms of the Oracle end user license agreement."
+    echo
+    echo "* <http://www.oracle.com/technetwork/java/javase/terms/license/>"
+    echo
     # Adjust the output if we are executing the script.
     # It doesn't make sense to see this message here in the documentation.
     if [ "${MODE}" != "build_docs" ]; then
         echo "If you want to see what this is script is doing while it is running then execute"
         echo "the following from another shell:"
-        echo 
+        echo
         echo "    tail -f `pwd`/`basename ${0}`.log"
         echo
     fi
@@ -489,14 +489,14 @@ do
     DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
     # Cookies required for download
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
-    
+
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
     wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
     ln -s ${WORK_PATH}/pkg/${JAVA_BIN} ${WORK_PATH}/src/${JAVA_BIN} >> "$log" 2>&1 &
-    pid=$!;progress_loop $pid    
+    pid=$!;progress_loop $pid
 done
 
 # Get JCE download index
@@ -507,14 +507,14 @@ pid=$!;progress $pid
 
 # Get JCE download URL, size, and cookies required for download
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
-	JCE_POLICY="jce_policy-6.zip"
-	DOWNLOAD_PATH=`grep "jce[^']*-6-oth-JPR'\]\['path" /tmp/oab-download-jce.html | cut -d'=' -f2 | cut -d'"' -f2`
-	DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
-	COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+    JCE_POLICY="jce_policy-6.zip"
+    DOWNLOAD_PATH=`grep "jce[^']*-6-oth-JPR'\]\['path" /tmp/oab-download-jce.html | cut -d'=' -f2 | cut -d'"' -f2`
+    DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
+    COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 else
-	JCE_POLICY="UnlimitedJCEPolicyJDK7.zip"
+    JCE_POLICY="UnlimitedJCEPolicyJDK7.zip"
     DOWNLOAD_URL=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
-	COOKIES="oraclelicensejce-7-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+    COOKIES="oraclelicensejce-7-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 fi
 DOWNLOAD_SIZE=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d'"' -f4`
 
@@ -531,7 +531,7 @@ NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
 if [ -n "${SKIP_REBUILD}" -a -r "${WORK_PATH}/deb/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
   echo " [!] Package exists, skipping build "
-  echo "All done!"  
+  echo "All done!"
   exit
 fi
 
@@ -564,8 +564,8 @@ if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]
     mv -v ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ${WORK_PATH}/deb/ >> "$log" 2>&1
     mv -v ${WORK_PATH}/*${JAVA_DEV}${JAVA_VER}-*_${NEW_VERSION}_*.deb ${WORK_PATH}/deb/ >> "$log" 2>&1 &
     pid=$!;progress $pid
-else    
-    error_msg "ERROR! Packages failed to build."    
+else
+    error_msg "ERROR! Packages failed to build."
 fi
 
 # Create a temporary 'override' file, which may contain duplicates
@@ -592,15 +592,15 @@ cecho success
 # Create a 'Release' file
 ncecho " [x] Creating Release file "
 cd ${WORK_PATH}/deb
-echo "Origin: ${HOSTNAME}"         >  Release
+echo "Origin: ${HOSTNAME}"                 > Release
 echo "Label: Java"                        >> Release
-echo "Suite: ${LSB_CODE}"               >> Release
-echo "Version: ${LSB_REL}"              >> Release
-echo "Codename: ${LSB_CODE}"            >> Release
-echo "Date: `date -R`"                   >> Release
-echo "Architectures: ${LSB_ARCH}"       >> Release
+echo "Suite: ${LSB_CODE}"                 >> Release
+echo "Version: ${LSB_REL}"                >> Release
+echo "Codename: ${LSB_CODE}"              >> Release
+echo "Date: `date -R`"                    >> Release
+echo "Architectures: ${LSB_ARCH}"         >> Release
 echo "Components: restricted"             >> Release
-echo "Description: Local Java Repository" >> Release 
+echo "Description: Local Java Repository" >> Release
 echo "MD5Sum:"                            >> Release
 for PACKAGE in Packages*
 do
@@ -669,7 +669,7 @@ if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_P
         ncecho " [x] Adding public key "
         apt-key add ${WORK_PATH}/deb/pubkey.asc >> "$log" 2>&1 &
         pid=$!;progress $pid
-    fi        
+    fi
 fi
 
 # Update apt cache
