@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.7"
+VER="0.2.8"
 
 # check the --fqdn version, if it's absent fall back to hostname
 HOSTNAME=$(hostname --fqdn 2>/dev/null)
@@ -158,7 +158,7 @@ function check_ubuntu() {
 function lsb() {
     local CMD_LSB_RELEASE=`which lsb_release`
     if [ "${CMD_LSB_RELEASE}" == "" ]; then
-	    error_msg "ERROR! 'lsb_release' was not found. I can't identify your distribution."
+        error_msg "ERROR! 'lsb_release' was not found. I can't identify your distribution."
     fi
     LSB_ID=`lsb_release -i | cut -f2 | sed 's/ //g'`
     LSB_REL=`lsb_release -r | cut -f2 | sed 's/ //g'`
@@ -179,92 +179,85 @@ function apt_update() {
 function copyright_msg() {
     local MODE=${1}
     if [ "${MODE}" == "build_docs" ]; then
-        echo "OAB-Java"
-        echo "========"                
-    fi    
+        echo "# OAB-Java"
+    fi
     echo `basename ${0}`" v${VER} - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages."
     echo
     echo "Copyright (c) Martin Wimpress, http://flexion.org. MIT License"
-	echo
-	echo "By running this script to download Java you acknowledge that you have"
-	echo "read and accepted the terms of the Oracle end user license agreement."
-	echo
-	echo "* http://www.oracle.com/technetwork/java/javase/terms/license/"
-	echo
+    echo
+    echo "By running this script to download Java you acknowledge that you have"
+    echo "read and accepted the terms of the Oracle end user license agreement."
+    echo
+    echo "* <http://www.oracle.com/technetwork/java/javase/terms/license/>"
+    echo
     # Adjust the output if we are executing the script.
     # It doesn't make sense to see this message here in the documentation.
     if [ "${MODE}" != "build_docs" ]; then
         echo "If you want to see what this is script is doing while it is running then execute"
         echo "the following from another shell:"
-        echo 
-        echo "  tail -f `pwd`/`basename ${0}`.log"
+        echo
+        echo "    tail -f `pwd`/`basename ${0}`.log"
         echo
     fi
 }
 
 function usage() {
     local MODE=${1}
-    echo "Usage"
-    echo "-----"
-    echo "::"
+    echo "## Usage"
     echo
-    echo "  sudo ${0}"    
+    echo "    sudo ${0}"
     echo
     echo "Optional parameters"
     echo
-    echo "* -7              : Build ``oracle-java7`` packages instead of ``sun-java6``"
-    echo "* -c              : Remove pre-existing packages from ``${WORK_PATH}/deb``"
-    echo "* -k <gpg-key-id> : Use the specified existing key instead of generating one"
-    echo "* -s              : Skip building if the packages already exist"
-    echo "* -h              : This help"
+    echo "  * -7              : Build ``oracle-java7`` packages instead of ``sun-java6``"
+    echo "  * -c              : Remove pre-existing packages from ``${WORK_PATH}/deb`` and sources from ``${WORK_PATH}/src``."
+    echo "  * -k <gpg-key-id> : Use the specified existing key instead of generating one"
+    echo "  * -s              : Skip building if the packages already exist"
+    echo "  * -t              : Specify the Java version tag to use from the upstream Debian packaging script."
+    echo "  * -h              : This help"
     echo
-    echo "How do I download and run this thing?"
-    echo "-------------------------------------"
+    echo "## How do I download and run this thing?"
+    echo
     echo "Like this."
-    echo "::"
     echo
-    echo "  cd ~/"
-    echo "  wget https://github.com/flexiondotorg/oab-java6/raw/${VER}/`basename ${0}` -O `basename ${0}`"
-    echo "  chmod +x `basename ${0}`"
-    echo "  sudo ./`basename ${0}`"
+    echo "    cd ~/"
+    echo "    wget https://github.com/flexiondotorg/oab-java6/raw/${VER}/`basename ${0}` -O `basename ${0}`"
+    echo "    chmod +x `basename ${0}`"
+    echo "    sudo ./`basename ${0}`"
     echo
     echo "If you are behind a proxy you may need to run using:"
-    echo "::"
     echo
-    echo "  sudo -i ./`basename ${0}`"
-    echo	
+    echo "    sudo -i ./`basename ${0}`"
+    echo
     # Adjust the output if we are building the docs.
     if [ "${MODE}" == "build_docs" ]; then
         echo "If you want to see what this script is doing while it is running then execute"
         echo "the following from another shell:"
-        echo "::"    
         echo
-	    echo "  tail -f ./`basename ${0}`.log"
+        echo "  tail -f ./`basename ${0}`.log"
         echo
-    fi            
-    echo "How it works"
-    echo "------------"
+    fi
+    echo "## How it works"
+    echo
     echo "This script is merely a wrapper for the most excellent Debian packaging"
     echo "scripts prepared by Janusz Dziemidowicz."
     echo
-    echo "* https://github.com/rraptorr/sun-java6"
-    echo "* https://github.com/rraptorr/oracle-java7"    
+    echo "  * <https://github.com/rraptorr/sun-java6>"
+    echo "  * <https://github.com/rraptorr/oracle-java7>"
     echo
     echo "The basic execution steps are:"
     echo
-    echo "* Remove, my now disabled, Java PPA 'ppa:flexiondotorg/java'."
-    echo "* Install the tools required to build the Java packages."
-    echo "* Create download cache in ``${WORK_PATH}/pkg``."
-    echo "* Download the i586 and x64 Java install binaries from Oracle. Yes, both are required."
-    echo "* Clone the build scripts from https://github.com/rraptorr/"
-    echo "* Build the Java packages applicable to your system."    
-    echo "* Create local ``apt`` repository in ``${WORK_PATH}/deb`` for the newly built Java Packages."
-    echo "* Create a GnuPG signing key in ``${WORK_PATH}/gpg`` if none exists."
-    echo "* Sign the local ``apt`` repository using the local GnuPG signing key."
+    echo "  * Remove, my now disabled, Java PPA ``ppa:flexiondotorg/java``."
+    echo "  * Install the tools required to build the Java packages."
+    echo "  * Create download cache in ``${WORK_PATH}/pkg``."
+    echo "  * Download the i586 and x64 Java install binaries from Oracle. Yes, both are required (for sun-java6 only)."
+    echo "  * Clone the build scripts from <https://github.com/rraptorr/>"
+    echo "  * Build the Java packages applicable to your system."
+    echo "  * Create local ``apt`` repository in ``${WORK_PATH}/deb`` for the newly built Java Packages."
+    echo "  * Create a GnuPG signing key in ``${WORK_PATH}/gpg`` if none exists."
+    echo "  * Sign the local ``apt`` repository using the local GnuPG signing key."
     echo
-    echo "What gets installed?"
-    echo "--------------------"
-    echo "Nothing!"
+    echo "## What gets installed?"
     echo
     echo "This script will no longer try and directly install or upgrade any Java"
     echo "packages, instead a local ``apt`` repository is created that hosts locally"
@@ -272,20 +265,17 @@ function usage() {
     echo "or upgrade the Java packages you require using ``apt-get``, ``aptitude`` or"
     echo "``synaptic``, etc. For example, once this script has been run you can simply"
     echo "install the JRE by executing the following from a shell."
-    echo "::"
     echo
-    echo "  sudo apt-get install sun-java6-jre"
+    echo "    sudo apt-get install sun-java6-jre"
     echo
     echo "Or if you ran the script with the ``-7`` option."
-    echo "::"
     echo
-    echo "  sudo apt-get install oracle-java7-jre"
+    echo "    sudo apt-get install oracle-java7-jre"
     echo
     echo "If you already have the *\"official\"* Ubuntu packages installed then you"
     echo "can upgrade by executing the following from a shell."
-    echo "::"
     echo
-    echo "  sudo apt-get upgrade"
+    echo "    sudo apt-get upgrade"
     echo
     echo "The local ``apt`` repository is just that, **local**. It is not accessible"
     echo "remotely and `basename ${0}` will never enable that capability to ensure"
@@ -294,15 +284,14 @@ function usage() {
     echo "By default, the script creates a temporary GPG keyring in the working"
     echo "directory. In order to use the current user's GPG chain instead, specify"
     echo "the key ID of an existing secret key. Run ``gpg -K`` to list available keys."
-    echo            
-    echo "Known Issues"
-    echo "------------"
     echo
-    echo "* The Oracle download servers can be horribly slow. My script caches the downloads"
+    echo "## Known Issues"
+    echo
+    echo "  * The Oracle download servers can be horribly slow. My script caches the downloads"
     echo "  so you only need download each file once."
     echo
-    echo "What is 'oab'?"
-    echo "--------------"
+    echo "## What is 'oab'?"
+    echo
     echo "Because, O.A.B! ;-)"
     echo
 
@@ -313,29 +302,29 @@ function usage() {
 }
 
 function build_docs() {
-    copyright_msg build_docs > README.rst
+    copyright_msg build_docs > README.md
 
     # Add the usage instructions
-    usage build_docs >> README.rst
+    usage build_docs >> README.md
 
     # Add the CHANGES
     if [ -e CHANGES ]; then
-        cat CHANGES >> README.rst
+        cat CHANGES >> README.md
     fi
 
     # Add the AUTHORS
     if [ -e AUTHORS ]; then
-        cat AUTHORS >> README.rst
+        cat AUTHORS >> README.md
     fi
 
     # Add the TODO
     if [ -e TODO ]; then
-        cat TODO >> README.rst
+        cat TODO >> README.md
     fi
 
     # Add the LICENSE
     if [ -e LICENSE ]; then
-        cat LICENSE >> README.rst
+        cat LICENSE >> README.md
     fi
 
     echo "Documentation built."
@@ -363,7 +352,7 @@ if [ -f $log ]; then
 fi
 
 # Parse the options
-OPTSTRING=7bchk:s
+OPTSTRING=7bchk:st:
 while getopts ${OPTSTRING} OPT
 do
     case ${OPT} in
@@ -374,9 +363,9 @@ do
         b) build_docs;;
         c) BUILD_CLEAN=1;;
         h) usage;;
-
         k) BUILD_KEY=${OPTARG};;
         s) SKIP_REBUILD=1;;
+        t) TAG=${OPTARG};;
         *) usage;;
     esac
 done
@@ -390,10 +379,19 @@ if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list ]; then
 fi
 
 # Determine the build and runtime requirements.
-BUILD_DEPS="build-essential debhelper defoma devscripts dpkg-dev git-core \
-gnupg imvirt libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
-if [ "${LSB_ARCH}" == "amd64" ]; then
+BUILD_DEPS="build-essential debhelper devscripts dpkg-dev git-core \
+gnupg libasound2 libxi6 libxt6 libxtst6 rng-tools unixodbc unzip"
+
+if [ "${LSB_ARCH}" == "amd64" ] && [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
     BUILD_DEPS="${BUILD_DEPS} lib32asound2 ia32-libs"
+    if [ "${LSB_CODE}" == "wheezy" ]; then
+        # Wheezy need the i386 arch to enable provide access to the tranisitional ia32-libs.
+        # https://github.com/rraptorr/sun-java6/issues/26
+        ncecho " [x] Adding i386 architecture "
+        dpkg --add-architecture i386
+        pid=$!;progress $pid
+        apt_update
+    fi
 fi
 
 if [ "${JAVA_UPSTREAM}" == "oracle-java7" ]; then
@@ -436,7 +434,7 @@ pid=$!;progress $pid
 
 # Get the last commit tag.
 cd ${WORK_PATH}/srcs/${JAVA_UPSTREAM}.git/ >> "$log" 2>&1
-TAG=`git describe --abbrev=0 --tags`
+TAG=${TAG:-`git describe --abbrev=0 --tags`}
 
 # Clone from mirror, pointing to the tagged, stable, version.
 ncecho " [x] Cloning ${JAVA_UPSTREAM} with ${TAG} "
@@ -499,14 +497,14 @@ do
     DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
     # Cookies required for download
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
-    
+
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
     wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JAVA_BIN} >> "$log" 2>&1 &
     pid=$!;progress_loop $pid
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
     ln -s ${WORK_PATH}/pkg/${JAVA_BIN} ${WORK_PATH}/src/${JAVA_BIN} >> "$log" 2>&1 &
-    pid=$!;progress_loop $pid    
+    pid=$!;progress_loop $pid
 done
 
 # Get JCE download index
@@ -517,14 +515,14 @@ pid=$!;progress $pid
 
 # Get JCE download URL, size, and cookies required for download
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
-	JCE_POLICY="jce_policy-6.zip"
-	DOWNLOAD_PATH=`grep "jce[^']*-6-oth-JPR'\]\['path" /tmp/oab-download-jce.html | cut -d'=' -f2 | cut -d'"' -f2`
-	DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
-	COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+    JCE_POLICY="jce_policy-6.zip"
+    DOWNLOAD_PATH=`grep "jce[^']*-6-oth-JPR'\]\['path" /tmp/oab-download-jce.html | cut -d'=' -f2 | cut -d'"' -f2`
+    DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
+    COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 else
-	JCE_POLICY="UnlimitedJCEPolicyJDK7.zip"
+    JCE_POLICY="UnlimitedJCEPolicyJDK7.zip"
     DOWNLOAD_URL=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
-	COOKIES="oraclelicensejce-7-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+    COOKIES="oraclelicensejce-7-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 fi
 DOWNLOAD_SIZE=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d'"' -f4`
 
@@ -541,7 +539,7 @@ NEW_VERSION="${DEB_VERSION}~${LSB_CODE}1"
 
 if [ -n "${SKIP_REBUILD}" -a -r "${WORK_PATH}/deb/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes" ]; then
   echo " [!] Package exists, skipping build "
-  echo "All done!"  
+  echo "All done!"
   exit
 fi
 
@@ -564,8 +562,8 @@ pid=$!;progress_can_fail $pid
 if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
     # Remove any existing .deb files if the 'clean' option was selected.
     if [ ${BUILD_CLEAN} -eq 1 ]; then
-        ncecho " [x] Removing existing .deb packages "
-        rm -fv ${WORK_PATH}/deb/* >> "$log" 2>&1 &
+        ncecho " [x] Removing existing .deb packages and sources "
+        rm -rfv ${WORK_PATH}/{deb,src}/* >> "$log" 2>&1 &
         pid=$!;progress $pid
     fi
 
@@ -574,8 +572,8 @@ if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]
     mv -v ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ${WORK_PATH}/deb/ >> "$log" 2>&1
     mv -v ${WORK_PATH}/*${JAVA_DEV}${JAVA_VER}-*_${NEW_VERSION}_*.deb ${WORK_PATH}/deb/ >> "$log" 2>&1 &
     pid=$!;progress $pid
-else    
-    error_msg "ERROR! Packages failed to build."    
+else
+    error_msg "ERROR! Packages failed to build."
 fi
 
 # Create a temporary 'override' file, which may contain duplicates
@@ -602,15 +600,15 @@ cecho success
 # Create a 'Release' file
 ncecho " [x] Creating Release file "
 cd ${WORK_PATH}/deb
-echo "Origin: ${HOSTNAME}"         >  Release
+echo "Origin: ${HOSTNAME}"                 > Release
 echo "Label: Java"                        >> Release
-echo "Suite: ${LSB_CODE}"               >> Release
-echo "Version: ${LSB_REL}"              >> Release
-echo "Codename: ${LSB_CODE}"            >> Release
-echo "Date: `date -R`"                   >> Release
-echo "Architectures: ${LSB_ARCH}"       >> Release
+echo "Suite: ${LSB_CODE}"                 >> Release
+echo "Version: ${LSB_REL}"                >> Release
+echo "Codename: ${LSB_CODE}"              >> Release
+echo "Date: `date -R`"                    >> Release
+echo "Architectures: ${LSB_ARCH}"         >> Release
 echo "Components: restricted"             >> Release
-echo "Description: Local Java Repository" >> Release 
+echo "Description: Local Java Repository" >> Release
 echo "MD5Sum:"                            >> Release
 for PACKAGE in Packages*
 do
@@ -618,33 +616,34 @@ do
 done
 cecho success
 
-# Skip anything todo with automated key creation if this script is running in
-# an OpenVZ container.
-if [[ `imvirt` != "OpenVZ" ]]; then
-    # Do we need to create signing keys
-    if [ -z "${BUILD_KEY}" ] && [ ! -e ${WORK_PATH}/gpg/pubring.gpg ] && [ ! -e ${WORK_PATH}/gpg/secring.gpg ] && [ ! -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
+# Do we need to create signing keys
+if [ -z "${BUILD_KEY}" ] && [ ! -e ${WORK_PATH}/gpg/pubring.gpg ] && [ ! -e ${WORK_PATH}/gpg/secring.gpg ] && [ ! -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
+    ncecho " [x] Create GnuPG configuration "
+    echo "Key-Type: DSA" > ${WORK_PATH}/gpg-key.conf
+    echo "Key-Length: 1024" >> ${WORK_PATH}/gpg-key.conf
+    echo "Subkey-Type: ELG-E" >> ${WORK_PATH}/gpg-key.conf
+    echo "Subkey-Length: 2048" >> ${WORK_PATH}/gpg-key.conf
+    echo "Name-Real: ${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
+    echo "Name-Email: root@${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
+    echo "Expire-Date: 0" >> ${WORK_PATH}/gpg-key.conf
+    cecho success
 
-        ncecho " [x] Create GnuPG configuration "
-        echo "Key-Type: DSA" > ${WORK_PATH}/gpg-key.conf
-        echo "Key-Length: 1024" >> ${WORK_PATH}/gpg-key.conf
-        echo "Subkey-Type: ELG-E" >> ${WORK_PATH}/gpg-key.conf
-        echo "Subkey-Length: 2048" >> ${WORK_PATH}/gpg-key.conf
-        echo "Name-Real: ${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
-        echo "Name-Email: root@${HOSTNAME}" >> ${WORK_PATH}/gpg-key.conf
-        echo "Expire-Date: 0" >> ${WORK_PATH}/gpg-key.conf
-        cecho success
-
+    # OpenVZ Check... Don't run if in OpenVZ
+    if [ ! -e /proc/user_beancounters ]; then
         # Stop the system 'rngd'.
         /etc/init.d/rng-tools stop >> "$log" 2>&1
 
-        ncecho " [x] Start generating entropy "  
+        ncecho " [x] Start generating entropy "
         rngd -r /dev/urandom -p /tmp/rngd.pid >> "$log" 2>&1 &
         pid=$!;progress $pid
+    fi
 
-        ncecho " [x] Creating signing key "
-        gpg --homedir ${WORK_PATH}/gpg --batch --gen-key ${WORK_PATH}/gpg-key.conf >> "$log" 2>&1 &
-        pid=$!;progress $pid
+    ncecho " [x] Creating signing key "
+    gpg --homedir ${WORK_PATH}/gpg --batch --gen-key ${WORK_PATH}/gpg-key.conf >> "$log" 2>&1 &
+    pid=$!;progress $pid
 
+    # OpenVZ Check... Don't run if in OpenVZ (same as above)
+    if [ ! -e /proc/user_beancounters ]; then
         ncecho " [x] Stop generating entropy "
         kill -9 `cat /tmp/rngd.pid` >> "$log" 2>&1 &
         pid=$!;progress $pid
@@ -658,7 +657,7 @@ fi
 # Do we have signing keys or a user specified key, if so use them.
 if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_PATH}/gpg/secring.gpg ] && [ -e ${WORK_PATH}/gpg/trustdb.gpg ]; then
     # Sign the Release
-    ncecho " [x] Signing the 'Release' file "    
+    ncecho " [x] Signing the 'Release' file "
     rm ${WORK_PATH}/deb/Release.gpg 2>/dev/null
     if [ -n "${BUILD_KEY}" ] ; then
         GPG_OPTION=(--default-key "${BUILD_KEY}")
@@ -678,7 +677,7 @@ if [ -n "${BUILD_KEY}" ] || [ -e ${WORK_PATH}/gpg/pubring.gpg ] && [ -e ${WORK_P
         ncecho " [x] Adding public key "
         apt-key add ${WORK_PATH}/deb/pubkey.asc >> "$log" 2>&1 &
         pid=$!;progress $pid
-    fi        
+    fi
 fi
 
 # Update apt cache

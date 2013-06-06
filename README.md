@@ -1,3 +1,101 @@
+# OAB-Java
+oab-java.sh v0.2.8 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
+
+Copyright (c) Martin Wimpress, http://flexion.org. MIT License
+
+By running this script to download Java you acknowledge that you have
+read and accepted the terms of the Oracle end user license agreement.
+
+* <http://www.oracle.com/technetwork/java/javase/terms/license/>
+
+## Usage
+
+    sudo ./oab-java.sh
+
+Optional parameters
+
+  * -7              : Build oracle-java7 packages instead of sun-java6
+  * -c              : Remove pre-existing packages from /var/local/oab/deb and sources from /var/local/oab/src.
+  * -k <gpg-key-id> : Use the specified existing key instead of generating one
+  * -s              : Skip building if the packages already exist
+  * -t              : Specify the Java version tag to use from the upstream Debian packaging script.
+  * -h              : This help
+
+## How do I download and run this thing?
+
+Like this.
+
+    cd ~/
+    wget https://github.com/flexiondotorg/oab-java6/raw/0.2.8/oab-java.sh -O oab-java.sh
+    chmod +x oab-java.sh
+    sudo ./oab-java.sh
+
+If you are behind a proxy you may need to run using:
+
+    sudo -i ./oab-java.sh
+
+If you want to see what this script is doing while it is running then execute
+the following from another shell:
+
+  tail -f ./oab-java.sh.log
+
+## How it works
+
+This script is merely a wrapper for the most excellent Debian packaging
+scripts prepared by Janusz Dziemidowicz.
+
+  * <https://github.com/rraptorr/sun-java6>
+  * <https://github.com/rraptorr/oracle-java7>
+
+The basic execution steps are:
+
+  * Remove, my now disabled, Java PPA ppa:flexiondotorg/java.
+  * Install the tools required to build the Java packages.
+  * Create download cache in /var/local/oab/pkg.
+  * Download the i586 and x64 Java install binaries from Oracle. Yes, both are required (for sun-java6 only).
+  * Clone the build scripts from <https://github.com/rraptorr/>
+  * Build the Java packages applicable to your system.
+  * Create local apt repository in /var/local/oab/deb for the newly built Java Packages.
+  * Create a GnuPG signing key in /var/local/oab/gpg if none exists.
+  * Sign the local apt repository using the local GnuPG signing key.
+
+## What gets installed?
+
+This script will no longer try and directly install or upgrade any Java
+packages, instead a local apt repository is created that hosts locally
+built Java packages applicable to your system. It is up to you to install
+or upgrade the Java packages you require using apt-get, aptitude or
+synaptic, etc. For example, once this script has been run you can simply
+install the JRE by executing the following from a shell.
+
+    sudo apt-get install sun-java6-jre
+
+Or if you ran the script with the -7 option.
+
+    sudo apt-get install oracle-java7-jre
+
+If you already have the *"official"* Ubuntu packages installed then you
+can upgrade by executing the following from a shell.
+
+    sudo apt-get upgrade
+
+The local apt repository is just that, **local**. It is not accessible
+remotely and oab-java.sh will never enable that capability to ensure
+compliance with Oracle's asinine license requirements.
+
+By default, the script creates a temporary GPG keyring in the working
+directory. In order to use the current user's GPG chain instead, specify
+the key ID of an existing secret key. Run gpg -K to list available keys.
+
+## Known Issues
+
+  * The Oracle download servers can be horribly slow. My script caches the downloads
+  so you only need download each file once.
+
+## What is 'oab'?
+
+Because, O.A.B! ;-)
+
 
 # History
 
@@ -147,3 +245,57 @@
 ## 0.1.0
 
   * Initial release.
+
+# Credits
+
+This package is written and maintained by Martin Wimpress, <code@flexion.org>
+
+Other contributors, listed alphabetically, are:
+
+  * Björgvin Ragnarsson
+  * David Kovach
+  * Derek Chen-Becker
+  * Eshwar Andhavarapu
+  * Greg Swallow
+  * Hannes Schmidt
+  * Ihor Kaharlichenko
+  * Jameson J Lee
+  * Jonathan Harker
+  * Ladios Jonquil
+  * Martin Polden
+  * Miah Johnson
+  * onlymostlydead
+  * Paul Scott
+  * Peter Leibiger
+  * Robert Pendell
+  * Thorsten Möllers
+
+Many thanks for all contributions!
+
+# Todo
+
+* Check the binary packages downloaded from Oracle are the correct size.
+* Add support to build for a given Ubuntu distribution.
+* Add support to build using `pbuilder` or use `fakeroot`.
+
+
+# License
+
+Copyright (c) 2012 Martin Wimpress, http://flexion.org/
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
