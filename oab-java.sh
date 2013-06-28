@@ -516,7 +516,7 @@ pid=$!;progress $pid
 # Get JCE download URL, size, and cookies required for download
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
     JCE_POLICY="jce_policy-6.zip"
-    DOWNLOAD_PATH=`grep "jce[^']*-6-oth-JPR'\]\['path" /tmp/oab-download-jce.html | cut -d'=' -f2 | cut -d'"' -f2`
+    DOWNLOAD_PATH="http://download.oracle.com/otn-pub/java/jce_policy/6/"
     DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
     COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 else
