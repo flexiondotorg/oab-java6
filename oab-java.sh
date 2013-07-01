@@ -493,7 +493,7 @@ fi
 for JAVA_BIN in ${JAVA_BINS}
 do
     # Get the download URL and size
-    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
+    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4| sed 's/otn/otn-pub/'`
     DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
     # Cookies required for download
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
@@ -517,7 +517,8 @@ pid=$!;progress $pid
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
     JCE_POLICY="jce_policy-6.zip"
     DOWNLOAD_PATH=`grep "jce[^']*-6-oth-JPR'\]\['path" /tmp/oab-download-jce.html | cut -d'=' -f2 | cut -d'"' -f2`
-    DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
+    #DOWNLOAD_URL="${DOWNLOAD_PATH}${JCE_POLICY}"
+	 DOWNLOAD_URL="http://download.oracle.com/otn-pub/java/jce_policy/6/jce_policy-6.zip"
     COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 else
     JCE_POLICY="UnlimitedJCEPolicyJDK7.zip"
