@@ -493,7 +493,7 @@ fi
 for JAVA_BIN in ${JAVA_BINS}
 do
     # Get the download URL and size
-    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
+    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4 | sed 's/otn/otn-pub/'`
     DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
     # Cookies required for download
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
@@ -508,8 +508,12 @@ do
 done
 
 # Get JCE download index
-DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jce-${JAVA_VER}-download-\d+\.html" /tmp/oab-index.html | uniq`
-ncecho " [x] Getting Java Cryptography Extension download page "
+if [ $JAVA_VER == "6" ]; then
+  DOWNLOAD_INDEX="technetwork/java/javase/downloads/jce-6-download-429243.html"
+else
+  DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jce-${JAVA_VER}-download-\d+\.html" /tmp/oab-index.html | uniq`
+  ncecho " [x] Getting Java Cryptography Extension download page "
+fi
 wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download-jce.html >> "$log" 2>&1 &
 pid=$!;progress $pid
 
