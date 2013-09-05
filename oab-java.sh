@@ -197,7 +197,7 @@ function copyright_msg() {
         echo "donating to this project. It is nice to have the effort I've put into this"
         echo "script recognised, I don't ask for much, it is at your discretion."
         echo
-        echo '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ESP59ZNJHLBZ8" target="_blank"><img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" /></a>'
+        echo "[![Donate to OAB-Java](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ESP59ZNJHLBZ8)  [![Flattr OAB-Java](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=flexiondotorg&url=https://github.com/flexiondotorg/oab-java6&title=oab-java6&language=shell&tags=github&category=software)"
         echo
     fi
     # Adjust the output if we are executing the script.
