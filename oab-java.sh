@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.9"
+VER="0.3.0-dev"
 
 # check the --fqdn version, if it's absent fall back to hostname
 HOSTNAME=$(hostname --fqdn 2>/dev/null)
@@ -190,6 +190,11 @@ function copyright_msg() {
     echo
     echo "* <http://www.oracle.com/technetwork/java/javase/terms/license/>"
     echo
+    echo "## Donate"
+    echo "If you or your organisation has found `basename ${0}` useful please consider"
+    echo "donating to this project. It is nice to have the effort I've put into this "
+    echo "script recognised, I don't ask for much, it is at your discretion."
+    echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="ESP59ZNJHLBZ8"><input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online."><img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>'
     # Adjust the output if we are executing the script.
     # It doesn't make sense to see this message here in the documentation.
     if [ "${MODE}" != "build_docs" ]; then
@@ -234,7 +239,7 @@ function usage() {
         echo "If you want to see what this script is doing while it is running then execute"
         echo "the following from another shell:"
         echo
-        echo "  tail -f ./`basename ${0}`.log"
+        echo "    tail -f ./`basename ${0}`.log"
         echo
     fi
     echo "## How it works"

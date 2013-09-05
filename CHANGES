@@ -13,7 +13,7 @@
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/104>
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/103>
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/101>
-  * Fixed download Java7.
+  * Fixed downloading Java7.
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/102>
   * Building Java7 on Ubunu Lucid 10.04 is no longer supported.
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/110>
