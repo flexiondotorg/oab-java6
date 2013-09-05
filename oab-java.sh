@@ -550,7 +550,12 @@ pid=$!;progress $pid
 
 # Build the binary packages
 ncecho " [x] Building the packages "
-dpkg-buildpackage -b >> "$log" 2>&1 &
+if [ $JAVA_VER == "7" ] && [ "${LSB_CODE}" == "lucid" ]; then
+    # Work around debhelper >= 8 requirement on Lucid.
+    dpkg-buildpackage -b -d >> "$log" 2>&1 &
+else
+    dpkg-buildpackage -b >> "$log" 2>&1 &
+fi
 pid=$!;progress_can_fail $pid
 
 if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
