@@ -450,28 +450,13 @@ DEB_URGENCY=`head -n1 ${WORK_PATH}/src/debian/changelog | cut -d'=' -f2`
 JAVA_VER=`echo ${DEB_VERSION} | cut -d'.' -f1`
 JAVA_UPD=`echo ${DEB_VERSION} | cut -d'.' -f2 | cut -d'-' -f1`
 
-# Try and dynamic find the JDK downloads
-#ncecho " [x] Getting Java SE download page "
-#wget "http://www.oracle.com/technetwork/java/javase/downloads/index.html" -O /tmp/oab-index.html >> "$log" 2>&1 &
-#pid=$!;progress $pid
-
-# See if the Java version is on the download frontpage, otherwise look for it in
-# the previous releases page.
-#DOWNLOAD_INDEX="$(egrep -o /technetwork/java/javase/downloads/jdk"$JAVA_VER(u$JAVA_UPD)?"-?downloads-[[:digit:]]+\\.html /tmp/oab-index.html | head -1)"
-#ncecho " [x] Getting current release download page "
-#wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download.html >> "$log" 2>&1 &
-#pid=$!;progress $pid
-#DOWNLOAD_FOUND=`grep "jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586\." /tmp/oab-download.html`
-#if [ -z "${DOWNLOAD_FOUND}" ]; then
-    ncecho " [x] Getting previous releases download page "
-    if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
-        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
-    else
-        #wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html -O /tmp/oab-download.html >> "$log" 2>&1 &    
-        wget http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html -O /tmp/oab-download.html >> "$log" 2>&1 &
-    fi
-    pid=$!;progress $pid
-#fi
+ncecho " [x] Getting releases download page "
+if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
+    wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
+else
+    wget http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html -O /tmp/oab-download.html >> "$log" 2>&1 &
+fi
+pid=$!;progress $pid
 
 # Set the files we're downloading since sun-java6 and oracle-java7 differ.
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
@@ -499,7 +484,7 @@ do
     else
         DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
     fi
-    DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
+    DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`
     # Cookies required for download
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 
