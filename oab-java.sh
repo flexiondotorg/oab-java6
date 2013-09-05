@@ -287,6 +287,8 @@ function usage() {
     echo
     echo "## Known Issues"
     echo
+    echo "  * Build Java 7 on Ubuntu Lucid 10.04 is no longer supported as the upstream scripts"
+    echo "  require `debhelper`>=8 which is not officially available for Lucid."
     echo "  * The Oracle download servers can be horribly slow. My script caches the downloads"
     echo "  so you only need download each file once."
     echo
@@ -370,6 +372,12 @@ do
     esac
 done
 shift "$(( $OPTIND - 1 ))"
+
+if [ "${JAVA_UPSTREAM}" == "oracle-java7" ] && [ "${LSB_CODE}" == "lucid" ]; then
+    ncecho " [!] Building Java 7 on Ubuntu Lucid is no longer supported "
+    cecho exitting
+    exit 1
+fi
 
 # Remove my, now disabled, Java PPA.
 if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list ]; then
@@ -550,12 +558,7 @@ pid=$!;progress $pid
 
 # Build the binary packages
 ncecho " [x] Building the packages "
-if [ $JAVA_VER == "7" ] && [ "${LSB_CODE}" == "lucid" ]; then
-    # Work around debhelper >= 8 requirement on Lucid.
-    dpkg-buildpackage -b -d >> "$log" 2>&1 &
-else
-    dpkg-buildpackage -b >> "$log" 2>&1 &
-fi
+dpkg-buildpackage -b >> "$log" 2>&1 &
 pid=$!;progress_can_fail $pid
 
 if [ -e ${WORK_PATH}/${JAVA_DEV}${JAVA_VER}_${NEW_VERSION}_${LSB_ARCH}.changes ]; then
