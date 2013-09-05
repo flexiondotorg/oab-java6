@@ -13,6 +13,7 @@ read and accepted the terms of the Oracle end user license agreement.
 If you or your organisation has found `oab-java.sh` useful please consider
 donating to this project. It is nice to have the effort I've put into this
 script recognised, I don't ask for much, it is at your discretion.
+
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ESP59ZNJHLBZ8" target="_blank"><img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" /></a>
 
 ## Usage
