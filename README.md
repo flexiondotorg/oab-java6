@@ -1,5 +1,5 @@
 # OAB-Java
-oab-java.sh v0.2.8 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
+oab-java.sh v0.2.9 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
 
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
@@ -26,7 +26,7 @@ Optional parameters
 Like this.
 
     cd ~/
-    wget https://github.com/flexiondotorg/oab-java6/raw/0.2.8/oab-java.sh -O oab-java.sh
+    wget https://github.com/flexiondotorg/oab-java6/raw/0.2.9/oab-java.sh -O oab-java.sh
     chmod +x oab-java.sh
     sudo ./oab-java.sh
 
@@ -89,6 +89,8 @@ the key ID of an existing secret key. Run gpg -K to list available keys.
 
 ## Known Issues
 
+  * Building Java 7 on Ubuntu Lucid 10.04 is no longer supported as the upstream scripts
+  require debhelper>=8 which is not officially available for Lucid.
   * The Oracle download servers can be horribly slow. My script caches the downloads
   so you only need download each file once.
 
@@ -98,6 +100,23 @@ Because, O.A.B! ;-)
 
 
 # History
+
+## 0.2.9
+
+  * Fixed downloading Java6 JCE. Thanks to Naoya Nakazawa.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/111>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/109>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/108>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/107>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/106>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/105>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/104>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/103>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/101>
+  * Fixed download Java7.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/102>
+  * Building Java7 on Ubunu Lucid 10.04 is no longer supported.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/110>
 
 ## 0.2.8
 
@@ -264,6 +283,7 @@ Other contributors, listed alphabetically, are:
   * Ladios Jonquil
   * Martin Polden
   * Miah Johnson
+  * Naoya Nakazawa
   * onlymostlydead
   * Paul Scott
   * Peter Leibiger
@@ -281,7 +301,7 @@ Many thanks for all contributions!
 
 # License
 
-Copyright (c) 2012 Martin Wimpress, http://flexion.org/
+Copyright (c) 2013 Martin Wimpress, http://flexion.org/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

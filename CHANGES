@@ -15,8 +15,7 @@
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/101>
   * Fixed download Java7.
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/102>
-  * Building Java7 on Ubunu Lucid 10.04 is no supported. Upstream build
-  dependencies now require `debhelper` >= 8 for Java7.
+  * Building Java7 on Ubunu Lucid 10.04 is no longer supported.
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/110>
 
 ## 0.2.8
