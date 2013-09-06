@@ -519,7 +519,7 @@ done
 if [ $JAVA_VER == "6" ]; then
   DOWNLOAD_INDEX="technetwork/java/javase/downloads/jce-6-download-429243.html"
 else
-  DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jce-${JAVA_VER}-download-\d+\.html" /tmp/oab-index.html | uniq`
+  DOWNLOAD_INDEX="technetwork/java/javase/downloads/jce-7-download-432124.html"
   ncecho " [x] Getting Java Cryptography Extension download page "
 fi
 wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download-jce.html >> "$log" 2>&1 &
