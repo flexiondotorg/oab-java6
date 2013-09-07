@@ -516,12 +516,13 @@ do
 done
 
 # Get JCE download index
-if [ $JAVA_VER == "6" ]; then
-  DOWNLOAD_INDEX="technetwork/java/javase/downloads/jce-6-download-429243.html"
+if [ $JAVA_VER == "7" ]; then
+  DOWNLOAD_INDEX_NO='432124'
 else
-  DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jce-${JAVA_VER}-download-\d+\.html" /tmp/oab-index.html | uniq`
-  ncecho " [x] Getting Java Cryptography Extension download page "
+  DOWNLOAD_INDEX_NO='429243'
 fi
+
+DOWNLOAD_INDEX="technetwork/java/javase/downloads/jce-${JAVA_VER}-download-${DOWNLOAD_INDEX_NO}.html"
 wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download-jce.html >> "$log" 2>&1 &
 pid=$!;progress $pid
 
