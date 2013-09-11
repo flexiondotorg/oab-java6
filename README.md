@@ -1,5 +1,5 @@
 # OAB-Java
-oab-java.sh v0.2.8 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
+oab-java.sh v0.3.0 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
 
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
@@ -7,6 +7,14 @@ By running this script to download Java you acknowledge that you have
 read and accepted the terms of the Oracle end user license agreement.
 
 * <http://www.oracle.com/technetwork/java/javase/terms/license/>
+
+## Donate
+
+If you or your organisation has found oab-java.sh useful please consider
+donating to this project. It is nice to have the effort I've put into this
+script recognised, I don't ask for much, it is at your discretion.
+
+[![Donate to OAB-Java](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ESP59ZNJHLBZ8)  [![Flattr OAB-Java](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=flexiondotorg&url=https://github.com/flexiondotorg/oab-java6&title=oab-java6&language=shell&tags=github&category=software)
 
 ## Usage
 
@@ -26,7 +34,7 @@ Optional parameters
 Like this.
 
     cd ~/
-    wget https://github.com/flexiondotorg/oab-java6/raw/0.2.8/oab-java.sh -O oab-java.sh
+    wget https://github.com/flexiondotorg/oab-java6/raw/0.3.0/oab-java.sh -O oab-java.sh
     chmod +x oab-java.sh
     sudo ./oab-java.sh
 
@@ -37,7 +45,7 @@ If you are behind a proxy you may need to run using:
 If you want to see what this script is doing while it is running then execute
 the following from another shell:
 
-  tail -f ./oab-java.sh.log
+    tail -f ./oab-java.sh.log
 
 ## How it works
 
@@ -89,6 +97,8 @@ the key ID of an existing secret key. Run gpg -K to list available keys.
 
 ## Known Issues
 
+  * Building Java 7 on Ubuntu Lucid 10.04 is no longer supported as the upstream scripts
+  require debhelper>=8 which is not officially available for Lucid.
   * The Oracle download servers can be horribly slow. My script caches the downloads
   so you only need download each file once.
 
@@ -98,6 +108,30 @@ Because, O.A.B! ;-)
 
 
 # History
+
+## 0.3.0
+
+  * Fixed download Java7 JCE. Thanks to Michał Kowalczuk.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/115>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/114>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/113>
+
+## 0.2.9
+
+  * Fixed downloading Java6 JCE. Thanks to Naoya Nakazawa.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/111>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/109>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/108>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/107>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/106>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/105>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/104>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/103>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/101>
+  * Fixed downloading Java7.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/102>
+  * Building Java7 on Ubunu Lucid 10.04 is no longer supported.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/110>
 
 ## 0.2.8
 
@@ -264,6 +298,8 @@ Other contributors, listed alphabetically, are:
   * Ladios Jonquil
   * Martin Polden
   * Miah Johnson
+  * Michał Kowalczuk
+  * Naoya Nakazawa
   * onlymostlydead
   * Paul Scott
   * Peter Leibiger
@@ -281,7 +317,7 @@ Many thanks for all contributions!
 
 # License
 
-Copyright (c) 2012 Martin Wimpress, http://flexion.org/
+Copyright (c) 2013 Martin Wimpress, http://flexion.org/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

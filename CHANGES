@@ -1,6 +1,30 @@
 
 # History
 
+## 0.3.0
+
+  * Fixed download Java7 JCE. Thanks to Michał Kowalczuk.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/115>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/114>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/113>
+
+## 0.2.9
+
+  * Fixed downloading Java6 JCE. Thanks to Naoya Nakazawa.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/111>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/109>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/108>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/107>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/106>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/105>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/104>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/103>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/101>
+  * Fixed downloading Java7.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/102>
+  * Building Java7 on Ubunu Lucid 10.04 is no longer supported.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/110>
+
 ## 0.2.8
 
   * Fixed building on Ubuntu 13.04 and Debian 7.

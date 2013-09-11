@@ -9,7 +9,7 @@
 #  - http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/gpg-cs.html
 
 # Version
-VER="0.2.8"
+VER="0.3.1-dev"
 
 # check the --fqdn version, if it's absent fall back to hostname
 HOSTNAME=$(hostname --fqdn 2>/dev/null)
@@ -190,6 +190,16 @@ function copyright_msg() {
     echo
     echo "* <http://www.oracle.com/technetwork/java/javase/terms/license/>"
     echo
+    if [ "${MODE}" == "build_docs" ]; then
+        echo "## Donate"
+        echo
+        echo "If you or your organisation has found `basename ${0}` useful please consider"
+        echo "donating to this project. It is nice to have the effort I've put into this"
+        echo "script recognised, I don't ask for much, it is at your discretion."
+        echo
+        echo "[![Donate to OAB-Java](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ESP59ZNJHLBZ8)  [![Flattr OAB-Java](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=flexiondotorg&url=https://github.com/flexiondotorg/oab-java6&title=oab-java6&language=shell&tags=github&category=software)"
+        echo
+    fi
     # Adjust the output if we are executing the script.
     # It doesn't make sense to see this message here in the documentation.
     if [ "${MODE}" != "build_docs" ]; then
@@ -234,7 +244,7 @@ function usage() {
         echo "If you want to see what this script is doing while it is running then execute"
         echo "the following from another shell:"
         echo
-        echo "  tail -f ./`basename ${0}`.log"
+        echo "    tail -f ./`basename ${0}`.log"
         echo
     fi
     echo "## How it works"
@@ -287,6 +297,8 @@ function usage() {
     echo
     echo "## Known Issues"
     echo
+    echo "  * Building Java 7 on Ubuntu Lucid 10.04 is no longer supported as the upstream scripts"
+    echo "  require ``debhelper``>=8 which is not officially available for Lucid."
     echo "  * The Oracle download servers can be horribly slow. My script caches the downloads"
     echo "  so you only need download each file once."
     echo
@@ -371,6 +383,12 @@ do
 done
 shift "$(( $OPTIND - 1 ))"
 
+if [ "${JAVA_UPSTREAM}" == "oracle-java7" ] && [ "${LSB_CODE}" == "lucid" ]; then
+    ncecho " [!] Building Java 7 on Ubuntu Lucid is no longer supported "
+    cecho exitting
+    exit 1
+fi
+
 # Remove my, now disabled, Java PPA.
 if [ -e /etc/apt/sources.list.d/flexiondotorg-java-${LSB_CODE}.list ]; then
     ncecho " [x] Removing ppa:flexiondotorg/java "
@@ -450,27 +468,13 @@ DEB_URGENCY=`head -n1 ${WORK_PATH}/src/debian/changelog | cut -d'=' -f2`
 JAVA_VER=`echo ${DEB_VERSION} | cut -d'.' -f1`
 JAVA_UPD=`echo ${DEB_VERSION} | cut -d'.' -f2 | cut -d'-' -f1`
 
-# Try and dynamic find the JDK downloads
-ncecho " [x] Getting Java SE download page "
-wget "http://www.oracle.com/technetwork/java/javase/downloads/index.html" -O /tmp/oab-index.html >> "$log" 2>&1 &
-pid=$!;progress $pid
-
-# See if the Java version is on the download frontpage, otherwise look for it in
-# the previous releases page.
-DOWNLOAD_INDEX="$(egrep -o /technetwork/java/javase/downloads/jdk"$JAVA_VER(u$JAVA_UPD)?"-?downloads-[[:digit:]]+\\.html /tmp/oab-index.html | head -1)"
-ncecho " [x] Getting current release download page "
-wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download.html >> "$log" 2>&1 &
-pid=$!;progress $pid
-DOWNLOAD_FOUND=`grep "jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586\." /tmp/oab-download.html`
-if [ -z "${DOWNLOAD_FOUND}" ]; then
-    ncecho " [x] Getting previous releases download page "
-    if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
-        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
-    else
-        wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase7-521261.html -O /tmp/oab-download.html >> "$log" 2>&1 &    
-    fi
-    pid=$!;progress $pid
+ncecho " [x] Getting releases download page "
+if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
+    wget http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html -O /tmp/oab-download.html >> "$log" 2>&1 &
+else
+    wget http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html -O /tmp/oab-download.html >> "$log" 2>&1 &
 fi
+pid=$!;progress $pid
 
 # Set the files we're downloading since sun-java6 and oracle-java7 differ.
 if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
@@ -493,8 +497,12 @@ fi
 for JAVA_BIN in ${JAVA_BINS}
 do
     # Get the download URL and size
-    DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
-    DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`    
+    if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
+        DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4 | sed 's/otn/otn-pub/'`
+    else
+        DOWNLOAD_URL=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
+    fi
+    DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`
     # Cookies required for download
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 
@@ -508,8 +516,13 @@ do
 done
 
 # Get JCE download index
-DOWNLOAD_INDEX=`grep -P -o "/technetwork/java/javase/downloads/jce-${JAVA_VER}-download-\d+\.html" /tmp/oab-index.html | uniq`
-ncecho " [x] Getting Java Cryptography Extension download page "
+if [ $JAVA_VER == "7" ]; then
+  DOWNLOAD_INDEX_NO='432124'
+else
+  DOWNLOAD_INDEX_NO='429243'
+fi
+
+DOWNLOAD_INDEX="technetwork/java/javase/downloads/jce-${JAVA_VER}-download-${DOWNLOAD_INDEX_NO}.html"
 wget http://www.oracle.com/${DOWNLOAD_INDEX} -O /tmp/oab-download-jce.html >> "$log" 2>&1 &
 pid=$!;progress $pid
 
