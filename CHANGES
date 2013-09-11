@@ -1,6 +1,13 @@
 
 # History
 
+## 0.3.0
+
+  * Fixed download Java7 JCE. Thanks to Michał Kowalczuk.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/115>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/114>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/113>
+
 ## 0.2.9
 
   * Fixed downloading Java6 JCE. Thanks to Naoya Nakazawa.

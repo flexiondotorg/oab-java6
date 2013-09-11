@@ -1,5 +1,5 @@
 # OAB-Java
-oab-java.sh v0.2.9 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
+oab-java.sh v0.3.0 - Create a local 'apt' repository for Sun Java 6 and/or Oracle Java 7 packages.
 
 Copyright (c) Martin Wimpress, http://flexion.org. MIT License
 
@@ -10,11 +10,11 @@ read and accepted the terms of the Oracle end user license agreement.
 
 ## Donate
 
-If you or your organisation has found `oab-java.sh` useful please consider
+If you or your organisation has found oab-java.sh useful please consider
 donating to this project. It is nice to have the effort I've put into this
 script recognised, I don't ask for much, it is at your discretion.
 
-[![Donate to OAB Java](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ESP59ZNJHLBZ8)  [![Flattr OAB-Java](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=flexiondotorg&url=https://github.com/flexiondotorg/oab-java6&title=oab-java6&language=shell&tags=github&category=software)
+[![Donate to OAB-Java](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ESP59ZNJHLBZ8)  [![Flattr OAB-Java](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=flexiondotorg&url=https://github.com/flexiondotorg/oab-java6&title=oab-java6&language=shell&tags=github&category=software)
 
 ## Usage
 
@@ -34,7 +34,7 @@ Optional parameters
 Like this.
 
     cd ~/
-    wget https://github.com/flexiondotorg/oab-java6/raw/0.2.9/oab-java.sh -O oab-java.sh
+    wget https://github.com/flexiondotorg/oab-java6/raw/0.3.0/oab-java.sh -O oab-java.sh
     chmod +x oab-java.sh
     sudo ./oab-java.sh
 
@@ -45,7 +45,7 @@ If you are behind a proxy you may need to run using:
 If you want to see what this script is doing while it is running then execute
 the following from another shell:
 
-  tail -f ./oab-java.sh.log
+    tail -f ./oab-java.sh.log
 
 ## How it works
 
@@ -109,6 +109,13 @@ Because, O.A.B! ;-)
 
 # History
 
+## 0.3.0
+
+  * Fixed download Java7 JCE. Thanks to Michał Kowalczuk.
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/115>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/114>
+     * Closes: <https://github.com/flexiondotorg/oab-java6/issues/113>
+
 ## 0.2.9
 
   * Fixed downloading Java6 JCE. Thanks to Naoya Nakazawa.
@@ -121,7 +128,7 @@ Because, O.A.B! ;-)
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/104>
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/103>
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/101>
-  * Fixed download Java7.
+  * Fixed downloading Java7.
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/102>
   * Building Java7 on Ubunu Lucid 10.04 is no longer supported.
      * Closes: <https://github.com/flexiondotorg/oab-java6/issues/110>
@@ -291,6 +298,7 @@ Other contributors, listed alphabetically, are:
   * Ladios Jonquil
   * Martin Polden
   * Miah Johnson
+  * Michał Kowalczuk
   * Naoya Nakazawa
   * onlymostlydead
   * Paul Scott
