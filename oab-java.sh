@@ -482,11 +482,11 @@ if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
 else
     JAVA_EXT=.tar.gz
 fi
-if grep -q ia32 ${WORK_PATH}/src/debian/rules; then
-    # Upstream still builds ia32 package, download both architectures
+if grep -q 'srcdir.*:=.*$(arch)' ${WORK_PATH}/src/debian/rules; then
+    # Upstream requires binary files for both architectures
     JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-i586${JAVA_EXT} jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64${JAVA_EXT}"
 else
-    # Upstream has removed ia32 package, just download the appropriate one
+    # Upstream requires binary file of the machine's architecture only
     if [ "${LSB_ARCH}" == "amd64" ]; then
         JAVA_BINS="jdk-${JAVA_VER}u${JAVA_UPD}-linux-x64${JAVA_EXT}"
     else
@@ -561,6 +561,13 @@ BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/
 
 # Change directory to the build directory
 cd ${WORK_PATH}/src
+
+# Run upstream's preparing script if it exists
+if [ -f prepare.sh ]; then
+    ncecho " [x] Inflating archives "
+    ./prepare.sh >> "$log" 2>&1 &
+    pid=$!;progress $pid
+fi
 
 # Update the changelog
 ncecho " [x] Updating the changelog "
