@@ -562,6 +562,13 @@ BUILD_MESSAGE="Automated build for ${LSB_REL} using https://github.com/rraptorr/
 # Change directory to the build directory
 cd ${WORK_PATH}/src
 
+# Run upstream's preparing script if it exists
+if [ -f prepare.sh ]; then
+    ncecho " [x] Inflating archives "
+    ./prepare.sh >> "$log" 2>&1 &
+    pid=$!;progress $pid
+fi
+
 # Update the changelog
 ncecho " [x] Updating the changelog "
 dch --distribution ${LSB_CODE} --force-distribution --newversion ${NEW_VERSION} --force-bad-version --urgency=${DEB_URGENCY} "${BUILD_MESSAGE}" >> "$log" 2>&1 &
