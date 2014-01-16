@@ -418,7 +418,7 @@ fi
 
 # Install the Java build requirements
 ncecho " [x] Installing Java build requirements "
-apt-get install -y --no-install-recommends ${BUILD_DEPS} >> "$log" 2>&1 &
+#apt-get install -y --no-install-recommends ${BUILD_DEPS} >> "$log" 2>&1 &
 pid=$!;progress $pid
 
 # Make sure the required dirs exist.
