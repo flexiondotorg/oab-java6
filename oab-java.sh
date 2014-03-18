@@ -504,7 +504,8 @@ do
     fi
     DOWNLOAD_SIZE=`grep ${JAVA_BIN} /tmp/oab-download.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d':' -f2 | sed 's/"//g'`
     # Cookies required for download
-    COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+    timestamp=$((`date +%s` + 180000))
+    COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com;s_cc=true;s_sq=%5B%5BB%5D%5D;s_nr=$timestamp"
 
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
     wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JAVA_BIN} >> "$log" 2>&1 &
