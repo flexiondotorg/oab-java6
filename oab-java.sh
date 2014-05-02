@@ -536,7 +536,9 @@ if [ "${JAVA_UPSTREAM}" == "sun-java6" ]; then
 else
     JCE_POLICY="UnlimitedJCEPolicyJDK7.zip"
     DOWNLOAD_URL=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f3 | cut -d'"' -f4`
-    COOKIES="oraclelicensejce-7-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+    # COOKIES="oraclelicensejce-7-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
+    timestamp=$((`date +%s` + 180000))
+    COOKIES="oraclelicense=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com;s_cc=true;s_sq=%5B%5BB%5D%5D;s_nr=$timestamp"
 fi
 DOWNLOAD_SIZE=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d'"' -f4`
 
